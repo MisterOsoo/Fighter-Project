@@ -1,0 +1,57 @@
+[gd_scene format=3 uid="uid://dkqfuqeqmyvpv"]
+
+[ext_resource type="Texture2D" uid="uid://bkjuujpwcuk0s" path="res://assets/impfx1_toon_impact_A_large_white/frame0000.png" id="1_0lj12"]
+[ext_resource type="Texture2D" uid="uid://coxpekuflvakl" path="res://assets/impfx1_toon_impact_A_large_white/frame0001.png" id="2_1rmte"]
+[ext_resource type="Texture2D" uid="uid://dbapecwwxxa0b" path="res://assets/impfx1_toon_impact_A_large_white/frame0002.png" id="3_sc4qu"]
+[ext_resource type="Texture2D" uid="uid://d3agbeqcbsajl" path="res://assets/impfx1_toon_impact_A_large_white/frame0003.png" id="4_j5mbp"]
+[ext_resource type="Texture2D" uid="uid://cwp1d7r17jxnj" path="res://assets/impfx1_toon_impact_A_large_white/frame0004.png" id="5_3bp6s"]
+[ext_resource type="Texture2D" uid="uid://g3307et220k1" path="res://assets/impfx1_toon_impact_A_large_white/frame0005.png" id="6_tjlx3"]
+[ext_resource type="Texture2D" uid="uid://c2kl63dh5xy3d" path="res://assets/impfx1_toon_impact_A_large_white/frame0006.png" id="7_q0h6d"]
+[ext_resource type="Texture2D" uid="uid://veu43rdla1cg" path="res://assets/impfx1_toon_impact_A_large_white/frame0007.png" id="8_8xrou"]
+[ext_resource type="Texture2D" uid="uid://demnfi1dwch4o" path="res://assets/impfx1_toon_impact_A_large_white/frame0008.png" id="9_41v0k"]
+[ext_resource type="Texture2D" uid="uid://dxtf5ncy7lti8" path="res://assets/impfx1_toon_impact_A_large_white/frame0009.png" id="10_bux3b"]
+[ext_resource type="Script" uid="uid://b1iqbw2pufu6u" path="res://scripts/impact_sprite.gd" id="11_1rmte"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_a4qce"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_0lj12")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_1rmte")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_sc4qu")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_j5mbp")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_3bp6s")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_tjlx3")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_q0h6d")
+}, {
+"duration": 1.0,
+"texture": ExtResource("8_8xrou")
+}, {
+"duration": 1.0,
+"texture": ExtResource("9_41v0k")
+}, {
+"duration": 1.0,
+"texture": ExtResource("10_bux3b")
+}],
+"loop": 0,
+"name": &"impact",
+"speed": 30.0
+}]
+
+[node name="impactSprite" type="AnimatedSprite2D" unique_id=1463261705]
+scale = Vector2(0.3, 0.3)
+sprite_frames = SubResource("SpriteFrames_a4qce")
+animation = &"impact"
+script = ExtResource("11_1rmte")

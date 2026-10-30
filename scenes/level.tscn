@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://c2g852dw7d3pi"]
+
+[ext_resource type="Texture2D" uid="uid://b2vyyh1o3wts6" path="res://assets/icon.svg" id="1_2q6dc"]
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="3_2r41h"]
+[ext_resource type="PackedScene" uid="uid://dgpi3p5d2eok" path="res://scenes/dummy.tscn" id="4_mx8sn"]
+[ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="5_klq6b"]
+[ext_resource type="PackedScene" uid="uid://cta8360fe31sq" path="res://scenes/players/knight.tscn" id="6_2r41h"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_b121j"]
+[ext_resource type="Script" uid="uid://ctht0fqm20g0c" path="res://scripts/dummySpawner.gd" id="7_klq6b"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w7c3h"]
+size = Vector2(856, 35)
+
+[sub_resource type="Resource" id="Resource_8c41q"]
+script = ExtResource("6_b121j")
+
+[node name="level" type="Node2D" unique_id=1704752631]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=919893541]
+position = Vector2(85, 277)
+collision_mask = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1898402038]
+position = Vector2(342, 181.5)
+shape = SubResource("RectangleShape2D_w7c3h")
+
+[node name="Icon" type="Sprite2D" parent="StaticBody2D/CollisionShape2D" unique_id=1825333061]
+position = Vector2(6.5000525, 0.5)
+scale = Vector2(6.914063, 0.296875)
+texture = ExtResource("1_2q6dc")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=868489909]
+physics_interpolation_mode = 1
+top_level = true
+position = Vector2(414.5, 400)
+zoom = Vector2(4, 4)
+process_callback = 0
+limit_left = 0
+limit_right = 854
+limit_bottom = 460
+
+[node name="PhantomCameraHost" type="Node" parent="Camera2D" unique_id=1964180462]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("3_2r41h")
+metadata/_custom_type_script = "uid://bd046eokvcnu2"
+
+[node name="PhantomCamera2D" type="Node2D" parent="." unique_id=27442747 node_paths=PackedStringArray("follow_targets")]
+top_level = true
+position = Vector2(414.5, 400)
+script = ExtResource("5_klq6b")
+follow_mode = 3
+follow_targets = [NodePath("../knight"), NodePath("../dummy")]
+zoom = Vector2(4, 4)
+tween_resource = SubResource("Resource_8c41q")
+follow_damping = true
+follow_damping_value = Vector2(0.5, 0.5)
+auto_zoom_min = 2.0
+auto_zoom_max = 4.0
+limit_left = 0
+limit_right = 854
+limit_bottom = 460
+metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
+
+[node name="dummy" parent="." unique_id=230361504 instance=ExtResource("4_mx8sn")]
+position = Vector2(462, 409)
+collision_layer = 1
+collision_mask = 1
+
+[node name="knight" parent="." unique_id=1208209418 instance=ExtResource("6_2r41h")]
+position = Vector2(367, 391)
+collision_layer = 1
+collision_mask = 1
+
+[node name="DummySpawner" type="Node2D" parent="." unique_id=297998310 node_paths=PackedStringArray("initial_dummy", "player", "phantom_camera")]
+script = ExtResource("7_klq6b")
+dummy_scene = ExtResource("4_mx8sn")
+initial_dummy = NodePath("../dummy")
+respawn_delay = 1.0
+player = NodePath("../knight")
+phantom_camera = NodePath("../PhantomCamera2D")
+metadata/_custom_type_script = "uid://ctht0fqm20g0c"

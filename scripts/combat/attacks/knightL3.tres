@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://c3k6ibt5st25n"]
+
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_t5l28"]
+
+[resource]
+script = ExtResource("1_t5l28")
+attack_name = "knightL3"
+animation_name = &"attack3"
+metadata/_custom_type_script = "uid://baru8ib5ws770"

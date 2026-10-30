@@ -1,0 +1,120 @@
+[gd_scene format=3 uid="uid://c21qvs2sw4o0l"]
+
+[ext_resource type="Script" uid="uid://bdno5v5e602nf" path="res://scripts/player.gd" id="1_g2els"]
+[ext_resource type="Script" uid="uid://2ol7mgcjfs3d" path="res://addons/activeFrameHitbox/components/hurtBox.gd" id="5_smehm"]
+[ext_resource type="Script" uid="uid://mhwlpwu2d25p" path="res://scripts/blocking.gd" id="6_1c80q"]
+[ext_resource type="Script" uid="uid://dq1wo7xx4vfdo" path="res://addons/activeFrameHitbox/components/activeFrameHitbox.gd" id="6_ur7pv"]
+[ext_resource type="Script" uid="uid://bltygro8vgn6j" path="res://scripts/airDash.gd" id="7_hpvxf"]
+[ext_resource type="Script" uid="uid://bu5u4cvc6apv0" path="res://scripts/FSM.gd" id="7_rlad0"]
+[ext_resource type="Script" uid="uid://ca3l5uffsae6d" path="res://scripts/dash.gd" id="8_eue8k"]
+[ext_resource type="Script" uid="uid://clr5sy5duuosk" path="res://scripts/playerStates/idle.gd" id="8_tqygo"]
+[ext_resource type="Script" uid="uid://b8vfj6vk2hd64" path="res://scripts/playerStates/move.gd" id="9_tqygo"]
+[ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="9_ur7pv"]
+[ext_resource type="Script" uid="uid://ccos8lqev0u22" path="res://scripts/playerStates/jump.gd" id="10_0ucu5"]
+[ext_resource type="Script" uid="uid://2h77xa48caxt" path="res://scripts/playerStates/attack.gd" id="11_0u7ka"]
+[ext_resource type="Script" uid="uid://ih26uf4a7jn5" path="res://scripts/cameraBounds.gd" id="11_d2wvv"]
+[ext_resource type="Script" uid="uid://barobe2htkutf" path="res://scripts/playerStates/dash.gd" id="12_thssr"]
+[ext_resource type="Script" uid="uid://cnd35yvm3jt6e" path="res://scripts/playerStates/air_dash.gd" id="13_kr1ms"]
+[ext_resource type="Script" uid="uid://bgr5xj2gu7yj3" path="res://scripts/playerStates/hurt.gd" id="16_eue8k"]
+
+[node name="basePlayer" type="CharacterBody2D" unique_id=1208209418 node_paths=PackedStringArray("visuals", "dash_component", "air_dash_component", "block_component") groups=["player"]]
+collision_layer = 2
+collision_mask = 3
+floor_max_angle = 0.0
+script = ExtResource("1_g2els")
+visuals = NodePath("Visuals")
+jump_velocity = -350.0
+dash_component = NodePath("DashComponent")
+air_dash_component = NodePath("AirDashComponent")
+block_component = NodePath("BlockComponent")
+jumpstart_animation = "jumpStart"
+jumptransition_animation = "jumpTransition"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=502901929]
+position = Vector2(1, 6.5)
+
+[node name="Visuals" type="Node2D" parent="." unique_id=890805793]
+
+[node name="Hurtbox" type="Area2D" parent="Visuals" unique_id=1319678047 node_paths=PackedStringArray("character", "health_component")]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("5_smehm")
+character = NodePath("../..")
+health_component = NodePath("../../HealthComponent")
+metadata/_custom_type_script = "uid://2ol7mgcjfs3d"
+
+[node name="light1" type="Area2D" parent="Visuals" unique_id=326006609 node_paths=PackedStringArray("character")]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("6_ur7pv")
+character = NodePath("../..")
+active_frames = Array[int]([3])
+damage = 10
+knockback = 20.0
+knockup = 150.0
+knockback_duration = 0.6
+hitstun_duration = 0.6
+metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
+
+[node name="light2" type="Area2D" parent="Visuals" unique_id=584469600]
+script = ExtResource("6_ur7pv")
+metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
+
+[node name="light3" type="Area2D" parent="Visuals" unique_id=396890563]
+script = ExtResource("6_ur7pv")
+metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
+
+[node name="HealthComponent" type="Node" parent="." unique_id=1359002574]
+script = ExtResource("9_ur7pv")
+metadata/_custom_type_script = "uid://dskndl01dtv8w"
+
+[node name="CameraBounds" type="Node" parent="." unique_id=279397461]
+script = ExtResource("11_d2wvv")
+metadata/_custom_type_script = "uid://ih26uf4a7jn5"
+
+[node name="BlockComponent" type="Area2D" parent="." unique_id=515685535]
+collision_layer = 16
+collision_mask = 4
+script = ExtResource("6_1c80q")
+metadata/_custom_type_script = "uid://mhwlpwu2d25p"
+
+[node name="AirDashComponent" type="Node" parent="." unique_id=637463712]
+script = ExtResource("7_hpvxf")
+metadata/_custom_type_script = "uid://bltygro8vgn6j"
+
+[node name="DashComponent" type="Node" parent="." unique_id=1120109285]
+script = ExtResource("8_eue8k")
+metadata/_custom_type_script = "uid://ca3l5uffsae6d"
+
+[node name="FiniteStateMachine" type="Node" parent="." unique_id=1321618913 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("7_rlad0")
+initial_state = NodePath("idle")
+metadata/_custom_type_script = "uid://bu5u4cvc6apv0"
+
+[node name="idle" type="Node" parent="FiniteStateMachine" unique_id=1728407734]
+script = ExtResource("8_tqygo")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="move" type="Node" parent="FiniteStateMachine" unique_id=1076819026]
+script = ExtResource("9_tqygo")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="jump" type="Node" parent="FiniteStateMachine" unique_id=1737627805]
+script = ExtResource("10_0ucu5")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="attack" type="Node" parent="FiniteStateMachine" unique_id=1005707244]
+script = ExtResource("11_0u7ka")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="dash" type="Node" parent="FiniteStateMachine" unique_id=233466675]
+script = ExtResource("12_thssr")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="airDash" type="Node" parent="FiniteStateMachine" unique_id=1735521113]
+script = ExtResource("13_kr1ms")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="hurt" type="Node" parent="FiniteStateMachine" unique_id=92045748]
+script = ExtResource("16_eue8k")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"

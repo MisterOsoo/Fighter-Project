@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://b8t5ys44gbrlv"]
+
+[ext_resource type="Script" uid="uid://wdrgtnym5b2x" path="res://scripts/baseEnemy.gd" id="1_4ra3w"]
+[ext_resource type="Script" uid="uid://dq1wo7xx4vfdo" path="res://addons/activeFrameHitbox/components/activeFrameHitbox.gd" id="3_qhn27"]
+[ext_resource type="Script" uid="uid://2ol7mgcjfs3d" path="res://addons/activeFrameHitbox/components/hurtBox.gd" id="3_xwavj"]
+[ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="4_nenq2"]
+[ext_resource type="Script" uid="uid://ih26uf4a7jn5" path="res://scripts/cameraBounds.gd" id="4_yhxwc"]
+
+[node name="baseEnemy" type="CharacterBody2D" unique_id=1500597518 node_paths=PackedStringArray("visuals", "health_component") groups=["enemy"]]
+scale = Vector2(0.39999956, 0.39999962)
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_4ra3w")
+visuals = NodePath("Visuals")
+health_component = NodePath("HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=291782998]
+position = Vector2(1, 0)
+
+[node name="Visuals" type="Node2D" parent="." unique_id=208781121]
+
+[node name="Hurtbox" type="Area2D" parent="Visuals" unique_id=482215017 node_paths=PackedStringArray("character", "health_component")]
+collision_layer = 8
+collision_mask = 0
+script = ExtResource("3_xwavj")
+character = NodePath("../..")
+health_component = NodePath("../../HealthComponent")
+metadata/_custom_type_script = "uid://2ol7mgcjfs3d"
+
+[node name="activeFrameHitbox" type="Area2D" parent="Visuals" unique_id=758990573]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("3_qhn27")
+metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
+
+[node name="HealthComponent" type="Node" parent="." unique_id=151457584]
+script = ExtResource("4_nenq2")
+metadata/_custom_type_script = "uid://dskndl01dtv8w"
+
+[node name="CameraBounds" type="Node" parent="." unique_id=620318242]
+script = ExtResource("4_yhxwc")
+metadata/_custom_type_script = "uid://ih26uf4a7jn5"
