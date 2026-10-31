@@ -6,12 +6,19 @@ class_name JumpState
 #region Input Settings
 
 @export_group("Input")
+
 @export var jump_input: StringName = &"jump"
+@export var light_input: StringName = &"lightAtk"
+@export var heavy_input: StringName = &"heavyAtk"
 
 #endregion
 
 
 #region References
+
+@export_group("References")
+
+@export var attack_state: AttackState
 
 @onready var player: BasePlayer = (
 	get_parent().get_parent() as BasePlayer
@@ -26,9 +33,6 @@ func Enter() -> void:
 	if player.is_dead or player.isStunned:
 		return
 
-	# Only start a new jump when grounded.
-	# Entering this state while airborne must not
-	# reset vertical velocity.
 	if player.is_on_floor():
 		var direction: float = Input.get_axis(
 			"ui_left",
@@ -61,19 +65,20 @@ func PhysicsUpdate(_delta: float) -> void:
 		if player.air_dash_component.is_air_dashing:
 			return
 
-	# Preserve fixed horizontal momentum in the air.
+	# Check aerial attacks.
 	if not player.is_on_floor():
-		player.velocity.x = player.jump_horizontal_velocity
+		if try_air_attack():
+			return
 
+		player.velocity.x = player.jump_horizontal_velocity
 		update_jump_animation()
 		return
 
-	# Landing: reset jump flags.
+	# Landing.
 	player.is_jumping = false
 	player.is_jump_transitioning = false
 	player.jump_transition_finished = false
 
-	# Return to a ground state.
 	var direction: float = Input.get_axis(
 		"ui_left",
 		"ui_right"
@@ -87,6 +92,46 @@ func PhysicsUpdate(_delta: float) -> void:
 
 func Exit() -> void:
 	pass
+
+#endregion
+
+
+#region Air Attack Handling
+
+func try_air_attack() -> bool:
+	if attack_state == null:
+		print("JumpState: AttackState reference is missing.")
+		return false
+
+	if InputMap.has_action(light_input):
+		if Input.is_action_just_pressed(light_input):
+			print("JumpState: Air light input detected.")
+
+			if attack_state.air_light_attack == null:
+				print("JumpState: Air Light Attack resource is missing.")
+				return false
+
+			attack_state.request_attack(&"light")
+			transition_to("attack")
+
+			print("JumpState: Requested transition to AttackState.")
+			return true
+
+	if InputMap.has_action(heavy_input):
+		if Input.is_action_just_pressed(heavy_input):
+			print("JumpState: Air heavy input detected.")
+
+			if attack_state.air_heavy_attack == null:
+				print("JumpState: Air Heavy Attack resource is missing.")
+				return false
+
+			attack_state.request_attack(&"heavy")
+			transition_to("attack")
+
+			print("JumpState: Requested transition to AttackState.")
+			return true
+
+	return false
 
 #endregion
 

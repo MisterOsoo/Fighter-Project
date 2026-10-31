@@ -57,6 +57,12 @@ var hitstun_duration: float = 0.4
 @export var launch_gravity_multiplier: float = 0.4
 @export var launch_max_fall_speed: float = 250.0
 
+@export_group("Ground Slam")
+@export var ground_slam: bool = false
+
+@export_range(0.0, 2000.0, 10.0, "or_greater")
+var ground_slam_speed: float = 500.0
+
 #endregion
 
 
@@ -228,6 +234,7 @@ func _on_animation_finished() -> void:
 
 func _on_area_entered(area: Area2D) -> void:
 	print("Hitbox detected area: ", area.name)
+
 	if not area is Hurtbox:
 		return
 
@@ -242,12 +249,8 @@ func _on_area_entered(area: Area2D) -> void:
 	if hurtbox in hit_targets:
 		return
 
-	# Register this target so the same attack
-	# cannot hit it repeatedly.
 	hit_targets.append(hurtbox)
 
-	# Hurtbox determines whether the attack
-	# successfully lands or is blocked.
 	var hit_landed: bool = hurtbox.receive_hit(
 		damage,
 		knockback,
@@ -257,18 +260,16 @@ func _on_area_entered(area: Area2D) -> void:
 		hitstun_duration,
 		launch_gravity_multiplier,
 		launch_max_fall_speed,
-		self
+		self,
+		ground_slam,
+		ground_slam_speed
 	)
 
-	# Blocked attacks do not confirm hits.
 	if not hit_landed:
 		return
 
-	# Notify AttackState of the successful hit.
-	# This unlocks hit-confirm-only combo cancels.
 	hit_confirmed.emit(StringName(attack_animation))
 
-	# Existing hit effects.
 	spawn_impact_fx(hurtbox)
 	trigger_hit_effects()
 
@@ -295,7 +296,6 @@ func spawn_impact_fx(hurtbox: Hurtbox) -> void:
 		impact_position + impact_fx_offset
 	)
 
-	# Automatically delete the effect after its lifetime.
 	if impact_fx_lifetime > 0.0:
 		get_tree().create_timer(
 			impact_fx_lifetime
@@ -327,10 +327,8 @@ func get_impact_position(hurtbox: Hurtbox) -> Vector2:
 			global_position + hurtbox.global_position
 		) * 0.5
 
-	# Calculate the world-space center of each collision shape.
 	var hit_center: Vector2 = hit_collision.global_position
 
-	# Find the nearest point on the Hurtbox to the Hitbox.
 	var hurt_local_point: Vector2 = (
 		hurt_collision.to_local(hit_center)
 	)
@@ -354,8 +352,6 @@ func get_impact_position(hurtbox: Hurtbox) -> Vector2:
 		hurt_collision.to_global(closest_local_point)
 	)
 
-	# Place the impact between the Hitbox center
-	# and the closest Hurtbox position.
 	return (
 		hit_center + closest_world_point
 	) * 0.5

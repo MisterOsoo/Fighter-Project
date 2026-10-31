@@ -65,6 +65,8 @@ var knockback_duration: float = 0.0
 var knockback_velocity: float = 0.0
 
 var is_launched: bool = false
+var is_ground_slammed: bool = false
+
 var launch_gravity_multiplier: float = 1.0
 var launch_max_fall_speed: float = 250.0
 
@@ -154,9 +156,12 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
+	# Reset launch properties after landing.
 	if is_on_floor() and is_launched:
 		is_launched = false
+		is_ground_slammed = false
 		launch_gravity_multiplier = 1.0
+		launch_max_fall_speed = 250.0
 
 	if not is_dead:
 		update_facing()
@@ -261,7 +266,7 @@ func update_knockback(delta: float) -> void:
 	if knockback_timer > 0.0:
 
 		var weight: float = (
-			knockback_timer / knockback_duration
+			knockback_timer / maxf(knockback_duration, 0.001)
 		)
 
 		velocity.x = knockback_velocity * weight
@@ -309,7 +314,8 @@ func receive_combat_hit(
 	new_knockback_duration: float,
 	new_hitstun_duration: float,
 	new_launch_gravity_multiplier: float = 1.0,
-	new_launch_max_fall_speed: float = 250.0
+	new_launch_max_fall_speed: float = 250.0,
+	ground_slam: bool = false
 ) -> void:
 
 	if is_dead:
@@ -331,7 +337,13 @@ func receive_combat_hit(
 	if knockback_duration <= 0.0:
 		velocity.x = 0.0
 
-	# Apply vertical knock-up.
+	# Reset previous launch modifiers.
+	is_launched = false
+	is_ground_slammed = false
+	launch_gravity_multiplier = 1.0
+	launch_max_fall_speed = 250.0
+
+	# Normal upward launch.
 	if impulse.y < 0.0:
 
 		velocity.y = impulse.y
@@ -346,6 +358,26 @@ func receive_combat_hit(
 			new_launch_max_fall_speed,
 			0.0
 		)
+
+	# Ground slam: send airborne enemies downward.
+	elif ground_slam and impulse.y > 0.0 and not is_on_floor():
+
+		velocity.y = impulse.y
+		is_launched = true
+		is_ground_slammed = true
+
+		# Use normal gravity during the slam.
+		launch_gravity_multiplier = 1.0
+
+		# Prevent the normal fall-speed cap
+		# from reducing the ground slam speed.
+		launch_max_fall_speed = INF
+
+	if is_launched:
+		# Clear any previous jump momentum.
+		# These properties are used by BasePlayer,
+		# but BaseEnemy only needs launch velocity.
+		pass
 
 	# Apply hitstun.
 	hitstun_timer = maxf(

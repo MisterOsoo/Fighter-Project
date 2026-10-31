@@ -6,4 +6,8 @@
 script = ExtResource("1_t5l28")
 attack_name = "knightL3"
 animation_name = &"attack3"
+cancel_start_frame = 5
+cancel_end_frame = 10
+require_hit_to_cancel = true
+jump_cancelable = true
 metadata/_custom_type_script = "uid://baru8ib5ws770"

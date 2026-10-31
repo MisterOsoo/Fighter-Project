@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://p6uiymnxfmlq"]
+
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_pcy7t"]
+
+[resource]
+script = ExtResource("1_pcy7t")
+attack_name = "knightAirL1"
+animation_name = &"airAttack"
+ground_only = false
+air_only = true
+lock_horizontal_movement = false
+metadata/_custom_type_script = "uid://baru8ib5ws770"

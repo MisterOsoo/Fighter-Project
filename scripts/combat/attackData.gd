@@ -38,6 +38,15 @@ class_name AttackData
 #endregion
 
 
+#region Jump Cancel Settings
+
+@export_group("Jump Cancel Settings")
+
+@export var jump_cancelable: bool = false
+
+#endregion
+
+
 #region Movement Settings
 
 @export_group("Movement Settings")

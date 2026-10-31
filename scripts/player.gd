@@ -53,6 +53,8 @@ var knockback_total_duration: float = 0.0
 var knockback_start_speed: float = 0.0
 
 var is_launched: bool = false
+var is_ground_slammed: bool = false
+
 var launch_gravity_multiplier: float = 1.0
 var launch_max_fall_speed: float = 250.0
 
@@ -185,32 +187,27 @@ func receive_combat_hit(
 	new_knockback_duration: float,
 	new_hitstun_duration: float,
 	gravity_multiplier: float,
-	max_fall_speed: float
+	max_fall_speed: float,
+	ground_slam: bool = false
 ) -> void:
 	if is_dead:
 		return
 
-	# Cancel blocking.
 	if block_component:
 		block_component.end_block()
 
-	# Cancel ground dash.
 	if dash_component and dash_component.is_dashing:
 		dash_component.stop_dash()
 
-	# Cancel air dash.
 	if air_dash_component and air_dash_component.is_air_dashing:
 		air_dash_component.stop_air_dash()
 
-	# Apply hitstun.
 	hitstun_timer = maxf(
 		new_hitstun_duration,
 		0.0
 	)
-
 	isStunned = hitstun_timer > 0.0
 
-	# Apply knockback.
 	knockback_total_duration = maxf(
 		new_knockback_duration,
 		0.0
@@ -219,7 +216,13 @@ func receive_combat_hit(
 	knockback_timer = knockback_total_duration
 	knockback_start_speed = impulse.x
 
-	# Handle launching.
+	# Reset launch modifiers for the new hit.
+	is_launched = false
+	is_ground_slammed = false
+	launch_gravity_multiplier = 1.0
+	launch_max_fall_speed = 250.0
+
+	# Upward launcher.
 	if impulse.y < 0.0:
 		velocity.y = impulse.y
 		is_launched = true
@@ -234,29 +237,37 @@ func receive_combat_hit(
 			0.0
 		)
 
+	# Downward ground slam.
+	elif ground_slam and impulse.y > 0.0 and not is_on_floor():
+		velocity.y = impulse.y
+		is_launched = true
+		is_ground_slammed = true
+
+		# Normal gravity for a fast downward slam.
+		launch_gravity_multiplier = 1.0
+
+		# Do not cap the slam at the normal launch fall speed.
+		launch_max_fall_speed = INF
+
+	if is_launched:
 		is_jumping = false
 		is_jump_transitioning = false
 		jump_transition_finished = false
 		jump_horizontal_velocity = 0.0
 
-	# Apply horizontal knockback.
 	if knockback_timer > 0.0:
 		velocity.x = knockback_start_speed
 	else:
 		velocity.x = 0.0
 
-	# Interrupt attacks.
 	isAttacking = false
 
-	# Enter HurtState on the first hit.
-	# Additional hits only restart the flash.
-	if isStunned or knockback_timer > 0.0:
+	if isStunned or knockback_timer > 0.0 or is_launched:
 		if fsm:
 			if fsm.current_state is HurtState:
 				var hurt_state: HurtState = (
 					fsm.current_state as HurtState
 				)
-
 				hurt_state.receive_additional_hit()
 			else:
 				fsm.transition_to("hurt", true)
@@ -272,10 +283,12 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	# Reset launch physics when grounded.
+	# Detect landing from a launch or ground slam.
 	if is_launched and is_on_floor() and velocity.y >= 0.0:
 		is_launched = false
+		is_ground_slammed = false
 		launch_gravity_multiplier = 1.0
+		launch_max_fall_speed = 250.0
 
 	var ground_dashing: bool = (
 		dash_component != null
@@ -287,11 +300,9 @@ func _physics_process(delta: float) -> void:
 		and air_dash_component.is_air_dashing
 	)
 
-	# Apply gravity unless actively air dashing.
 	if not air_dashing:
 		apply_gravity(delta)
 
-	# Update hitstun.
 	if isStunned:
 		hitstun_timer = maxf(
 			hitstun_timer - delta,
@@ -301,7 +312,6 @@ func _physics_process(delta: float) -> void:
 		if hitstun_timer <= 0.0:
 			isStunned = false
 
-	# Update knockback.
 	if knockback_timer > 0.0:
 		knockback_timer = maxf(
 			knockback_timer - delta,
@@ -322,56 +332,60 @@ func _physics_process(delta: float) -> void:
 		if knockback_timer <= 0.0:
 			velocity.x = 0.0
 
-	# HurtState controls hurt animations.
 	if isStunned or knockback_timer > 0.0:
 		move_and_slide()
 		update_facing()
 		return
 
-	# Block movement.
 	if block_component and block_component.is_blocking:
 		velocity.x = 0.0
 		move_and_slide()
 		update_facing()
 		return
 
-	# Ground dash.
 	if ground_dashing:
 		dash_component.apply_dash_velocity()
-
 		play_animation(
 			dash_component.get_dash_animation()
 		)
-
 		move_and_slide()
 		update_facing()
 		return
 
-	# Air dash.
 	if air_dashing:
 		air_dash_component.apply_air_dash_velocity()
-
 		play_animation(
-			air_dash_component.get_dash_animation()
+			air_dash_component.get_air_dash_animation()
 		)
-
 		move_and_slide()
 		update_facing()
 		return
 
-	# Attack movement.
 	if isAttacking:
-		velocity.x = 0.0
+		var lock_horizontal: bool = true
+
+		if fsm and fsm.current_state is AttackState:
+			var attack_state: AttackState = (
+				fsm.current_state as AttackState
+			)
+
+			if attack_state.current_attack:
+				lock_horizontal = (
+					attack_state.current_attack.lock_horizontal_movement
+				)
+
+		if lock_horizontal:
+			velocity.x = 0.0
+		elif not is_on_floor():
+			velocity.x = jump_horizontal_velocity
+
 		move_and_slide()
 		update_facing()
 		return
 
-	# Normal movement.
 	move_and_slide()
 	update_facing()
 
-	# Detect walking off an edge without
-	# interrupting active combat states.
 	if not is_on_floor() and fsm:
 		if fsm.current_state:
 			var state_name: String = (
