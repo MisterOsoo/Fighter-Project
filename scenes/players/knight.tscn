@@ -15,9 +15,12 @@
 [ext_resource type="Texture2D" uid="uid://kdy81h5n8v4a" path="res://assets/FREE_Knight 2D Pixel Art v1.2/JUMP-TRANSITION.png" id="8_b4xqx"]
 [ext_resource type="Texture2D" uid="uid://7kec2mipu7ik" path="res://assets/FREE_Knight 2D Pixel Art v1.2/WALK.png" id="9_vwao6"]
 [ext_resource type="PackedScene" uid="uid://dkqfuqeqmyvpv" path="res://scenes/impact_sprite.tscn" id="11_tw6kv"]
+[ext_resource type="Texture2D" uid="uid://d1p6xxsit0b34" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/THRUST ATTACK.png" id="14_ie60q"]
 [ext_resource type="Script" uid="uid://dq1wo7xx4vfdo" path="res://addons/activeFrameHitbox/components/activeFrameHitbox.gd" id="16_gkckh"]
 [ext_resource type="Resource" uid="uid://cj5f315s5lnkm" path="res://scripts/combat/attacks/knightL1.tres" id="16_vwao6"]
 [ext_resource type="Resource" uid="uid://p6uiymnxfmlq" path="res://scripts/combat/attacks/knightAirL1.tres" id="17_xlok1"]
+[ext_resource type="AudioStream" uid="uid://cahd8b20il4ld" path="res://assets/sfx/metal-weapon-swing-impact-heavy-joshua-chivers-2-2-00-01.mp3" id="20_iwxi6"]
+[ext_resource type="Script" uid="uid://e56gcny8jiob" path="res://scripts/randomPitch.gd" id="21_87wqp"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tfmq4"]
 
@@ -413,6 +416,58 @@ region = Rect2(112, 0, 112, 96)
 atlas = ExtResource("8_b4xqx")
 region = Rect2(224, 0, 112, 96)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_ipkl2"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cdw0y"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_08a0x"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xf0hc"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5xle1"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xv6bo"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ibnyq"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fr8cx"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n4yr7"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(896, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wt2aw"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(1008, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qcc5y"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(1120, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xqvoe"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(1232, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vx6pr"]
+atlas = ExtResource("14_ie60q")
+region = Rect2(1344, 0, 112, 96)
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_y8v5s"]
 atlas = ExtResource("9_vwao6")
 region = Rect2(0, 0, 112, 96)
@@ -803,6 +858,50 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_ipkl2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cdw0y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_08a0x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xf0hc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5xle1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xv6bo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ibnyq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fr8cx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n4yr7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wt2aw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qcc5y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xqvoe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vx6pr")
+}],
+"loop": 0,
+"name": &"lightThrust",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_y8v5s")
 }, {
 "duration": 1.0,
@@ -846,11 +945,16 @@ size = Vector2(50, 53)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_toiwi"]
 size = Vector2(45, 55)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2q874"]
+size = Vector2(80, 16)
+
 [sub_resource type="CircleShape2D" id="CircleShape2D_q3foc"]
 radius = 34.0
 
-[node name="knight" unique_id=1208209418 node_paths=PackedStringArray("anim") instance=ExtResource("1_otkoh")]
+[node name="knight" unique_id=1208209418 node_paths=PackedStringArray("anim", "fsm") instance=ExtResource("1_otkoh")]
 anim = NodePath("Visuals/AnimatedSprite2D")
+fsm = NodePath("FiniteStateMachine")
+speed = 75.0
 death_animation = "death"
 
 [node name="CollisionShape2D" parent="." index="0" unique_id=502901929]
@@ -859,8 +963,8 @@ shape = SubResource("CircleShape2D_tfmq4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="0" unique_id=916986781]
 sprite_frames = SubResource("SpriteFrames_joarl")
-animation = &"airAttack"
-frame = 4
+animation = &"lightThrust"
+frame = 6
 
 [node name="HurtboxCollision" type="CollisionShape2D" parent="Visuals/Hurtbox" parent_id_path=PackedInt32Array(1319678047) index="0" unique_id=298190807]
 position = Vector2(0, 18.5)
@@ -875,6 +979,7 @@ screen_shake_duration = 0.1
 impact_fx_scene = ExtResource("11_tw6kv")
 
 [node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/light1" index="0" unique_id=1535231387]
+visible = false
 position = Vector2(19, 20.5)
 shape = SubResource("RectangleShape2D_iyavm")
 debug_color = Color(1, 1, 0, 0.3)
@@ -895,6 +1000,7 @@ screen_shake_duration = 0.1
 impact_fx_scene = ExtResource("11_tw6kv")
 
 [node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/light2" index="0" unique_id=1137609335]
+visible = false
 position = Vector2(-0.5, 16.5)
 shape = SubResource("RectangleShape2D_b4xqx")
 debug_color = Color(1, 1, 0, 0.3)
@@ -916,6 +1022,7 @@ screen_shake_duration = 0.15
 impact_fx_scene = ExtResource("11_tw6kv")
 
 [node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/light3" index="0" unique_id=845078406]
+visible = false
 position = Vector2(10, 10.5)
 shape = SubResource("RectangleShape2D_vwao6")
 debug_color = Color(1, 1, 0, 0.3)
@@ -929,15 +1036,40 @@ animated_sprite = NodePath("../AnimatedSprite2D")
 attack_animation = "airAttack"
 active_frames = Array[int]([4])
 damage = 15
-knockback = 80.0
+knockback = 100.0
 hitstun_duration = 1.0
 ground_slam = true
 impact_fx_scene = ExtResource("11_tw6kv")
 metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
 
 [node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/airLight" index="0" unique_id=138449108]
+visible = false
 position = Vector2(12.5, 12.5)
 shape = SubResource("RectangleShape2D_toiwi")
+debug_color = Color(1, 1, 0, 0.3)
+
+[node name="lightThrust" type="Area2D" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="6" unique_id=705532369 node_paths=PackedStringArray("character", "animated_sprite")]
+position = Vector2(35, 22)
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("16_gkckh")
+character = NodePath("../..")
+animated_sprite = NodePath("../AnimatedSprite2D")
+attack_animation = "lightThrust"
+active_frames = Array[int]([6])
+damage = 25
+knockback = 300.0
+knockup = 50.0
+hitstop_duration = 0.1
+screen_shake_duration = 0.25
+impact_fx_scene = ExtResource("11_tw6kv")
+blockstun_duration = 0.5
+metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
+
+[node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/lightThrust" index="0" unique_id=1863590207]
+visible = false
+position = Vector2(-30, 0)
+shape = SubResource("RectangleShape2D_2q874")
 debug_color = Color(1, 1, 0, 0.3)
 
 [node name="BlockComponent" parent="." index="4" unique_id=515685535]
@@ -966,6 +1098,12 @@ jump_input = &"jump"
 input_buffer_frames = 20
 jump_buffer_frames = 30
 
-[connection signal="hit_confirmed" from="Visuals/light1" to="FiniteStateMachine/attack" method="_on_light_1_hit_confirmed"]
-[connection signal="hit_confirmed" from="Visuals/light2" to="FiniteStateMachine/attack" method="_on_light_2_hit_confirmed"]
-[connection signal="hit_confirmed" from="Visuals/light3" to="FiniteStateMachine/attack" method="_on_light_3_hit_confirmed"]
+[node name="swordHit" type="AudioStreamPlayer2D" parent="." index="8" unique_id=1950935511]
+process_mode = 3
+stream = ExtResource("20_iwxi6")
+script = ExtResource("21_87wqp")
+
+[connection signal="hit_confirmed" from="Visuals/light1" to="swordHit" method="_on_light_1_hit_confirmed"]
+[connection signal="hit_confirmed" from="Visuals/light2" to="swordHit" method="_on_light_2_hit_confirmed"]
+[connection signal="hit_confirmed" from="Visuals/light3" to="swordHit" method="_on_light_3_hit_confirmed"]
+[connection signal="hit_confirmed" from="Visuals/airLight" to="swordHit" method="_on_air_light_hit_confirmed"]

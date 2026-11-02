@@ -9,4 +9,5 @@ animation_name = &"airAttack"
 ground_only = false
 air_only = true
 lock_horizontal_movement = false
+enable_ground_bounce = true
 metadata/_custom_type_script = "uid://baru8ib5ws770"

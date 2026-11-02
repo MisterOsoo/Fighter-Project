@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="SpecialAttackData" format=3 uid="uid://chl8wdhrfebex"]
+
+[ext_resource type="Script" uid="uid://dqean8ijehqjn" path="res://scripts/combat/specialAttackData.gd" id="1_mlefd"]
+
+[resource]
+script = ExtResource("1_mlefd")
+special_name = "lightThrust"
+animation_name = &"lightThrust"
+movement_type = 1
+movement_start_frame = 5
+movement_speed = 250.0
+metadata/_custom_type_script = "uid://dqean8ijehqjn"

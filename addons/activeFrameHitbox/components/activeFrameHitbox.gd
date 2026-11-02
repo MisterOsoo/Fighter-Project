@@ -66,10 +66,19 @@ var ground_slam_speed: float = 500.0
 #endregion
 
 
+#region Ground Bounce
+
+# Configured by AttackState from the current AttackData.
+var enable_ground_bounce: bool = false
+var bounce_speed: float = 230.0
+var bounce_hitstun: float = 0.6
+
+#endregion
+
+
 #region Hit Effects
 
 @export_group("Hit Effects")
-
 @export var enable_hitstop: bool = true
 
 @export_range(0.0, 1.0, 0.01, "or_greater")
@@ -89,7 +98,6 @@ var screen_shake_duration: float = 0.2
 #region Impact FX
 
 @export_group("Impact FX")
-
 @export var impact_fx_scene: PackedScene
 @export var impact_fx_offset: Vector2 = Vector2.ZERO
 
@@ -233,8 +241,6 @@ func _on_animation_finished() -> void:
 
 
 func _on_area_entered(area: Area2D) -> void:
-	print("Hitbox detected area: ", area.name)
-
 	if not area is Hurtbox:
 		return
 
@@ -262,7 +268,10 @@ func _on_area_entered(area: Area2D) -> void:
 		launch_max_fall_speed,
 		self,
 		ground_slam,
-		ground_slam_speed
+		ground_slam_speed,
+		ground_slam and enable_ground_bounce,
+		bounce_speed,
+		bounce_hitstun
 	)
 
 	if not hit_landed:
@@ -291,17 +300,12 @@ func spawn_impact_fx(hurtbox: Hurtbox) -> void:
 	var impact_position: Vector2 = get_impact_position(hurtbox)
 
 	get_tree().current_scene.add_child(effect)
-
-	effect.global_position = (
-		impact_position + impact_fx_offset
-	)
+	effect.global_position = impact_position + impact_fx_offset
 
 	if impact_fx_lifetime > 0.0:
 		get_tree().create_timer(
 			impact_fx_lifetime
-		).timeout.connect(
-			effect.queue_free
-		)
+		).timeout.connect(effect.queue_free)
 
 #endregion
 
@@ -318,17 +322,12 @@ func get_impact_position(hurtbox: Hurtbox) -> Vector2:
 	)
 
 	if hit_collision == null or hurt_collision == null:
-		return (
-			global_position + hurtbox.global_position
-		) * 0.5
+		return (global_position + hurtbox.global_position) * 0.5
 
 	if hit_collision.shape == null or hurt_collision.shape == null:
-		return (
-			global_position + hurtbox.global_position
-		) * 0.5
+		return (global_position + hurtbox.global_position) * 0.5
 
 	var hit_center: Vector2 = hit_collision.global_position
-
 	var hurt_local_point: Vector2 = (
 		hurt_collision.to_local(hit_center)
 	)
@@ -352,9 +351,7 @@ func get_impact_position(hurtbox: Hurtbox) -> Vector2:
 		hurt_collision.to_global(closest_local_point)
 	)
 
-	return (
-		hit_center + closest_world_point
-	) * 0.5
+	return (hit_center + closest_world_point) * 0.5
 
 #endregion
 
@@ -377,9 +374,16 @@ func trigger_hit_effects() -> void:
 		)
 
 	if enable_hitstop:
-		effects.call(
-			"hitstop",
-			hitstop_duration
-		)
+		effects.call("hitstop", hitstop_duration)
+
+#endregion
+
+
+#region Blockstun Settings
+
+@export_group("Blockstun")
+
+@export_range(0.0, 5.0, 0.01, "or_greater")
+var blockstun_duration: float = 0.2
 
 #endregion

@@ -16,6 +16,8 @@
 [ext_resource type="Script" uid="uid://barobe2htkutf" path="res://scripts/playerStates/dash.gd" id="12_thssr"]
 [ext_resource type="Script" uid="uid://cnd35yvm3jt6e" path="res://scripts/playerStates/air_dash.gd" id="13_kr1ms"]
 [ext_resource type="Script" uid="uid://bgr5xj2gu7yj3" path="res://scripts/playerStates/hurt.gd" id="16_eue8k"]
+[ext_resource type="Script" uid="uid://bd10vsbov2pok" path="res://scripts/playerStates/block.gd" id="17_g1owl"]
+[ext_resource type="Script" uid="uid://bj481humtrkua" path="res://scenes/special_attack.gd" id="18_nhqlq"]
 
 [node name="basePlayer" type="CharacterBody2D" unique_id=1208209418 node_paths=PackedStringArray("visuals", "dash_component", "air_dash_component", "block_component") groups=["player"]]
 collision_layer = 2
@@ -117,4 +119,12 @@ metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="hurt" type="Node" parent="FiniteStateMachine" unique_id=92045748]
 script = ExtResource("16_eue8k")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="block" type="Node" parent="FiniteStateMachine" unique_id=1514899201]
+script = ExtResource("17_g1owl")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="specialAttack" type="Node" parent="FiniteStateMachine" unique_id=1910992027]
+script = ExtResource("18_nhqlq")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"

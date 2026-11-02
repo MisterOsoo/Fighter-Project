@@ -11,4 +11,5 @@ next_light_attack = ExtResource("1_pbyku")
 cancel_start_frame = 5
 cancel_end_frame = 8
 require_hit_to_cancel = true
+blockstun_duration = 0.35
 metadata/_custom_type_script = "uid://baru8ib5ws770"

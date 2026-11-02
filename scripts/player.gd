@@ -61,6 +61,17 @@ var launch_max_fall_speed: float = 250.0
 #endregion
 
 
+#region Ground Bounce State
+
+var ground_bounce_pending: bool = false
+var ground_bounce_active: bool = false
+
+var ground_bounce_speed: float = 230.0
+var ground_bounce_hitstun: float = 0.6
+
+#endregion
+
+
 #region Jump State
 
 var is_jumping: bool = false
@@ -161,10 +172,7 @@ func can_use_ground_states() -> bool:
 
 
 func update_ground_state() -> void:
-	if fsm == null:
-		return
-
-	if not can_use_ground_states():
+	if fsm == null or not can_use_ground_states():
 		return
 
 	var direction: float = Input.get_axis(
@@ -188,26 +196,30 @@ func receive_combat_hit(
 	new_hitstun_duration: float,
 	gravity_multiplier: float,
 	max_fall_speed: float,
-	ground_slam: bool = false
+	ground_slam: bool = false,
+	ground_bounce: bool = false,
+	bounce_speed: float = 230.0,
+	bounce_hitstun: float = 0.6
 ) -> void:
 	if is_dead:
 		return
 
+	# A successful hit interrupts blocking.
 	if block_component:
-		block_component.end_block()
+		block_component.end_block(true)
 
+	# Interrupt active dashes.
 	if dash_component and dash_component.is_dashing:
 		dash_component.stop_dash()
 
 	if air_dash_component and air_dash_component.is_air_dashing:
 		air_dash_component.stop_air_dash()
 
-	hitstun_timer = maxf(
-		new_hitstun_duration,
-		0.0
-	)
+	# Apply hitstun.
+	hitstun_timer = maxf(new_hitstun_duration, 0.0)
 	isStunned = hitstun_timer > 0.0
 
+	# Apply horizontal knockback.
 	knockback_total_duration = maxf(
 		new_knockback_duration,
 		0.0
@@ -216,13 +228,13 @@ func receive_combat_hit(
 	knockback_timer = knockback_total_duration
 	knockback_start_speed = impulse.x
 
-	# Reset launch modifiers for the new hit.
-	is_launched = false
-	is_ground_slammed = false
-	launch_gravity_multiplier = 1.0
-	launch_max_fall_speed = 250.0
+	# Reset previous launch settings.
+	reset_launch_state()
 
-	# Upward launcher.
+	ground_bounce_pending = false
+	ground_bounce_active = false
+
+	# Standard upward launch.
 	if impulse.y < 0.0:
 		velocity.y = impulse.y
 		is_launched = true
@@ -237,17 +249,20 @@ func receive_combat_hit(
 			0.0
 		)
 
-	# Downward ground slam.
+	# Ground Slam.
 	elif ground_slam and impulse.y > 0.0 and not is_on_floor():
 		velocity.y = impulse.y
+
 		is_launched = true
 		is_ground_slammed = true
 
-		# Normal gravity for a fast downward slam.
 		launch_gravity_multiplier = 1.0
-
-		# Do not cap the slam at the normal launch fall speed.
 		launch_max_fall_speed = INF
+
+		# Ground Bounce is configured by AttackData.
+		ground_bounce_pending = ground_bounce
+		ground_bounce_speed = maxf(bounce_speed, 0.0)
+		ground_bounce_hitstun = maxf(bounce_hitstun, 0.0)
 
 	if is_launched:
 		is_jumping = false
@@ -268,6 +283,7 @@ func receive_combat_hit(
 				var hurt_state: HurtState = (
 					fsm.current_state as HurtState
 				)
+
 				hurt_state.receive_additional_hit()
 			else:
 				fsm.transition_to("hurt", true)
@@ -283,12 +299,12 @@ func _physics_process(delta: float) -> void:
 		move_and_slide()
 		return
 
-	# Detect landing from a launch or ground slam.
+	# Resolve landing from a previous physics frame.
 	if is_launched and is_on_floor() and velocity.y >= 0.0:
-		is_launched = false
-		is_ground_slammed = false
-		launch_gravity_multiplier = 1.0
-		launch_max_fall_speed = 250.0
+		if ground_bounce_pending:
+			trigger_ground_bounce()
+		else:
+			reset_launch_state()
 
 	var ground_dashing: bool = (
 		dash_component != null
@@ -303,6 +319,7 @@ func _physics_process(delta: float) -> void:
 	if not air_dashing:
 		apply_gravity(delta)
 
+	# Update hitstun.
 	if isStunned:
 		hitstun_timer = maxf(
 			hitstun_timer - delta,
@@ -312,6 +329,7 @@ func _physics_process(delta: float) -> void:
 		if hitstun_timer <= 0.0:
 			isStunned = false
 
+	# Update horizontal knockback.
 	if knockback_timer > 0.0:
 		knockback_timer = maxf(
 			knockback_timer - delta,
@@ -332,35 +350,63 @@ func _physics_process(delta: float) -> void:
 		if knockback_timer <= 0.0:
 			velocity.x = 0.0
 
+	# Ground Bounce removes all horizontal momentum.
+	if ground_bounce_active:
+		velocity.x = 0.0
+		knockback_timer = 0.0
+		knockback_total_duration = 0.0
+		knockback_start_speed = 0.0
+		jump_horizontal_velocity = 0.0
+
+	# BlockState is entered only by BlockComponent
+	# when an attack successfully connects.
+	if block_component and block_component.is_blocking:
+		velocity.x = 0.0
+
+		if fsm and not (fsm.current_state is BlockState):
+			fsm.transition_to("block")
+
+		move_and_slide()
+		update_facing()
+		return
+
+	# Stunned characters cannot control movement.
 	if isStunned or knockback_timer > 0.0:
 		move_and_slide()
 		update_facing()
 		return
 
-	if block_component and block_component.is_blocking:
-		velocity.x = 0.0
-		move_and_slide()
-		update_facing()
-		return
-
+	# Ground dash.
 	if ground_dashing:
 		dash_component.apply_dash_velocity()
+
 		play_animation(
 			dash_component.get_dash_animation()
 		)
+
 		move_and_slide()
 		update_facing()
 		return
 
+	# Air dash.
 	if air_dashing:
 		air_dash_component.apply_air_dash_velocity()
+
 		play_animation(
-			air_dash_component.get_air_dash_animation()
+			air_dash_component.get_dash_animation()
 		)
+
 		move_and_slide()
 		update_facing()
 		return
 
+	# Special attacks control their own movement.
+	if fsm and fsm.current_state is SpecialAttackState:
+		move_and_slide()
+		update_facing()
+		return
+
+	# Normal attacks preserve their existing movement rules.
 	if isAttacking:
 		var lock_horizontal: bool = true
 
@@ -383,9 +429,15 @@ func _physics_process(delta: float) -> void:
 		update_facing()
 		return
 
+	# Normal movement is controlled by the FSM.
 	move_and_slide()
 	update_facing()
 
+	# Release the vertical-only bounce lock on landing.
+	if ground_bounce_active and is_on_floor():
+		ground_bounce_active = false
+
+	# Transition to jump when leaving the floor.
 	if not is_on_floor() and fsm:
 		if fsm.current_state:
 			var state_name: String = (
@@ -396,10 +448,62 @@ func _physics_process(delta: float) -> void:
 				"jump",
 				"hurt",
 				"airdash",
-				"attack"
+				"attack",
+				"specialattack",
+				"block"
 			]:
 				jump_horizontal_velocity = velocity.x
 				fsm.transition_to("jump")
+
+#endregion
+
+
+#region Ground Bounce
+
+func trigger_ground_bounce() -> void:
+	ground_bounce_pending = false
+	ground_bounce_active = true
+
+	# Remove all horizontal momentum.
+	velocity.x = 0.0
+
+	knockback_timer = 0.0
+	knockback_total_duration = 0.0
+	knockback_start_speed = 0.0
+
+	jump_horizontal_velocity = 0.0
+
+	# Bounce vertically upward.
+	velocity.y = -ground_bounce_speed
+
+	is_launched = true
+	is_ground_slammed = false
+
+	launch_gravity_multiplier = 1.0
+	launch_max_fall_speed = 250.0
+
+	# Extend hitstun so the bounce can be comboed.
+	hitstun_timer = maxf(
+		hitstun_timer,
+		ground_bounce_hitstun
+	)
+
+	isStunned = hitstun_timer > 0.0
+
+	if fsm and not (fsm.current_state is HurtState):
+		fsm.transition_to("hurt", true)
+
+#endregion
+
+
+#region Launch Reset
+
+func reset_launch_state() -> void:
+	is_launched = false
+	is_ground_slammed = false
+
+	launch_gravity_multiplier = 1.0
+	launch_max_fall_speed = 250.0
 
 #endregion
 

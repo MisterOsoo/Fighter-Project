@@ -81,17 +81,18 @@ func receive_hit(
 	launch_max_fall_speed: float = 250.0,
 	attacking_hitbox: Area2D = null,
 	ground_slam: bool = false,
-	ground_slam_speed: float = 500.0
+	ground_slam_speed: float = 500.0,
+	ground_bounce: bool = false,
+	bounce_speed: float = 230.0,
+	bounce_hitstun: float = 0.6
 ) -> bool:
 
-	# Validate the receiving character.
 	if not is_instance_valid(character):
 		return false
 
 	if character.get("is_dead") == true:
 		return false
 
-	# Check whether the attack was blocked.
 	if attacking_hitbox:
 		var block_component: Node = (
 			character.get_node_or_null("BlockComponent")
@@ -105,33 +106,27 @@ func receive_hit(
 				):
 					return false
 
-	# The attack successfully landed.
 	damage_received.emit(damage)
 
 	if health_component:
 		health_component.take_damage(damage)
 
-	# Damage may have defeated the character.
 	if not is_instance_valid(character):
 		return true
 
 	if character.get("is_dead") == true:
 		return true
 
-	# Determine horizontal knockback direction.
 	var direction: float = (
 		1.0 if character.global_position.x >= attacker_position.x
 		else -1.0
 	)
 
-	# Standard knockback and upward launch.
 	var impulse: Vector2 = Vector2(
 		direction * knockback,
 		-knockup
 	)
 
-	# Ground Slam overrides vertical knockback
-	# when the target is airborne.
 	var apply_ground_slam: bool = (
 		ground_slam and not character.is_on_floor()
 	)
@@ -139,8 +134,6 @@ func receive_hit(
 	if apply_ground_slam:
 		impulse.y = maxf(ground_slam_speed, 0.0)
 
-	# Both BasePlayer and BaseEnemy now support
-	# the sixth Ground Slam argument.
 	if character.has_method("receive_combat_hit"):
 		character.call(
 			"receive_combat_hit",
@@ -149,12 +142,12 @@ func receive_hit(
 			hitstun_duration,
 			launch_gravity_multiplier,
 			launch_max_fall_speed,
-			apply_ground_slam
+			apply_ground_slam,
+			apply_ground_slam and ground_bounce,
+			bounce_speed,
+			bounce_hitstun
 		)
-
 	else:
-		# Compatibility with characters that
-		# use the original combat signals.
 		if (
 			knockback != 0.0
 			or knockup != 0.0
@@ -166,9 +159,7 @@ func receive_hit(
 			)
 
 		if hitstun_duration > 0.0:
-			hitstun_received.emit(
-				hitstun_duration
-			)
+			hitstun_received.emit(hitstun_duration)
 
 	return true
 

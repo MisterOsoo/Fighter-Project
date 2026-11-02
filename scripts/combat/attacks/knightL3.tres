@@ -10,4 +10,5 @@ cancel_start_frame = 5
 cancel_end_frame = 10
 require_hit_to_cancel = true
 jump_cancelable = true
+blockstun_duration = 0.5
 metadata/_custom_type_script = "uid://baru8ib5ws770"

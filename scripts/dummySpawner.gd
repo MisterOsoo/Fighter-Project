@@ -27,6 +27,16 @@ class_name DummySpawner
 #endregion
 
 
+#region Collision Settings
+
+@export_group("Collision Settings")
+
+@export_range(1.0, 100.0, 1.0)
+var dummy_collision_priority: float = 10.0
+
+#endregion
+
+
 #region Camera Settings
 
 @export_group("Camera Settings")
@@ -77,12 +87,29 @@ func register_dummy(dummy: Node2D) -> void:
 
 	current_dummy = dummy
 
+	# Apply collision priority to all dummies.
+	apply_dummy_collision_priority(current_dummy)
+
 	if not current_dummy.tree_exited.is_connected(
 		_on_dummy_destroyed
 	):
 		current_dummy.tree_exited.connect(
 			_on_dummy_destroyed
 		)
+
+#endregion
+
+
+#region Collision Management
+
+func apply_dummy_collision_priority(dummy: Node2D) -> void:
+	if not is_instance_valid(dummy):
+		return
+
+	if dummy is CharacterBody2D:
+		var body: CharacterBody2D = dummy as CharacterBody2D
+
+		body.collision_priority = dummy_collision_priority
 
 #endregion
 
@@ -146,6 +173,9 @@ func spawn_dummy() -> void:
 
 	scene_root.add_child(new_dummy)
 	new_dummy.global_position = spawn_position
+
+	# Apply collision priority before registration.
+	apply_dummy_collision_priority(new_dummy)
 
 	# Update the camera's group targets.
 	update_camera_target(new_dummy)

@@ -78,7 +78,6 @@ var jump_buffer_remaining: int = 0
 
 var attack_finished: bool = false
 var attack_started: bool = false
-
 var attack_started_airborne: bool = false
 
 #endregion
@@ -87,12 +86,46 @@ var attack_started_airborne: bool = false
 #region Initialization
 
 func _ready() -> void:
+	if player == null:
+		return
+
 	if player.anim:
 		if not player.anim.animation_finished.is_connected(
 			_on_animation_finished
 		):
 			player.anim.animation_finished.connect(
 				_on_animation_finished
+			)
+
+	connect_hitbox_signals()
+
+#endregion
+
+
+#region Hitbox Connections
+
+func connect_hitbox_signals() -> void:
+	if player == null:
+		return
+
+	for node in player.find_children(
+		"*",
+		"activeFrameHitbox",
+		true,
+		false
+	):
+		var hitbox: activeFrameHitbox = (
+			node as activeFrameHitbox
+		)
+
+		if hitbox == null:
+			continue
+
+		if not hitbox.hit_confirmed.is_connected(
+			notify_hit_confirmed
+		):
+			hitbox.hit_confirmed.connect(
+				notify_hit_confirmed
 			)
 
 #endregion
@@ -105,16 +138,14 @@ func request_attack(attack_type: StringName) -> void:
 
 	match attack_type:
 		&"light":
-			if airborne:
-				requested_attack = air_light_attack
-			else:
-				requested_attack = light_attack
+			requested_attack = (
+				air_light_attack if airborne else light_attack
+			)
 
 		&"heavy":
-			if airborne:
-				requested_attack = air_heavy_attack
-			else:
-				requested_attack = heavy_attack
+			requested_attack = (
+				air_heavy_attack if airborne else heavy_attack
+			)
 
 		_:
 			requested_attack = null
@@ -154,18 +185,15 @@ func PhysicsUpdate(_delta: float) -> void:
 	if player.is_dead or player.isStunned:
 		return
 
-	# Landing immediately cancels aerial attacks.
 	if try_landing_cancel():
 		return
 
-	# Buffer jump input.
 	if current_attack.jump_cancelable:
 		if InputMap.has_action(jump_input):
 			if Input.is_action_just_pressed(jump_input):
 				jump_buffered = true
 				jump_buffer_remaining = jump_buffer_frames + 1
 
-	# Buffer attack inputs.
 	if InputMap.has_action(light_input):
 		if Input.is_action_just_pressed(light_input):
 			buffer_input(&"light")
@@ -174,14 +202,12 @@ func PhysicsUpdate(_delta: float) -> void:
 		if Input.is_action_just_pressed(heavy_input):
 			buffer_input(&"heavy")
 
-	# Jump cancel takes priority.
 	if try_jump_cancel():
 		return
 
 	if try_combo_cancel():
 		return
 
-	# Update jump buffer.
 	if jump_buffered and not hold_jump_buffer_until_cancel:
 		jump_buffer_remaining -= 1
 
@@ -189,19 +215,19 @@ func PhysicsUpdate(_delta: float) -> void:
 			jump_buffered = false
 			jump_buffer_remaining = 0
 
-	# Update attack buffer.
 	if buffer_frames_remaining > 0:
 		buffer_frames_remaining -= 1
 
 		if buffer_frames_remaining <= 0:
 			buffered_input = &""
 
-	# Finish attack.
 	if attack_finished:
 		return_to_movement()
 
 
 func Exit() -> void:
+	clear_hitbox_bounce_settings()
+
 	current_attack = null
 	requested_attack = null
 
@@ -241,12 +267,13 @@ func start_attack(attack: AttackData) -> void:
 	attack_finished = false
 	attack_started = true
 
-	# Remember whether this attack began in the air.
 	attack_started_airborne = (
 		attack.air_only or not player.is_on_floor()
 	)
 
 	player.isAttacking = true
+
+	apply_hitbox_bounce_settings(attack)
 
 	if attack.lock_horizontal_movement:
 		player.velocity.x = 0.0
@@ -288,6 +315,58 @@ func is_attack_allowed(attack: AttackData) -> bool:
 #endregion
 
 
+#region Ground Bounce Hitbox Settings
+
+func apply_hitbox_bounce_settings(attack: AttackData) -> void:
+	if player == null:
+		return
+
+	for node in player.find_children(
+		"*",
+		"activeFrameHitbox",
+		true,
+		false
+	):
+		var hitbox: activeFrameHitbox = (
+			node as activeFrameHitbox
+		)
+
+		if hitbox == null:
+			continue
+
+		if hitbox.attack_animation == str(
+			attack.animation_name
+		):
+			hitbox.enable_ground_bounce = (
+				attack.enable_ground_bounce
+			)
+
+			hitbox.bounce_speed = attack.bounce_speed
+			hitbox.bounce_hitstun = attack.bounce_hitstun
+		else:
+			hitbox.enable_ground_bounce = false
+
+
+func clear_hitbox_bounce_settings() -> void:
+	if player == null:
+		return
+
+	for node in player.find_children(
+		"*",
+		"activeFrameHitbox",
+		true,
+		false
+	):
+		var hitbox: activeFrameHitbox = (
+			node as activeFrameHitbox
+		)
+
+		if hitbox:
+			hitbox.enable_ground_bounce = false
+
+#endregion
+
+
 #region Landing Cancel
 
 func try_landing_cancel() -> bool:
@@ -297,20 +376,15 @@ func try_landing_cancel() -> bool:
 	if current_attack == null:
 		return false
 
-	# Ground attacks should never be landing-canceled.
 	if not attack_started_airborne:
 		return false
 
-	# Wait until the character actually lands.
 	if not player.is_on_floor():
 		return false
 
-	# Stop the aerial attack animation immediately.
 	if player.anim:
 		player.anim.stop()
 
-	# Clear the attack before changing states.
-	# This also prevents further combo cancels.
 	attack_finished = true
 	player.isAttacking = false
 
@@ -328,12 +402,17 @@ func notify_hit_confirmed(
 	if current_attack == null:
 		return
 
+	if player == null or player.anim == null:
+		return
+
+	if player.anim.animation != current_attack.animation_name:
+		return
+
 	if attack_animation != current_attack.animation_name:
 		return
 
 	hit_confirmed = true
 
-	# Immediately check for a buffered jump.
 	if jump_buffered:
 		try_jump_cancel()
 
@@ -493,33 +572,5 @@ func return_to_movement() -> void:
 		transition_to("idle")
 	else:
 		transition_to("move")
-
-#endregion
-
-
-#region Hitbox Signals
-
-func _on_light_1_hit_confirmed(
-	attack_animation: StringName
-) -> void:
-	notify_hit_confirmed(attack_animation)
-
-
-func _on_light_2_hit_confirmed(
-	attack_animation: StringName
-) -> void:
-	notify_hit_confirmed(attack_animation)
-
-
-func _on_light_3_hit_confirmed(
-	attack_animation: StringName
-) -> void:
-	notify_hit_confirmed(attack_animation)
-
-
-func _on_air_light_1_hit_confirmed(
-	attack_animation: StringName
-) -> void:
-	notify_hit_confirmed(attack_animation)
 
 #endregion

@@ -54,3 +54,28 @@ class_name AttackData
 @export var lock_horizontal_movement: bool = true
 
 #endregion
+
+
+#region Ground Bounce Settings
+
+@export_group("Ground Bounce Settings")
+
+@export var enable_ground_bounce: bool = false
+
+@export_range(0.0, 1000.0, 10.0, "or_greater")
+var bounce_speed: float = 230.0
+
+@export_range(0.0, 5.0, 0.05, "or_greater")
+var bounce_hitstun: float = 0.6
+
+#endregion
+
+
+#region Blockstun Settings
+
+@export_group("Blockstun Settings")
+
+@export_range(0.0, 5.0, 0.01, "or_greater")
+var blockstun_duration: float = 0.2
+
+#endregion

@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://bv3u0dmwc1s0k"]
+
+[ext_resource type="Script" uid="uid://bk710ob1e7ni8" path="res://scripts/UI/commandMenuUI.gd" id="1_l3fnt"]
+
+[node name="commandMenuUI" type="CanvasLayer" unique_id=2073219795]
+process_mode = 3
+layer = 10
+script = ExtResource("1_l3fnt")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1134450073]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -127.0
+offset_top = -72.5
+offset_right = 127.0
+offset_bottom = 72.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1226688597]
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="PanelContainer/VBoxContainer" unique_id=1294720510]
+layout_mode = 2
+show_percentage = false
+
+[node name="timerLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=440287291]
+layout_mode = 2
+
+[node name="titleLabel" type="Label" parent="PanelContainer/VBoxContainer" unique_id=1181745359]
+layout_mode = 2
+
+[node name="specialButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1628035299]
+layout_mode = 2
+
+[node name="teamButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1794905468]
+layout_mode = 2
+
+[node name="cancelButton" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1952579647]
+layout_mode = 2
