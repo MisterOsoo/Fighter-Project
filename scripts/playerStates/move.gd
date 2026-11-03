@@ -46,6 +46,15 @@ func PhysicsUpdate(delta: float) -> void:
 	if not player.can_use_ground_states():
 		return
 
+	# Crouching immediately stops movement.
+	if Input.is_action_pressed(player.crouch_input):
+		player.velocity.x = 0.0
+		player.jump_horizontal_velocity = 0.0
+
+		transition_to("crouch")
+		return
+
+	# Normal attacks.
 	if attack_state:
 		if Input.is_action_just_pressed(
 			attack_state.light_input
@@ -61,10 +70,12 @@ func PhysicsUpdate(delta: float) -> void:
 			transition_to("attack")
 			return
 
+	# Jump.
 	if Input.is_action_just_pressed(jump_input):
 		transition_to("jump")
 		return
 
+	# Horizontal movement.
 	var direction: float = Input.get_axis(
 		left_input,
 		right_input

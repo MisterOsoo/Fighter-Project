@@ -18,6 +18,8 @@
 [ext_resource type="Script" uid="uid://bgr5xj2gu7yj3" path="res://scripts/playerStates/hurt.gd" id="16_eue8k"]
 [ext_resource type="Script" uid="uid://bd10vsbov2pok" path="res://scripts/playerStates/block.gd" id="17_g1owl"]
 [ext_resource type="Script" uid="uid://bj481humtrkua" path="res://scenes/special_attack.gd" id="18_nhqlq"]
+[ext_resource type="Script" uid="uid://bx356p3y4xgyd" path="res://scripts/playerStates/death.gd" id="19_oet57"]
+[ext_resource type="Script" uid="uid://cucr5ryoyd5vx" path="res://scripts/playerStates/crouch.gd" id="20_wq7h6"]
 
 [node name="basePlayer" type="CharacterBody2D" unique_id=1208209418 node_paths=PackedStringArray("visuals", "dash_component", "air_dash_component", "block_component") groups=["player"]]
 collision_layer = 2
@@ -43,6 +45,10 @@ collision_mask = 0
 script = ExtResource("5_smehm")
 character = NodePath("../..")
 health_component = NodePath("../../HealthComponent")
+metadata/_custom_type_script = "uid://2ol7mgcjfs3d"
+
+[node name="crouchHurtbox" type="Area2D" parent="Visuals" unique_id=1238168306]
+script = ExtResource("5_smehm")
 metadata/_custom_type_script = "uid://2ol7mgcjfs3d"
 
 [node name="light1" type="Area2D" parent="Visuals" unique_id=326006609 node_paths=PackedStringArray("character")]
@@ -127,4 +133,12 @@ metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="specialAttack" type="Node" parent="FiniteStateMachine" unique_id=1910992027]
 script = ExtResource("18_nhqlq")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="death" type="Node" parent="FiniteStateMachine" unique_id=661847533]
+script = ExtResource("19_oet57")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="crouch" type="Node" parent="FiniteStateMachine" unique_id=1866627877]
+script = ExtResource("20_wq7h6")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"

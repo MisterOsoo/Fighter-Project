@@ -240,6 +240,7 @@ script = ExtResource("7_r3f7b")
 character = NodePath("../..")
 animated_sprite = NodePath("../AnimatedSprite2D")
 active_frames = Array[int]([4])
+damage = 50
 blockstun_duration = 0.5
 metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
 

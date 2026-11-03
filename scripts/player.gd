@@ -14,10 +14,14 @@ class_name BasePlayer
 @export var speed: float = 100.0
 @export var jump_velocity: float = -400.0
 
+@export_group("Input")
+@export var crouch_input: StringName = &"ui_down"
+
 @export_group("Components")
 @export var dash_component: DashComponent
 @export var air_dash_component: AirDashComponent
 @export var block_component: BlockComponent
+@export var health_component: HealthComponent
 
 var opponent: CharacterBody2D
 var facing_direction: int = 1
@@ -113,6 +117,19 @@ func _ready() -> void:
 			"BlockComponent"
 		) as BlockComponent
 
+	if health_component == null:
+		health_component = get_node_or_null(
+			"HealthComponent"
+		) as HealthComponent
+
+	if health_component:
+		if not health_component.defeated.is_connected(
+			_on_health_defeated
+		):
+			health_component.defeated.connect(
+				_on_health_defeated
+			)
+
 	update_facing()
 
 #endregion
@@ -149,6 +166,20 @@ func update_facing() -> void:
 
 #region FSM Helpers
 
+func is_crouching() -> bool:
+	if fsm == null:
+		return false
+
+	if fsm.current_state is CrouchState:
+		return true
+
+	if block_component:
+		if block_component.is_blocking:
+			return block_component.is_crouch_blocking
+
+	return false
+
+
 func can_use_ground_states() -> bool:
 	if is_dead or isStunned or isAttacking:
 		return false
@@ -173,6 +204,14 @@ func can_use_ground_states() -> bool:
 
 func update_ground_state() -> void:
 	if fsm == null or not can_use_ground_states():
+		return
+
+	# Crouching takes priority over horizontal movement.
+	if Input.is_action_pressed(crouch_input):
+		velocity.x = 0.0
+		jump_horizontal_velocity = 0.0
+
+		fsm.transition_to("crouch")
 		return
 
 	var direction: float = Input.get_axis(
@@ -429,6 +468,16 @@ func _physics_process(delta: float) -> void:
 		update_facing()
 		return
 
+	# Crouching prevents horizontal movement,
+	# including when left or right is held.
+	if fsm and fsm.current_state is CrouchState:
+		velocity.x = 0.0
+		jump_horizontal_velocity = 0.0
+
+		move_and_slide()
+		update_facing()
+		return
+
 	# Normal movement is controlled by the FSM.
 	move_and_slide()
 	update_facing()
@@ -450,7 +499,9 @@ func _physics_process(delta: float) -> void:
 				"airdash",
 				"attack",
 				"specialattack",
-				"block"
+				"block",
+				"crouch",
+				"death"
 			]:
 				jump_horizontal_velocity = velocity.x
 				fsm.transition_to("jump")
@@ -565,5 +616,46 @@ func _on_animated_sprite_2d_animation_finished() -> void:
 	if anim.animation == jumptransition_animation:
 		is_jump_transitioning = false
 		jump_transition_finished = true
+
+#endregion
+
+
+#region Death Handling
+
+func _on_health_defeated() -> void:
+	die()
+
+
+func die() -> void:
+	if is_dead:
+		return
+
+	# Mark defeated immediately to prevent further hits.
+	is_dead = true
+
+	# Interrupt existing actions before entering DeathState.
+	if dash_component and dash_component.is_dashing:
+		dash_component.stop_dash()
+
+	if air_dash_component and air_dash_component.is_air_dashing:
+		air_dash_component.stop_air_dash()
+
+	if block_component and block_component.is_blocking:
+		block_component.end_block(true)
+
+	isAttacking = false
+	isStunned = false
+
+	hitstun_timer = 0.0
+	knockback_timer = 0.0
+	knockback_total_duration = 0.0
+	knockback_start_speed = 0.0
+
+	velocity.x = 0.0
+
+	if fsm:
+		fsm.transition_to("death", true)
+	else:
+		play_animation(death_animation)
 
 #endregion

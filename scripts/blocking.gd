@@ -35,6 +35,7 @@ var add_shape_button = add_collision_shape
 @export_group("Input")
 @export var left_input: StringName = &"ui_left"
 @export var right_input: StringName = &"ui_right"
+@export var down_input: StringName = &"ui_down"
 
 #endregion
 
@@ -43,6 +44,7 @@ var add_shape_button = add_collision_shape
 
 @export_group("Animation")
 @export var block_animation: String = "block"
+@export var crouch_block_animation: String = "crouchblock"
 
 #endregion
 
@@ -68,6 +70,7 @@ var anim: AnimatedSprite2D
 #region State
 
 var is_blocking: bool = false
+var is_crouch_blocking: bool = false
 var blockstun_timer: float = 0.0
 
 #endregion
@@ -146,6 +149,10 @@ func is_holding_back() -> bool:
 	return Input.is_action_pressed(right_input)
 
 
+func is_holding_down() -> bool:
+	return Input.is_action_pressed(down_input)
+
+
 func is_attack_from_front(attacker: Node2D) -> bool:
 	if player == null or attacker == null:
 		return false
@@ -185,8 +192,7 @@ func can_block() -> bool:
 	if not player.is_on_floor():
 		return false
 
-	# Keep blocking during active blockstun,
-	# even if the player releases back.
+	# Continue guarding throughout blockstun.
 	if is_blocking and blockstun_timer > 0.0:
 		return true
 
@@ -206,7 +212,6 @@ func get_attack_blockstun(attacker: Node2D) -> float:
 	if attacker == null:
 		return duration
 
-	# First preference: blockstun on the hitbox.
 	if attacker is activeFrameHitbox:
 		var hitbox: activeFrameHitbox = (
 			attacker as activeFrameHitbox
@@ -214,7 +219,6 @@ func get_attack_blockstun(attacker: Node2D) -> float:
 
 		duration = maxf(hitbox.blockstun_duration, 0.0)
 
-	# Second preference: matching AttackData.
 	var attacking_character: Node = (
 		attacker.get("character") as Node
 	)
@@ -241,7 +245,6 @@ func get_attack_blockstun(attacker: Node2D) -> float:
 	if attack_data == null:
 		return duration
 
-	# Only use AttackData if it matches the hitbox.
 	if attacker is activeFrameHitbox:
 		var active_hitbox: activeFrameHitbox = (
 			attacker as activeFrameHitbox
@@ -278,6 +281,7 @@ func try_block_hit(attacker: Node2D = null) -> bool:
 	var new_blockstun: float = get_attack_blockstun(attacker)
 
 	if not is_blocking:
+		is_crouch_blocking = is_holding_down()
 		is_blocking = true
 		block_started.emit()
 
@@ -286,7 +290,6 @@ func try_block_hit(attacker: Node2D = null) -> bool:
 
 	player.velocity.x = 0.0
 
-	play_block_animation()
 	attack_blocked.emit()
 
 	var player_fsm: FiniteStateMachine = (
@@ -312,6 +315,7 @@ func end_block(force: bool = false) -> void:
 		return
 
 	is_blocking = false
+	is_crouch_blocking = false
 	blockstun_timer = 0.0
 
 	block_ended.emit()
@@ -325,11 +329,16 @@ func play_block_animation() -> void:
 	if anim == null or anim.sprite_frames == null:
 		return
 
-	if not anim.sprite_frames.has_animation(block_animation):
+	var animation_name: String = block_animation
+
+	if is_crouch_blocking:
+		animation_name = crouch_block_animation
+
+	if not anim.sprite_frames.has_animation(animation_name):
 		return
 
-	if anim.animation != block_animation or not anim.is_playing():
-		anim.play(block_animation)
+	if anim.animation != animation_name or not anim.is_playing():
+		anim.play(animation_name)
 
 #endregion
 

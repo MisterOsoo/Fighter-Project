@@ -3,6 +3,14 @@ extends State
 class_name HurtState
 
 
+#region Animation Settings
+
+@export_group("Hurt Animation")
+@export var hurt_animation: String = "hurt"
+
+#endregion
+
+
 #region Flash Settings
 
 @export_group("Hit Flash")
@@ -27,6 +35,7 @@ class_name HurtState
 
 var flash_timer: float = 0.0
 var original_modulate: Color = Color.WHITE
+var hurt_animation_finished: bool = false
 
 #endregion
 
@@ -55,6 +64,7 @@ func Enter() -> void:
 		return
 
 	player.isAttacking = false
+	hurt_animation_finished = false
 
 	play_hurt_animation()
 	start_hit_flash()
@@ -68,6 +78,11 @@ func PhysicsUpdate(_delta: float) -> void:
 	if player.is_dead:
 		return
 
+	# Keep the final hurt frame visible during recovery.
+	if hurt_animation_finished:
+		hold_last_hurt_frame()
+
+	# Remain in HurtState until hitstun and knockback end.
 	if player.isStunned or player.knockback_timer > 0.0:
 		return
 
@@ -79,6 +94,7 @@ func PhysicsUpdate(_delta: float) -> void:
 
 func Exit() -> void:
 	flash_timer = 0.0
+	hurt_animation_finished = false
 	reset_flash()
 
 #endregion
@@ -94,11 +110,11 @@ func play_hurt_animation() -> void:
 		return
 
 	if not player.anim.sprite_frames.has_animation(
-		player.hurt_animation
+		hurt_animation
 	):
 		return
 
-	player.anim.play(player.hurt_animation)
+	player.anim.play(hurt_animation)
 	player.anim.set_frame_and_progress(0, 0.0)
 
 
@@ -111,15 +127,18 @@ func hold_last_hurt_frame() -> void:
 	if frames == null:
 		return
 
-	if not frames.has_animation(player.hurt_animation):
+	if not frames.has_animation(hurt_animation):
 		return
 
 	var frame_count: int = frames.get_frame_count(
-		player.hurt_animation
+		hurt_animation
 	)
 
 	if frame_count <= 0:
 		return
+
+	if player.anim.animation != hurt_animation:
+		player.anim.animation = hurt_animation
 
 	player.anim.stop()
 	player.anim.set_frame_and_progress(
@@ -169,8 +188,8 @@ func receive_additional_hit() -> void:
 	if player.is_dead:
 		return
 
-	# Only restart the flash.
-	# Do not replay or change the hurt animation.
+	# Only restart the hit flash.
+	# Preserve the current hurt animation frame.
 	start_hit_flash()
 
 #endregion
@@ -185,8 +204,11 @@ func _on_animation_finished() -> void:
 	if player.anim == null:
 		return
 
-	if player.anim.animation == player.hurt_animation:
-		hold_last_hurt_frame()
+	if player.anim.animation != hurt_animation:
+		return
+
+	hurt_animation_finished = true
+	hold_last_hurt_frame()
 
 #endregion
 
