@@ -1,0 +1,118 @@
+[gd_scene format=3 uid="uid://cyd8ahtaqegfy"]
+
+[ext_resource type="Texture2D" uid="uid://c722t83p6s8fu" path="res://assets/HealthBars/Style2/7/7back.png" id="1_pk21q"]
+[ext_resource type="Texture2D" uid="uid://bc8ntcnmvctal" path="res://assets/HealthBars/Style2/7/7sPurple.png" id="2_im11v"]
+[ext_resource type="Texture2D" uid="uid://dgi3uhkdtwcqo" path="res://assets/HealthBars/Style2/7/7front.png" id="3_w0jq0"]
+[ext_resource type="Texture2D" uid="uid://cg88aho8tlk5m" path="res://assets/HealthBars/Style2/1/Sprite-0002.png" id="4_fdeev"]
+[ext_resource type="Texture2D" uid="uid://blwno5qvl3efg" path="res://assets/HealthBars/Style2/Icons/3.png" id="5_fsaq6"]
+[ext_resource type="Script" uid="uid://cjpjbp76t2y65" path="res://scripts/UI/healthBarController.gd" id="6_im11v"]
+
+[node name="healthBars" type="CanvasLayer" unique_id=1743953624]
+metadata/_edit_horizontal_guides_ = [-160.0]
+metadata/_edit_vertical_guides_ = [427.0]
+
+[node name="backs and circle" type="Node2D" parent="." unique_id=732689885]
+position = Vector2(42, -2)
+scale = Vector2(0.9, 0.9)
+
+[node name="topLeftBar" type="Sprite2D" parent="backs and circle" unique_id=93733691]
+position = Vector2(260, 49)
+scale = Vector2(2.0296042, 1.6280221)
+texture = ExtResource("1_pk21q")
+
+[node name="topLeft" type="TextureProgressBar" parent="backs and circle" unique_id=1453392352]
+offset_left = 113.0
+offset_top = 14.0
+offset_right = 408.0
+offset_bottom = 90.0
+value = 100.0
+nine_patch_stretch = true
+stretch_margin_left = 11
+stretch_margin_right = 12
+texture_progress = ExtResource("2_im11v")
+
+[node name="bottomLeftBar" type="Sprite2D" parent="backs and circle" unique_id=562513681]
+position = Vector2(271, 76)
+scale = Vector2(2.0296042, 1.6280221)
+texture = ExtResource("1_pk21q")
+
+[node name="bottomLeft" type="TextureProgressBar" parent="backs and circle" unique_id=1253643824]
+offset_left = 130.0
+offset_top = 46.0
+offset_right = 414.0
+offset_bottom = 107.0
+value = 100.0
+nine_patch_stretch = true
+stretch_margin_left = 11
+stretch_margin_right = 12
+texture_progress = ExtResource("2_im11v")
+
+[node name="topRightBar" type="Sprite2D" parent="backs and circle" unique_id=2051692450]
+position = Vector2(598, 49.5)
+rotation = 3.1415927
+scale = Vector2(2.0296042, -1.6280221)
+texture = ExtResource("1_pk21q")
+
+[node name="topRight" type="TextureProgressBar" parent="backs and circle" unique_id=1932610624]
+offset_left = 459.0
+offset_top = 15.0
+offset_right = 752.0
+offset_bottom = 91.0
+value = 100.0
+nine_patch_stretch = true
+stretch_margin_left = 11
+stretch_margin_right = 12
+texture_progress = ExtResource("2_im11v")
+
+[node name="bottomRightBar" type="Sprite2D" parent="backs and circle" unique_id=247895681]
+position = Vector2(577, 76)
+rotation = 3.1415927
+scale = Vector2(2.0296042, -1.6280221)
+texture = ExtResource("1_pk21q")
+
+[node name="bottomRight" type="TextureProgressBar" parent="backs and circle" unique_id=1431524128]
+offset_left = 445.0
+offset_top = 45.0
+offset_right = 732.0
+offset_bottom = 108.0
+value = 100.0
+nine_patch_stretch = true
+stretch_margin_left = 11
+stretch_margin_right = 12
+texture_progress = ExtResource("2_im11v")
+
+[node name="topLeftCircle" type="Sprite2D" parent="backs and circle" unique_id=704390003]
+position = Vector2(79, 46)
+scale = Vector2(1.5160153, 1.5051522)
+texture = ExtResource("3_w0jq0")
+
+[node name="bottomLeftCircle" type="Sprite2D" parent="backs and circle" unique_id=129596870]
+position = Vector2(107, 79)
+scale = Vector2(1.5160153, 1.5051522)
+texture = ExtResource("3_w0jq0")
+
+[node name="topRightCircle" type="Sprite2D" parent="backs and circle" unique_id=910879003]
+position = Vector2(782, 44)
+scale = Vector2(1.5160153, 1.5051522)
+texture = ExtResource("3_w0jq0")
+
+[node name="bottomRightCircle" type="Sprite2D" parent="backs and circle" unique_id=845625634]
+position = Vector2(754, 80)
+scale = Vector2(1.5160153, 1.5051522)
+texture = ExtResource("3_w0jq0")
+
+[node name="middleCircle" type="Sprite2D" parent="backs and circle" unique_id=1659463306]
+position = Vector2(427.00003, 49.405)
+scale = Vector2(1.5624241, 1.5512284)
+texture = ExtResource("4_fdeev")
+
+[node name="fill" type="Sprite2D" parent="backs and circle/middleCircle" unique_id=853978952]
+position = Vector2(0.6336433, 2.2780213)
+scale = Vector2(1.0545973, 1.0545973)
+texture = ExtResource("5_fsaq6")
+
+[node name="HealthBarController" type="CanvasLayer" parent="." unique_id=773681039 node_paths=PackedStringArray("player_health_bar", "enemy_health_bar")]
+script = ExtResource("6_im11v")
+player_health_bar = NodePath("../backs and circle/bottomLeft")
+enemy_health_bar = NodePath("../backs and circle/bottomRight")
+metadata/_custom_type_script = "uid://cjpjbp76t2y65"

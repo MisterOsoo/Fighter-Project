@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://cmdyxxpmvstsw" path="res://scripts/commandMenuManager.gd" id="12_7eys6"]
 [ext_resource type="PackedScene" uid="uid://cep3b6yxynnrh" path="res://scenes/enemy/test_rat.tscn" id="12_31r7n"]
 [ext_resource type="PackedScene" uid="uid://bv3u0dmwc1s0k" path="res://scenes/command_menu_ui.tscn" id="13_2tael"]
+[ext_resource type="PackedScene" uid="uid://cyd8ahtaqegfy" path="res://scenes/health_bars.tscn" id="14_vtflf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w7c3h"]
 size = Vector2(856, 35)
@@ -432,30 +433,85 @@ sources/0 = SubResource("TileSetAtlasSource_gunhw")
 
 [node name="testLevel" type="Node2D" unique_id=1704752631]
 
-[node name="BackgroundLayer1" type="Sprite2D" parent="." unique_id=227345522]
-position = Vector2(428.99997, 301)
-scale = Vector2(2.6625, 2.6333334)
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=116109104]
+layer = -2
+follow_viewport_enabled = true
+
+[node name="Node2D" type="Node2D" parent="CanvasLayer" unique_id=988454714]
+position = Vector2(274.0001, 270.00003)
+scale = Vector2(0.375, 0.375)
+
+[node name="BackgroundLayer1" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=227345522]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.7424996, 2.8733325)
 texture = ExtResource("1_bso8f")
 
-[node name="BackgroundLayer2" type="Sprite2D" parent="." unique_id=428631111]
-position = Vector2(428.5, 300.5)
-scale = Vector2(2.653125, 2.6277778)
+[node name="BackgroundLayer2" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=428631111]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
 texture = ExtResource("2_1tu8g")
 
-[node name="BackgroundLayer3" type="Sprite2D" parent="." unique_id=281561984]
-position = Vector2(428, 302)
-scale = Vector2(2.6625, 2.6111112)
+[node name="BackgroundLayer3" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=281561984]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
 texture = ExtResource("3_vtflf")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=919893541]
+[node name="Node2D3" type="Node2D" parent="CanvasLayer" unique_id=755616848]
+position = Vector2(603, 270)
+scale = Vector2(0.375, 0.375)
+
+[node name="BackgroundLayer1" type="Sprite2D" parent="CanvasLayer/Node2D3" unique_id=896452390]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.7424996, 2.8733325)
+texture = ExtResource("1_bso8f")
+
+[node name="BackgroundLayer2" type="Sprite2D" parent="CanvasLayer/Node2D3" unique_id=293229924]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("2_1tu8g")
+
+[node name="BackgroundLayer3" type="Sprite2D" parent="CanvasLayer/Node2D3" unique_id=472327132]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("3_vtflf")
+
+[node name="Node2D2" type="Node2D" parent="CanvasLayer" unique_id=1821704843]
+position = Vector2(-55, 270)
+scale = Vector2(0.375, 0.375)
+
+[node name="BackgroundLayer1" type="Sprite2D" parent="CanvasLayer/Node2D2" unique_id=826727615]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.7424996, 2.8733325)
+texture = ExtResource("1_bso8f")
+
+[node name="BackgroundLayer2" type="Sprite2D" parent="CanvasLayer/Node2D2" unique_id=1733947214]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("2_1tu8g")
+
+[node name="BackgroundLayer3" type="Sprite2D" parent="CanvasLayer/Node2D2" unique_id=1768915894]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("3_vtflf")
+
+[node name="floor" type="StaticBody2D" parent="." unique_id=919893541]
 position = Vector2(85, 277)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1898402038]
-position = Vector2(340, 188)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floor" unique_id=1898402038]
+position = Vector2(340, 189)
 shape = SubResource("RectangleShape2D_w7c3h")
 
-[node name="Icon" type="Sprite2D" parent="StaticBody2D/CollisionShape2D" unique_id=1825333061]
+[node name="Icon" type="Sprite2D" parent="floor/CollisionShape2D" unique_id=1825333061]
 visible = false
 position = Vector2(6.5000525, 0.5)
 scale = Vector2(6.914063, 0.296875)
@@ -518,3 +574,6 @@ metadata/_custom_type_script = "uid://cmdyxxpmvstsw"
 
 [node name="testRat" parent="." unique_id=468140087 instance=ExtResource("12_31r7n")]
 position = Vector2(457, 430)
+
+[node name="healthBars" parent="." unique_id=1743953624 instance=ExtResource("14_vtflf")]
+layer = -1
