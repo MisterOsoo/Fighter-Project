@@ -23,10 +23,6 @@ signal special_executed(special: SpecialAttackData)
 @export_range(1.0, 30.0, 0.5)
 var menu_duration: float = 5.0
 
-@export_group("Special Attacks")
-
-@export var special_attacks: Array[SpecialAttackData] = []
-
 #endregion
 
 
@@ -34,8 +30,9 @@ var menu_duration: float = 5.0
 
 @export_group("References")
 
-@export var player: BasePlayer
 @export var menu_ui: CommandMenuUI
+
+var player: BasePlayer
 
 #endregion
 
@@ -52,6 +49,8 @@ var time_remaining: float = 0.0
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+
+	find_active_player()
 
 	if menu_ui:
 		menu_ui.hide_menu()
@@ -81,6 +80,34 @@ func _ready() -> void:
 			menu_ui.special_selected.connect(
 				_on_special_selected
 			)
+
+#endregion
+
+
+#region Active Player
+
+func find_active_player() -> void:
+	var candidate: Node = get_tree().get_first_node_in_group(
+		"player"
+	)
+
+	player = candidate as BasePlayer
+
+
+func set_active_player(
+	new_player: BasePlayer
+) -> void:
+	if is_menu_open:
+		close_menu()
+
+	player = new_player
+
+
+func get_active_player() -> BasePlayer:
+	if not is_instance_valid(player):
+		find_active_player()
+
+	return player
 
 #endregion
 
@@ -123,34 +150,38 @@ func confirm_selection() -> void:
 #region Menu Eligibility
 
 func can_open_menu() -> bool:
-	if player == null:
+	var active_player: BasePlayer = get_active_player()
+
+	if active_player == null:
 		return false
 
-	if player.is_dead or player.isStunned:
+	if active_player.is_dead or active_player.isStunned:
 		return false
 
-	if player.block_component:
-		if player.block_component.is_blocking:
+	if active_player.block_component:
+		if active_player.block_component.is_blocking:
 			return false
 
-	if player.fsm == null:
+	if active_player.fsm == null:
 		return false
 
-	if player.fsm.current_state is SpecialAttackState:
+	if active_player.fsm.current_state is SpecialAttackState:
 		return false
 
-	if player.isAttacking:
+	if active_player.isAttacking:
 		return can_cancel_attack_into_menu()
 
 	return true
 
 
 func can_cancel_attack_into_menu() -> bool:
-	if player.fsm == null:
+	var active_player: BasePlayer = get_active_player()
+
+	if active_player == null or active_player.fsm == null:
 		return false
 
 	var attack_state: AttackState = (
-		player.fsm.current_state as AttackState
+		active_player.fsm.current_state as AttackState
 	)
 
 	if attack_state == null:
@@ -162,7 +193,6 @@ func can_cancel_attack_into_menu() -> bool:
 	if not attack_state.is_inside_cancel_window():
 		return false
 
-	# Reuse AttackState's existing hit-confirm flag.
 	if attack_state.current_attack.require_hit_to_cancel:
 		if not attack_state.hit_confirmed:
 			return false
@@ -242,6 +272,39 @@ func _process(delta: float) -> void:
 
 #region Special Attacks
 
+func get_equipped_specials() -> Array[SpecialAttackData]:
+	var result: Array[SpecialAttackData] = []
+
+	var active_player: BasePlayer = get_active_player()
+
+	if active_player == null:
+		return result
+
+	return active_player.get_equipped_specials()
+
+
+func get_available_specials() -> Array[SpecialAttackData]:
+	var result: Array[SpecialAttackData] = []
+
+	var active_player: BasePlayer = get_active_player()
+
+	if active_player == null:
+		return result
+
+	var is_airborne: bool = not active_player.is_on_floor()
+
+	for special in get_equipped_specials():
+		if special == null:
+			continue
+
+		if not special.can_use(is_airborne):
+			continue
+
+		result.append(special)
+
+	return result
+
+
 func _on_special_attacks_pressed() -> void:
 	special_attacks_selected.emit()
 
@@ -249,27 +312,6 @@ func _on_special_attacks_pressed() -> void:
 		menu_ui.show_special_menu(
 			get_available_specials()
 		)
-
-
-func get_available_specials() -> Array[SpecialAttackData]:
-	var result: Array[SpecialAttackData] = []
-
-	if player == null:
-		return result
-
-	for special in special_attacks:
-		if special == null:
-			continue
-
-		if special.ground_only and not player.is_on_floor():
-			continue
-
-		if special.air_only and player.is_on_floor():
-			continue
-
-		result.append(special)
-
-	return result
 
 
 func _on_special_selected(
@@ -281,12 +323,14 @@ func _on_special_selected(
 	if not get_available_specials().has(special):
 		return
 
-	if player == null or player.fsm == null:
+	var active_player: BasePlayer = get_active_player()
+
+	if active_player == null or active_player.fsm == null:
 		return
 
 	var special_state: SpecialAttackState = null
 
-	for child in player.fsm.get_children():
+	for child in active_player.fsm.get_children():
 		if child is SpecialAttackState:
 			special_state = child as SpecialAttackState
 			break
@@ -301,7 +345,10 @@ func _on_special_selected(
 
 	close_menu()
 
-	player.fsm.transition_to("specialattack", true)
+	active_player.fsm.transition_to(
+		"specialattack",
+		true
+	)
 
 	special_executed.emit(special)
 

@@ -29,6 +29,29 @@ var facing_direction: int = 1
 #endregion
 
 
+#region Equipped Special Attacks
+
+@export_group("Equipped Special Attacks")
+@export var equipped_specials: Array[SpecialAttackData] = []
+
+
+func get_equipped_specials() -> Array[SpecialAttackData]:
+	var result: Array[SpecialAttackData] = []
+
+	for special in equipped_specials:
+		if special == null:
+			continue
+
+		result.append(special)
+
+		if result.size() >= 4:
+			break
+
+	return result
+
+#endregion
+
+
 #region Animation Settings
 
 @export_group("Animations")

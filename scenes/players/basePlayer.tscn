@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://bu5u4cvc6apv0" path="res://scripts/FSM.gd" id="7_rlad0"]
 [ext_resource type="Script" uid="uid://ca3l5uffsae6d" path="res://scripts/dash.gd" id="8_eue8k"]
 [ext_resource type="Script" uid="uid://clr5sy5duuosk" path="res://scripts/playerStates/idle.gd" id="8_tqygo"]
+[ext_resource type="Script" uid="uid://bk46s61c2ne8h" path="res://scripts/projectile/activeFrameSpawner.gd" id="9_cc4va"]
 [ext_resource type="Script" uid="uid://b8vfj6vk2hd64" path="res://scripts/playerStates/move.gd" id="9_tqygo"]
 [ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="9_ur7pv"]
 [ext_resource type="Script" uid="uid://ccos8lqev0u22" path="res://scripts/playerStates/jump.gd" id="10_0ucu5"]
@@ -17,7 +18,7 @@
 [ext_resource type="Script" uid="uid://cnd35yvm3jt6e" path="res://scripts/playerStates/air_dash.gd" id="13_kr1ms"]
 [ext_resource type="Script" uid="uid://bgr5xj2gu7yj3" path="res://scripts/playerStates/hurt.gd" id="16_eue8k"]
 [ext_resource type="Script" uid="uid://bd10vsbov2pok" path="res://scripts/playerStates/block.gd" id="17_g1owl"]
-[ext_resource type="Script" uid="uid://bj481humtrkua" path="res://scenes/special_attack.gd" id="18_nhqlq"]
+[ext_resource type="Script" uid="uid://bj481humtrkua" path="res://scripts/combat/special_attack.gd" id="18_nhqlq"]
 [ext_resource type="Script" uid="uid://bx356p3y4xgyd" path="res://scripts/playerStates/death.gd" id="19_oet57"]
 [ext_resource type="Script" uid="uid://cucr5ryoyd5vx" path="res://scripts/playerStates/crouch.gd" id="20_wq7h6"]
 
@@ -27,7 +28,7 @@ collision_mask = 3
 floor_max_angle = 0.0
 script = ExtResource("1_g2els")
 visuals = NodePath("Visuals")
-jump_velocity = -350.0
+jump_velocity = -300.0
 dash_component = NodePath("DashComponent")
 air_dash_component = NodePath("AirDashComponent")
 block_component = NodePath("BlockComponent")
@@ -72,6 +73,8 @@ metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
 script = ExtResource("6_ur7pv")
 metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
 
+[node name="projectilePoint" type="Marker2D" parent="Visuals" unique_id=1931063390]
+
 [node name="HealthComponent" type="Node" parent="." unique_id=1359002574]
 script = ExtResource("9_ur7pv")
 metadata/_custom_type_script = "uid://dskndl01dtv8w"
@@ -93,6 +96,10 @@ metadata/_custom_type_script = "uid://bltygro8vgn6j"
 [node name="DashComponent" type="Node" parent="." unique_id=1120109285]
 script = ExtResource("8_eue8k")
 metadata/_custom_type_script = "uid://ca3l5uffsae6d"
+
+[node name="ActiveFrameSpawner" type="Node2D" parent="." unique_id=1476909129]
+script = ExtResource("9_cc4va")
+metadata/_custom_type_script = "uid://bk46s61c2ne8h"
 
 [node name="FiniteStateMachine" type="Node" parent="." unique_id=1321618913 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("7_rlad0")

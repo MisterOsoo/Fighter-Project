@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SpecialAttackData" format=3 uid="uid://btjxbvyxvwhw7"]
+
+[ext_resource type="Script" uid="uid://dqean8ijehqjn" path="res://scripts/combat/specialAttackData.gd" id="1_je7c8"]
+
+[resource]
+script = ExtResource("1_je7c8")
+special_name = "lightSlash"
+animation_name = &"lightSlash"
+usage_type = 2
+metadata/_custom_type_script = "uid://dqean8ijehqjn"

@@ -15,10 +15,29 @@ class_name SpecialAttackData
 
 #region Restrictions
 
+enum UsageType {
+	GROUND_ONLY,
+	AIR_ONLY,
+	GROUND_AND_AIR
+}
+
 @export_group("Restrictions")
 
-@export var ground_only: bool = true
-@export var air_only: bool = false
+@export var usage_type: UsageType = UsageType.GROUND_ONLY
+
+
+func can_use(is_airborne: bool) -> bool:
+	match usage_type:
+		UsageType.GROUND_ONLY:
+			return not is_airborne
+
+		UsageType.AIR_ONLY:
+			return is_airborne
+
+		UsageType.GROUND_AND_AIR:
+			return true
+
+	return false
 
 #endregion
 

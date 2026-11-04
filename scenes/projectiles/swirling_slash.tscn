@@ -1,0 +1,72 @@
+[gd_scene format=3 uid="uid://uvssx6ebtd2e"]
+
+[ext_resource type="PackedScene" uid="uid://r077l3a7ofeo" path="res://scenes/projectiles/baseBullet.tscn" id="1_men27"]
+[ext_resource type="Texture2D" uid="uid://cg1fm1tsmgc5x" path="res://assets/projectiles/swirling slash/Effect (29)1.png" id="2_xldcq"]
+[ext_resource type="Texture2D" uid="uid://bla7osd40mh63" path="res://assets/projectiles/swirling slash/Effect (29)2.png" id="3_8ec3q"]
+[ext_resource type="Texture2D" uid="uid://db1xa3v1od7ps" path="res://assets/projectiles/swirling slash/Effect (29)3.png" id="4_6rmwb"]
+[ext_resource type="Texture2D" uid="uid://dja8yljqjak78" path="res://assets/projectiles/swirling slash/Effect (29)4.png" id="5_52vdb"]
+[ext_resource type="Texture2D" uid="uid://b46tvshp556he" path="res://assets/projectiles/swirling slash/Effect (29)5.png" id="6_ybl4a"]
+[ext_resource type="Texture2D" uid="uid://ckge23udjd730" path="res://assets/projectiles/swirling slash/Effect (29)6.png" id="7_2ei7r"]
+[ext_resource type="PackedScene" uid="uid://dkqfuqeqmyvpv" path="res://scenes/impact_sprite.tscn" id="8_xldcq"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_q503e"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_xldcq")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_8ec3q")
+}, {
+"duration": 1.0,
+"texture": ExtResource("4_6rmwb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("5_52vdb")
+}, {
+"duration": 1.0,
+"texture": ExtResource("6_ybl4a")
+}, {
+"duration": 1.0,
+"texture": ExtResource("7_2ei7r")
+}],
+"loop": 1,
+"name": &"slash",
+"speed": 15.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ga4mj"]
+radius = 14.035668
+
+[node name="swirlingSlash" unique_id=1612894689 node_paths=PackedStringArray("hitbox", "anim") instance=ExtResource("1_men27")]
+speed = 100.0
+bullet_animation = &"slash"
+hitbox = NodePath("BulletHitbox")
+anim = NodePath("AnimatedSprite2D")
+
+[node name="AnimatedSprite2D" parent="." index="0" unique_id=1679193920]
+sprite_frames = SubResource("SpriteFrames_q503e")
+animation = &"slash"
+frame = 4
+frame_progress = 0.80754507
+
+[node name="BulletHitbox" parent="." index="1" unique_id=638731895]
+collision_layer = 4
+collision_mask = 8
+shape_type = 1
+damage = 20
+knockback = 20.0
+knockup = null
+knockback_duration = 0.3
+hitstun_duration = 0.35
+ground_slam = null
+ground_slam_speed = null
+enable_ground_bounce = null
+bounce_speed = null
+bounce_hitstun = null
+blockstun_duration = 0.3
+impact_fx_scene = ExtResource("8_xldcq")
+
+[node name="bulletCollision" type="CollisionShape2D" parent="BulletHitbox" index="0" unique_id=1934310731]
+shape = SubResource("CircleShape2D_ga4mj")
+debug_color = Color(1, 1, 0, 0.4)

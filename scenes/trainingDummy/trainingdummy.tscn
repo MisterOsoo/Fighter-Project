@@ -1,12 +1,11 @@
 [gd_scene format=3 uid="uid://be4rtyjlfqog3"]
 
-[ext_resource type="Script" uid="uid://wdrgtnym5b2x" path="res://scripts/baseEnemy.gd" id="1_us81u"]
+[ext_resource type="Script" uid="uid://wdrgtnym5b2x" path="res://scripts/trainingDummy.gd" id="1_us81u"]
 [ext_resource type="Script" uid="uid://2ol7mgcjfs3d" path="res://addons/activeFrameHitbox/components/hurtBox.gd" id="2_wj5ti"]
 [ext_resource type="Texture2D" uid="uid://8net2liecg6f" path="res://assets/rat/rat-attack-outline.png" id="3_o40dk"]
 [ext_resource type="Texture2D" uid="uid://d3upwdvc6ywis" path="res://assets/Training Dummy 2D Pixel Art/BREAKING.png" id="4_ao2kq"]
 [ext_resource type="Texture2D" uid="uid://dunbratwen37y" path="res://assets/Training Dummy 2D Pixel Art/HIT.png" id="5_nvurv"]
 [ext_resource type="Texture2D" uid="uid://bditryxyt17e6" path="res://assets/Training Dummy 2D Pixel Art/IDLE.png" id="6_hddcy"]
-[ext_resource type="Script" uid="uid://dq1wo7xx4vfdo" path="res://addons/activeFrameHitbox/components/activeFrameHitbox.gd" id="7_r3f7b"]
 [ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="8_m6xck"]
 [ext_resource type="Script" uid="uid://ih26uf4a7jn5" path="res://scripts/cameraBounds.gd" id="9_jngw7"]
 
@@ -199,9 +198,6 @@ animations = [{
 "speed": 12.0
 }]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_2bup3"]
-size = Vector2(21, 23)
-
 [node name="dummy" type="CharacterBody2D" unique_id=1271576175 node_paths=PackedStringArray("visuals", "anim", "health_component") groups=["enemy"]]
 floor_max_angle = 0.0
 script = ExtResource("1_us81u")
@@ -232,22 +228,6 @@ debug_color = Color(1, 0.41, 0.71, 0.3)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals" unique_id=1113667628]
 sprite_frames = SubResource("SpriteFrames_a4qce")
 animation = &"idle"
-
-[node name="activeFrameHitbox" type="Area2D" parent="Visuals" unique_id=343856739 node_paths=PackedStringArray("character", "animated_sprite")]
-collision_layer = 4
-collision_mask = 8
-script = ExtResource("7_r3f7b")
-character = NodePath("../..")
-animated_sprite = NodePath("../AnimatedSprite2D")
-active_frames = Array[int]([4])
-damage = 50
-blockstun_duration = 0.5
-metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
-
-[node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/activeFrameHitbox" unique_id=1506847112]
-position = Vector2(5.5, 4.5)
-shape = SubResource("RectangleShape2D_2bup3")
-debug_color = Color(1, 1, 0, 0.3)
 
 [node name="HealthComponent" type="Node" parent="." unique_id=1625563618]
 script = ExtResource("8_m6xck")

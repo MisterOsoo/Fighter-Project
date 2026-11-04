@@ -5,7 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://btu7682e70ure" path="res://assets/oak_woods_v1.0/background/background_layer_2.png" id="2_arp2o"]
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="3_2r41h"]
 [ext_resource type="Texture2D" uid="uid://dp5abu70se1at" path="res://assets/oak_woods_v1.0/background/background_layer_3.png" id="3_ux5qa"]
-[ext_resource type="PackedScene" uid="uid://be4rtyjlfqog3" path="res://scenes/trainingdummy.tscn" id="5_8iemx"]
+[ext_resource type="PackedScene" uid="uid://be4rtyjlfqog3" path="res://scenes/trainingDummy/trainingdummy.tscn" id="5_8iemx"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="5_klq6b"]
 [ext_resource type="PackedScene" uid="uid://cta8360fe31sq" path="res://scenes/players/knight.tscn" id="6_2r41h"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_b121j"]
@@ -13,8 +13,6 @@
 [ext_resource type="Script" uid="uid://cmdyxxpmvstsw" path="res://scripts/commandMenuManager.gd" id="8_8c41q"]
 [ext_resource type="Texture2D" uid="uid://3bclsgo1d1ya" path="res://assets/oak_woods_v1.0/tileset/oak_woods_tileset.png" id="8_82cfe"]
 [ext_resource type="PackedScene" uid="uid://bv3u0dmwc1s0k" path="res://scenes/command_menu_ui.tscn" id="9_olg7q"]
-[ext_resource type="Script" uid="uid://dqean8ijehqjn" path="res://scripts/combat/specialAttackData.gd" id="9_t1rx8"]
-[ext_resource type="Resource" uid="uid://chl8wdhrfebex" path="res://scripts/combat/specialAttacks/lightThrust.tres" id="10_8iemx"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w7c3h"]
 size = Vector2(856, 35)
@@ -518,11 +516,9 @@ player = NodePath("../knight")
 phantom_camera = NodePath("../PhantomCamera2D")
 metadata/_custom_type_script = "uid://ctht0fqm20g0c"
 
-[node name="CommandMenuManager" type="Node" parent="." unique_id=506197021 node_paths=PackedStringArray("player", "menu_ui")]
+[node name="CommandMenuManager" type="Node" parent="." unique_id=506197021 node_paths=PackedStringArray("menu_ui")]
 script = ExtResource("8_8c41q")
 menu_duration = 7.0
-special_attacks = Array[ExtResource("9_t1rx8")]([ExtResource("10_8iemx")])
-player = NodePath("../knight")
 menu_ui = NodePath("../commandMenuUI")
 metadata/_custom_type_script = "uid://cmdyxxpmvstsw"
 

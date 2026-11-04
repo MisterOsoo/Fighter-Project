@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://cep3b6yxynnrh"]
+
+[ext_resource type="PackedScene" uid="uid://cdb3oj6qha50s" path="res://scenes/enemy/base_enemy.tscn" id="1_u0c47"]
+[ext_resource type="Texture2D" uid="uid://dhja1hphn44v5" path="res://assets/rat/rat-idle-outline.png" id="2_d1wj3"]
+[ext_resource type="Texture2D" uid="uid://cayekjm2wuvo2" path="res://assets/rat/rat-run-outline.png" id="3_ddgqo"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_bso8f"]
+radius = 7.5
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_86830"]
+atlas = ExtResource("2_d1wj3")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w2oxx"]
+atlas = ExtResource("2_d1wj3")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_avj4k"]
+atlas = ExtResource("2_d1wj3")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_48wsq"]
+atlas = ExtResource("2_d1wj3")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_46qw8"]
+atlas = ExtResource("2_d1wj3")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fw6wi"]
+atlas = ExtResource("2_d1wj3")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_krko6"]
+atlas = ExtResource("3_ddgqo")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kmlve"]
+atlas = ExtResource("3_ddgqo")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qyfeh"]
+atlas = ExtResource("3_ddgqo")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_erm7n"]
+atlas = ExtResource("3_ddgqo")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fgpjg"]
+atlas = ExtResource("3_ddgqo")
+region = Rect2(128, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k438g"]
+atlas = ExtResource("3_ddgqo")
+region = Rect2(160, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wp2t3"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_86830")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w2oxx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_avj4k")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_48wsq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_46qw8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fw6wi")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_krko6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kmlve")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qyfeh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_erm7n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fgpjg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k438g")
+}],
+"loop": 1,
+"name": &"walk",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l8v5h"]
+size = Vector2(23, 20)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ea3ej"]
+radius = 56.0
+
+[node name="testRat" unique_id=468140087 instance=ExtResource("1_u0c47")]
+
+[node name="CollisionShape2D" parent="." index="0" unique_id=261309969]
+position = Vector2(0, 9)
+shape = SubResource("CircleShape2D_bso8f")
+
+[node name="AnimatedSprite2D" parent="Visuals" parent_id_path=PackedInt32Array(1271988173) index="0" unique_id=67492509]
+sprite_frames = SubResource("SpriteFrames_wp2t3")
+animation = &"idle"
+
+[node name="Hurtbox" parent="Visuals" parent_id_path=PackedInt32Array(1271988173) index="1" unique_id=470468608 node_paths=PackedStringArray("character", "health_component")]
+position = Vector2(0, 7)
+collision_layer = 8
+collision_mask = 0
+character = NodePath("../..")
+health_component = NodePath("../../HealthComponent")
+
+[node name="HurtboxCollision" type="CollisionShape2D" parent="Visuals/Hurtbox" index="0" unique_id=487603044]
+position = Vector2(0.5, 0)
+shape = SubResource("RectangleShape2D_l8v5h")
+debug_color = Color(1, 0.41, 0.71, 0.3)
+
+[node name="AIController" parent="." index="3" unique_id=1813703295 node_paths=PackedStringArray("enemy")]
+ai_type = 1
+enemy = NodePath("..")
+
+[node name="CollisionShape2D" parent="detection" parent_id_path=PackedInt32Array(1383988391) index="0" unique_id=1517841327]
+position = Vector2(0, 9)
+shape = SubResource("CircleShape2D_ea3ej")
+
+[node name="LowHealthRetreat" parent="." index="5" unique_id=934453231]
+target_retreat_distance = 80.0
+
+[node name="jump" parent="FiniteStateMachine" parent_id_path=PackedInt32Array(1624247729) index="2" unique_id=1834174850 node_paths=PackedStringArray("enemy")]
+enemy = NodePath("../..")
+debug_jump = true
+
+[node name="dash" parent="FiniteStateMachine" parent_id_path=PackedInt32Array(1624247729) index="3" unique_id=2046910097 node_paths=PackedStringArray("enemy")]
+enemy = NodePath("../..")
+
+[node name="airDash" parent="FiniteStateMachine" parent_id_path=PackedInt32Array(1624247729) index="4" unique_id=1707705350 node_paths=PackedStringArray("enemy")]
+enemy = NodePath("../..")

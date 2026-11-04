@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b8t5ys44gbrlv"]
 
-[ext_resource type="Script" uid="uid://wdrgtnym5b2x" path="res://scripts/baseEnemy.gd" id="1_4ra3w"]
+[ext_resource type="Script" uid="uid://wdrgtnym5b2x" path="res://scripts/trainingDummy.gd" id="1_4ra3w"]
 [ext_resource type="Script" uid="uid://dq1wo7xx4vfdo" path="res://addons/activeFrameHitbox/components/activeFrameHitbox.gd" id="3_qhn27"]
 [ext_resource type="Script" uid="uid://2ol7mgcjfs3d" path="res://addons/activeFrameHitbox/components/hurtBox.gd" id="3_xwavj"]
 [ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="4_nenq2"]

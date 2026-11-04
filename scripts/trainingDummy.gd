@@ -1,6 +1,6 @@
 
 extends CharacterBody2D
-class_name BaseEnemy
+class_name TrainingDummy
 
 
 #region Collision Settings
@@ -36,18 +36,6 @@ var facing_direction: int = -1
 @export var idle_animation: String = "idle"
 @export var hit_animation: String = "hit"
 @export var death_animation: String = "dead"
-@export var attack_animation: String = "attack"
-
-#endregion
-
-
-#region Test Attack Settings
-
-@export_group("Test Attack")
-
-@export var test_attack_input: StringName = &"testAtk"
-
-var isAttacking: bool = false
 
 #endregion
 
@@ -162,11 +150,9 @@ func update_facing() -> void:
 
 #region Physics
 
-
 func _physics_process(delta: float) -> void:
 	if not is_dead:
 		update_hitstun(delta)
-		handle_test_attack()
 
 	update_knockback(delta)
 	apply_gravity(delta)
@@ -193,39 +179,10 @@ func _physics_process(delta: float) -> void:
 #endregion
 
 
-#region Test Attack
-
-func handle_test_attack() -> void:
-	if not Input.is_action_just_pressed(test_attack_input):
-		return
-
-	if isAttacking or isStunned or is_dead:
-		return
-
-	if not is_on_floor():
-		return
-
-	if anim == null or anim.sprite_frames == null:
-		return
-
-	if not anim.sprite_frames.has_animation(attack_animation):
-		return
-
-	start_test_attack()
-
-
-func start_test_attack() -> void:
-	isAttacking = true
-	velocity.x = 0.0
-	anim.play(attack_animation)
-
-#endregion
-
-
 #region Animation Handling
 
 func play_idle_animation() -> void:
-	if is_dead or isAttacking or isStunned:
+	if is_dead or isStunned:
 		return
 
 	if anim == null or anim.sprite_frames == null:
@@ -239,11 +196,7 @@ func _on_animation_finished() -> void:
 	if anim == null or is_dead:
 		return
 
-	if anim.animation == attack_animation:
-		isAttacking = false
-		play_idle_animation()
-
-	elif anim.animation == hit_animation:
+	if anim.animation == hit_animation:
 		if not isStunned:
 			play_idle_animation()
 
@@ -264,7 +217,7 @@ func update_hitstun(delta: float) -> void:
 	isStunned = hitstun_timer > 0.0
 
 	if was_stunned and not isStunned:
-		if not isAttacking and not is_dead:
+		if not is_dead:
 			play_idle_animation()
 
 #endregion
@@ -332,8 +285,6 @@ func receive_combat_hit(
 ) -> void:
 	if is_dead:
 		return
-
-	isAttacking = false
 
 	knockback_velocity = impulse.x
 	knockback_duration = maxf(
@@ -444,7 +395,6 @@ func _on_defeated() -> void:
 		return
 
 	is_dead = true
-	isAttacking = false
 	isStunned = false
 	hitstun_timer = 0.0
 

@@ -1,0 +1,118 @@
+[gd_scene format=3 uid="uid://cdb3oj6qha50s"]
+
+[ext_resource type="Script" uid="uid://2ol7mgcjfs3d" path="res://addons/activeFrameHitbox/components/hurtBox.gd" id="1_23iyx"]
+[ext_resource type="Script" uid="uid://bel1gh8x3bupg" path="res://scripts/enemy/baseEnemy.gd" id="1_eb5uv"]
+[ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="2_eb5uv"]
+[ext_resource type="Script" uid="uid://bu5u4cvc6apv0" path="res://scripts/FSM.gd" id="3_0clvb"]
+[ext_resource type="Script" uid="uid://dafnhcvh2ppq3" path="res://scripts/enemy/AIController/AIController.gd" id="4_0clvb"]
+[ext_resource type="Script" uid="uid://c7y1pdo4tg8dn" path="res://scripts/state.gd" id="6_se4xw"]
+[ext_resource type="Script" uid="uid://cvlog5luqrwyg" path="res://scripts/enemy/states/idleE.gd" id="6_x8f0n"]
+[ext_resource type="Script" uid="uid://cl2311s4esnr4" path="res://scripts/enemy/states/moveE.gd" id="7_316ce"]
+[ext_resource type="Script" uid="uid://ih26uf4a7jn5" path="res://scripts/cameraBounds.gd" id="7_ja8iv"]
+[ext_resource type="Script" uid="uid://bws0otun1erg2" path="res://scripts/enemy/states/jumpE.gd" id="8_ehali"]
+[ext_resource type="Script" uid="uid://bl0w4k5ncyydt" path="res://scripts/enemy/detection.gd" id="10_w3qd2"]
+[ext_resource type="Script" uid="uid://dvq856tlh4px4" path="res://scripts/enemy/lowHealthRetreat.gd" id="11_ea3ej"]
+[ext_resource type="Script" uid="uid://celunr1e5b2lt" path="res://scripts/enemy/states/dashE.gd" id="12_bw6yy"]
+[ext_resource type="Script" uid="uid://dg32mkuqs5fyo" path="res://scripts/enemy/states/air_dashE.gd" id="13_vke1u"]
+
+[node name="baseEnemy" type="CharacterBody2D" unique_id=468140087 node_paths=PackedStringArray("visuals", "anim", "health_component", "fsm") groups=["enemy"]]
+script = ExtResource("1_eb5uv")
+move_speed = 80.0
+jump_velocity = -350.0
+visuals = NodePath("Visuals")
+anim = NodePath("Visuals/AnimatedSprite2D")
+health_component = NodePath("HealthComponent")
+fsm = NodePath("FiniteStateMachine")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=261309969]
+
+[node name="Visuals" type="Node2D" parent="." unique_id=1271988173]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals" unique_id=67492509]
+
+[node name="Hurtbox" type="Area2D" parent="Visuals" unique_id=470468608]
+script = ExtResource("1_23iyx")
+metadata/_custom_type_script = "uid://2ol7mgcjfs3d"
+
+[node name="HealthComponent" type="Node" parent="." unique_id=812285896]
+script = ExtResource("2_eb5uv")
+metadata/_custom_type_script = "uid://dskndl01dtv8w"
+
+[node name="AIController" type="Node" parent="." unique_id=1813703295]
+script = ExtResource("4_0clvb")
+
+[node name="detection" type="Area2D" parent="." unique_id=1383988391 node_paths=PackedStringArray("enemy", "ai_controller")]
+collision_layer = 0
+collision_mask = 4
+script = ExtResource("10_w3qd2")
+enemy = NodePath("..")
+ai_controller = NodePath("../AIController")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="detection" unique_id=1517841327]
+
+[node name="LowHealthRetreat" type="Node" parent="." unique_id=934453231 node_paths=PackedStringArray("enemy", "ai_controller", "health_component", "camera_bounds")]
+script = ExtResource("11_ea3ej")
+enemy = NodePath("..")
+ai_controller = NodePath("../AIController")
+health_component = NodePath("../HealthComponent")
+camera_bounds = NodePath("../CameraBounds")
+retreat_trigger_distance = 130.0
+target_retreat_distance = 160.0
+comfortable_distance = 190.0
+metadata/_custom_type_script = "uid://dvq856tlh4px4"
+
+[node name="CameraBounds" type="Node" parent="." unique_id=1681505556]
+script = ExtResource("7_ja8iv")
+metadata/_custom_type_script = "uid://ih26uf4a7jn5"
+
+[node name="FiniteStateMachine" type="Node" parent="." unique_id=1624247729 node_paths=PackedStringArray("initial_state")]
+script = ExtResource("3_0clvb")
+initial_state = NodePath("idle")
+metadata/_custom_type_script = "uid://bu5u4cvc6apv0"
+
+[node name="idle" type="Node" parent="FiniteStateMachine" unique_id=1278392328 node_paths=PackedStringArray("enemy")]
+script = ExtResource("6_x8f0n")
+enemy = NodePath("../..")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="move" type="Node" parent="FiniteStateMachine" unique_id=462533101 node_paths=PackedStringArray("enemy")]
+script = ExtResource("7_316ce")
+enemy = NodePath("../..")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="jump" type="Node" parent="FiniteStateMachine" unique_id=1834174850]
+script = ExtResource("8_ehali")
+forward_jump_speed = 70.0
+backward_jump_speed = 70.0
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="dash" type="Node" parent="FiniteStateMachine" unique_id=2046910097]
+script = ExtResource("12_bw6yy")
+forward_dash_speed = 250.0
+backward_dash_speed = 250.0
+dash_duration = 0.25
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="airDash" type="Node" parent="FiniteStateMachine" unique_id=1707705350]
+script = ExtResource("13_vke1u")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="attack" type="Node" parent="FiniteStateMachine" unique_id=1472730563]
+script = ExtResource("6_se4xw")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="specialAttack" type="Node" parent="FiniteStateMachine" unique_id=1030794786]
+script = ExtResource("6_se4xw")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="block" type="Node" parent="FiniteStateMachine" unique_id=186859451]
+script = ExtResource("6_se4xw")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="hurt" type="Node" parent="FiniteStateMachine" unique_id=1349970779]
+script = ExtResource("6_se4xw")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="death" type="Node" parent="FiniteStateMachine" unique_id=1537028527]
+script = ExtResource("6_se4xw")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"

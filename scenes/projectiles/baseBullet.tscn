@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://r077l3a7ofeo"]
+
+[ext_resource type="Script" uid="uid://2rxieed5aoi5" path="res://scripts/projectile/baseBullet.gd" id="1_u2slo"]
+[ext_resource type="Script" uid="uid://tg08sn2btju1" path="res://scripts/projectile/bulletHitbox.gd" id="2_sqoif"]
+
+[node name="baseBullet" type="Node2D" unique_id=1612894689]
+script = ExtResource("1_u2slo")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1679193920]
+
+[node name="BulletHitbox" type="Area2D" parent="." unique_id=638731895]
+collision_layer = 4
+collision_mask = 8
+script = ExtResource("2_sqoif")
+metadata/_custom_type_script = "uid://tg08sn2btju1"
