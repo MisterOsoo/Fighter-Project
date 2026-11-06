@@ -103,6 +103,10 @@ metadata/_custom_type_script = "uid://bltygro8vgn6j"
 script = ExtResource("8_eue8k")
 metadata/_custom_type_script = "uid://ca3l5uffsae6d"
 
+[node name="EXVisualEffects" type="Node" parent="." unique_id=1659274355]
+script = ExtResource("23_jw02x")
+metadata/_custom_type_script = "uid://b2vbvqmtqo8jh"
+
 [node name="ActiveFrameSpawner" type="Node2D" parent="." unique_id=1476909129]
 script = ExtResource("9_cc4va")
 metadata/_custom_type_script = "uid://bk46s61c2ne8h"
@@ -155,7 +159,3 @@ metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 [node name="crouch" type="Node" parent="FiniteStateMachine" unique_id=1866627877]
 script = ExtResource("20_wq7h6")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
-
-[node name="EXVisualEffects" type="Node" parent="." unique_id=1659274355]
-script = ExtResource("23_jw02x")
-metadata/_custom_type_script = "uid://b2vbvqmtqo8jh"

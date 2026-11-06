@@ -160,12 +160,35 @@ func _ready() -> void:
 
 #region Facing
 
+func is_facing_locked() -> bool:
+	if isAttacking:
+		return true
+
+	if dash_component and dash_component.is_dashing:
+		return true
+
+	if air_dash_component and air_dash_component.is_air_dashing:
+		return true
+
+	# Also cover the FSM transition frames when an action is starting.
+	if fsm and fsm.current_state:
+		var state_name: String = fsm.current_state.name.to_lower()
+		if state_name.contains("attack") or state_name.contains("dash"):
+			return true
+
+	return false
+
+
 func update_facing() -> void:
 	var candidate: Node = (
 		get_tree().get_first_node_in_group("enemy")
 	)
 
 	opponent = candidate as CharacterBody2D
+
+	# Preserve facing throughout attacks, specials, EX moves, and dashes.
+	if is_facing_locked():
+		return
 
 	if not is_on_floor() or not is_instance_valid(opponent):
 		return

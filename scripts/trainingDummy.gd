@@ -55,6 +55,49 @@ var is_blinking: bool = false
 #endregion
 
 
+#region Training Respawn Settings
+
+@export_group("Training Respawn")
+
+@export var training_respawn_enabled: bool = true
+
+@export_range(0.0, 30.0, 0.1)
+var respawn_delay: float = 2.0
+
+@export_range(0.0, 2000.0, 10.0)
+var respawn_height: float = 500.0
+
+@export_range(0.0, 2000.0, 10.0)
+var respawn_distance: float = 150.0
+
+enum RespawnSide {
+	OPPOSITE,
+	LEFT,
+	RIGHT
+}
+
+@export var respawn_side: RespawnSide = RespawnSide.OPPOSITE
+
+@export_range(0.0, 10.0, 0.1)
+var respawn_blink_duration: float = 1.0
+
+@export_range(0.01, 1.0, 0.01)
+var respawn_blink_interval: float = 0.1
+
+#endregion
+
+
+#region Camera Respawn Settings
+
+@export_group("Camera Respawn")
+
+@export var camera_controller: GroupCameraController
+
+@export var camera_enemy_group: StringName = &"enemy"
+
+#endregion
+
+
 #region Combat State
 
 var isStunned: bool = false
@@ -78,10 +121,36 @@ var ground_bounce_hitstun: float = 0.6
 #endregion
 
 
+#region Respawn State
+
+var spawn_position: Vector2
+
+var original_collision_layer: int
+var original_collision_mask: int
+
+var hurtbox: Area2D
+var original_hurtbox_layer: int
+var original_hurtbox_mask: int
+var original_hurtbox_monitoring: bool
+var original_hurtbox_monitorable: bool
+
+var is_respawning: bool = false
+var was_in_enemy_group: bool = false
+
+var respawn_side_direction: float = 1.0
+
+#endregion
+
+
 #region Initialization
 
 func _ready() -> void:
 	collision_priority = body_collision_priority
+
+	spawn_position = global_position
+
+	original_collision_layer = collision_layer
+	original_collision_mask = collision_mask
 
 	if visuals == null:
 		visuals = get_node_or_null("Visuals") as Node2D
@@ -95,6 +164,14 @@ func _ready() -> void:
 		health_component = get_node_or_null(
 			"HealthComponent"
 		) as HealthComponent
+
+	hurtbox = get_node_or_null("Hurtbox") as Area2D
+
+	if hurtbox:
+		original_hurtbox_layer = hurtbox.collision_layer
+		original_hurtbox_mask = hurtbox.collision_mask
+		original_hurtbox_monitoring = hurtbox.monitoring
+		original_hurtbox_monitorable = hurtbox.monitorable
 
 	if health_component:
 		if not health_component.defeated.is_connected(
@@ -151,6 +228,9 @@ func update_facing() -> void:
 #region Physics
 
 func _physics_process(delta: float) -> void:
+	if is_respawning:
+		return
+
 	if not is_dead:
 		update_hitstun(delta)
 
@@ -283,7 +363,7 @@ func receive_combat_hit(
 	bounce_speed: float = 230.0,
 	bounce_hitstun: float = 0.6
 ) -> void:
-	if is_dead:
+	if is_dead or is_respawning:
 		return
 
 	knockback_velocity = impulse.x
@@ -405,10 +485,6 @@ func _on_defeated() -> void:
 	ground_bounce_pending = false
 	ground_bounce_active = false
 
-	var hurtbox: Area2D = get_node_or_null(
-		"Hurtbox"
-	) as Area2D
-
 	if hurtbox:
 		hurtbox.set_deferred("monitorable", false)
 		hurtbox.set_deferred("monitoring", false)
@@ -440,7 +516,7 @@ func play_death_sequence() -> void:
 #endregion
 
 
-#region Blinking
+#region Death Blinking
 
 func start_blinking() -> void:
 	if is_blinking:
@@ -449,7 +525,7 @@ func start_blinking() -> void:
 	is_blinking = true
 
 	if visuals == null:
-		queue_free()
+		finish_death_sequence()
 		return
 
 	var elapsed: float = 0.0
@@ -468,7 +544,232 @@ func start_blinking() -> void:
 		elapsed += interval
 
 	visuals.visible = true
+	is_blinking = false
 
-	queue_free()
+	finish_death_sequence()
+
+#endregion
+
+
+#region Camera Respawn Handling
+
+func disconnect_from_camera() -> void:
+	was_in_enemy_group = is_in_group(camera_enemy_group)
+
+	if was_in_enemy_group:
+		remove_from_group(camera_enemy_group)
+
+	if is_instance_valid(camera_controller):
+		camera_controller.queue_target_refresh()
+
+
+func reconnect_to_camera() -> void:
+	if was_in_enemy_group:
+		add_to_group(camera_enemy_group)
+
+	if is_instance_valid(camera_controller):
+		camera_controller.queue_target_refresh()
+
+	was_in_enemy_group = false
+
+#endregion
+
+
+#region Respawn Position
+
+func get_respawn_position() -> Vector2:
+	var candidate: Node = get_tree().get_first_node_in_group(
+		"player"
+	)
+
+	opponent = candidate as CharacterBody2D
+
+	if not is_instance_valid(opponent):
+		return spawn_position
+
+	var direction: float = 1.0
+
+	match respawn_side:
+		RespawnSide.LEFT:
+			direction = -1.0
+
+		RespawnSide.RIGHT:
+			direction = 1.0
+
+		RespawnSide.OPPOSITE:
+			direction = respawn_side_direction
+
+	return Vector2(
+		opponent.global_position.x + direction * respawn_distance,
+		spawn_position.y
+	)
+
+#endregion
+
+
+#region Respawn Handling
+
+func finish_death_sequence() -> void:
+	if not training_respawn_enabled:
+		queue_free()
+		return
+
+	start_respawn()
+
+
+func start_respawn() -> void:
+	if is_respawning:
+		return
+
+	is_respawning = true
+
+	# Remember which side of the player the dummy was on.
+	var candidate: Node = get_tree().get_first_node_in_group(
+		"player"
+	)
+
+	opponent = candidate as CharacterBody2D
+
+	if is_instance_valid(opponent):
+		respawn_side_direction = signf(
+			global_position.x - opponent.global_position.x
+		)
+
+		if is_zero_approx(respawn_side_direction):
+			respawn_side_direction = 1.0
+
+	# Disconnect from the camera before moving.
+	disconnect_from_camera()
+
+	# Hide the dummy.
+	if visuals:
+		visuals.hide()
+
+	# Disable physical collision.
+	collision_layer = 0
+	collision_mask = 0
+
+	if hurtbox:
+		hurtbox.set_deferred("collision_layer", 0)
+		hurtbox.set_deferred("collision_mask", 0)
+		hurtbox.set_deferred("monitoring", false)
+		hurtbox.set_deferred("monitorable", false)
+
+	velocity = Vector2.ZERO
+
+	# Move the dummy above the arena while invisible.
+	global_position.y -= respawn_height
+
+	# Restore health.
+	if health_component:
+		health_component.current_health = health_component.max_health
+		health_component.health_changed.emit(
+			health_component.current_health
+		)
+
+	# Wait before respawning.
+	await get_tree().create_timer(
+		respawn_delay
+	).timeout
+
+	if not is_inside_tree():
+		return
+
+	complete_respawn()
+
+
+func complete_respawn() -> void:
+	# Respawn relative to the player's current position.
+	global_position = get_respawn_position()
+
+	velocity = Vector2.ZERO
+
+	# Reset combat state.
+	is_dead = false
+	isStunned = false
+	hitstun_timer = 0.0
+
+	knockback_timer = 0.0
+	knockback_duration = 0.0
+	knockback_velocity = 0.0
+
+	ground_bounce_pending = false
+	ground_bounce_active = false
+
+	reset_launch_state()
+
+	if anim and anim.sprite_frames:
+		if anim.sprite_frames.has_animation(idle_animation):
+			anim.play(idle_animation)
+
+	# Blink back into the arena.
+	blink_respawn()
+
+#endregion
+
+
+#region Respawn Blinking
+
+func blink_respawn() -> void:
+	if visuals == null:
+		reconnect_to_camera()
+		finish_respawn()
+		return
+
+	visuals.hide()
+
+	# Reconnect after the dummy reaches its new position.
+	reconnect_to_camera()
+
+	var elapsed: float = 0.0
+	var interval: float = maxf(
+		respawn_blink_interval,
+		0.01
+	)
+
+	while elapsed < respawn_blink_duration:
+		visuals.visible = not visuals.visible
+
+		await get_tree().create_timer(
+			interval
+		).timeout
+
+		if not is_inside_tree():
+			return
+
+		elapsed += interval
+
+	visuals.show()
+
+	finish_respawn()
+
+
+func finish_respawn() -> void:
+	# Restore body collision.
+	collision_layer = original_collision_layer
+	collision_mask = original_collision_mask
+
+	# Restore hurtbox collision.
+	if hurtbox:
+		hurtbox.set_deferred(
+			"collision_layer",
+			original_hurtbox_layer
+		)
+		hurtbox.set_deferred(
+			"collision_mask",
+			original_hurtbox_mask
+		)
+		hurtbox.set_deferred(
+			"monitoring",
+			original_hurtbox_monitoring
+		)
+		hurtbox.set_deferred(
+			"monitorable",
+			original_hurtbox_monitorable
+		)
+
+	is_respawning = false
+
+	update_facing()
 
 #endregion

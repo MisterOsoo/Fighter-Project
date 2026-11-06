@@ -567,7 +567,8 @@ jump_velocity = -350.0
 
 [node name="CommandMenuManager" type="Node" parent="." unique_id=506197021 node_paths=PackedStringArray("menu_ui")]
 script = ExtResource("12_7eys6")
-menu_duration = 7.0
+menu_duration = 4.0
+slowdownMult = 0.05
 menu_ui = NodePath("../commandMenuUI")
 metadata/_custom_type_script = "uid://cmdyxxpmvstsw"
 

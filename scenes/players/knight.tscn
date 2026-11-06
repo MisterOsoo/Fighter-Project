@@ -1308,10 +1308,11 @@ dash_duration = 0.25
 forward_dash_animation = "dash"
 backward_dash_animation = "dash"
 
-[node name="swordHit" type="AudioStreamPlayer2D" parent="." index="8" unique_id=1950935511]
-process_mode = 3
-stream = ExtResource("20_iwxi6")
-script = ExtResource("21_87wqp")
+[node name="EXVisualEffects" parent="." index="8" unique_id=1659274355 node_paths=PackedStringArray("character", "animated_sprite", "visuals")]
+character = NodePath("..")
+animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
+visuals = NodePath("../Visuals")
+shadow_2_delay = 0.17
 
 [node name="ActiveFrameSpawner" parent="." index="9" unique_id=1476909129 node_paths=PackedStringArray("animated_sprite", "spawn_marker", "shooter")]
 animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
@@ -1344,11 +1345,10 @@ death_animation = "death"
 standing_hurtbox = NodePath("../../Visuals/Hurtbox")
 crouching_hurtbox = NodePath("../../Visuals/crouchHurtbox")
 
-[node name="EXVisualEffects" parent="." index="11" unique_id=1659274355 node_paths=PackedStringArray("character", "animated_sprite", "visuals")]
-character = NodePath("..")
-animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
-visuals = NodePath("../Visuals")
-shadow_2_delay = 0.17
+[node name="swordHit" type="AudioStreamPlayer2D" parent="." index="11" unique_id=1950935511]
+process_mode = 3
+stream = ExtResource("20_iwxi6")
+script = ExtResource("21_87wqp")
 
 [connection signal="hit_confirmed" from="Visuals/light1" to="swordHit" method="_on_light_1_hit_confirmed"]
 [connection signal="hit_confirmed" from="Visuals/light2" to="swordHit" method="_on_light_2_hit_confirmed"]

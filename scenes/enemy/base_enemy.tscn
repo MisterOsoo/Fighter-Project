@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://c7y1pdo4tg8dn" path="res://scripts/components/state.gd" id="6_se4xw"]
 [ext_resource type="Script" uid="uid://cvlog5luqrwyg" path="res://scripts/enemy/states/idleE.gd" id="6_x8f0n"]
 [ext_resource type="Script" uid="uid://cl2311s4esnr4" path="res://scripts/enemy/states/moveE.gd" id="7_316ce"]
+[ext_resource type="Script" uid="uid://b2vbvqmtqo8jh" path="res://scripts/components/EXVisualEffects.gd" id="7_ce0r4"]
 [ext_resource type="Script" uid="uid://ih26uf4a7jn5" path="res://scripts/cameraBounds.gd" id="7_ja8iv"]
 [ext_resource type="Script" uid="uid://bws0otun1erg2" path="res://scripts/enemy/states/jumpE.gd" id="8_ehali"]
 [ext_resource type="Script" uid="uid://bl0w4k5ncyydt" path="res://scripts/enemy/detection.gd" id="10_w3qd2"]
@@ -54,6 +55,10 @@ enemy = NodePath("..")
 ai_controller = NodePath("../AIController")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="detection" unique_id=1517841327]
+
+[node name="EXVisualEffects" type="Node" parent="." unique_id=608017104]
+script = ExtResource("7_ce0r4")
+metadata/_custom_type_script = "uid://b2vbvqmtqo8jh"
 
 [node name="LowHealthRetreat" type="Node" parent="." unique_id=934453231 node_paths=PackedStringArray("enemy", "ai_controller", "health_component", "camera_bounds")]
 script = ExtResource("11_ea3ej")

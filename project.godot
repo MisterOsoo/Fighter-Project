@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="fighter project"
-run/main_scene="uid://bm6eifp8wl2eo"
+run/main_scene="uid://bsgqmp6s6dpmm"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://assets/icon.svg"
 

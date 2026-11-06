@@ -322,12 +322,29 @@ func air_dash(
 
 #region Facing
 
+func is_facing_locked() -> bool:
+	if isAttacking or is_in_dash_state() or is_in_air_dash_state():
+		return true
+
+	# Cover attack/special states even when isAttacking has not
+	# yet been updated during an FSM transition.
+	if fsm and fsm.current_state:
+		var state_name: String = fsm.current_state.name.to_lower()
+		if state_name.contains("attack") or state_name.contains("dash"):
+			return true
+
+	return false
+
+
 func update_facing() -> void:
 	var candidate: Node = get_tree().get_first_node_in_group(
 		"player"
 	)
 
 	opponent = candidate as CharacterBody2D
+
+	if is_facing_locked():
+		return
 
 	if not is_on_floor():
 		return

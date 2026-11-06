@@ -1,0 +1,99 @@
+[gd_scene format=3 uid="uid://bsgqmp6s6dpmm"]
+
+[ext_resource type="Script" uid="uid://b44rkxgmlmyu1" path="res://scripts/main_menu.gd" id="1_ekxnf"]
+[ext_resource type="FontFile" uid="uid://de3vucx1dmbhn" path="res://assets/fonts/ThaleahFat.ttf" id="1_l6cm7"]
+[ext_resource type="PackedScene" uid="uid://bm6eifp8wl2eo" path="res://scenes/testLevel.tscn" id="2_wu84c"]
+[ext_resource type="PackedScene" uid="uid://c2g852dw7d3pi" path="res://scenes/level.tscn" id="3_8ln24"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l6cm7"]
+
+[sub_resource type="Theme" id="Theme_a4qce"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_a4qce"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_db88c"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xj3q8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_emfws"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_woek2"]
+
+[node name="mainMenu" type="CanvasLayer" unique_id=1682859070]
+script = ExtResource("1_ekxnf")
+accept_input = &"specialMenu"
+selected_color = Color(1.3307494, 0.42606953, 0, 1)
+battle_scene = ExtResource("2_wu84c")
+training_scene = ExtResource("3_8ln24")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=733016135]
+offset_left = 598.0
+offset_top = 197.0
+offset_right = 752.0
+offset_bottom = 314.0
+theme_override_styles/panel = SubResource("StyleBoxEmpty_l6cm7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=1234313057]
+layout_mode = 2
+theme = SubResource("Theme_a4qce")
+theme_override_constants/separation = 9
+
+[node name="Play" type="Button" parent="PanelContainer/VBoxContainer" unique_id=546989504]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a4qce")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_db88c")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xj3q8")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_emfws")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_woek2")
+text = "Play
+"
+
+[node name="PlaySubmenu" type="VBoxContainer" parent="PanelContainer/VBoxContainer" unique_id=1334462924]
+visible = false
+layout_mode = 2
+
+[node name="Battle" type="Button" parent="PanelContainer/VBoxContainer/PlaySubmenu" unique_id=1682654745]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a4qce")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_db88c")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xj3q8")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_emfws")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_woek2")
+text = "Battle"
+
+[node name="Training" type="Button" parent="PanelContainer/VBoxContainer/PlaySubmenu" unique_id=1432900120]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a4qce")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_db88c")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xj3q8")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_emfws")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_woek2")
+text = "Training"
+
+[node name="Options" type="Button" parent="PanelContainer/VBoxContainer" unique_id=664975064]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a4qce")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_db88c")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xj3q8")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_emfws")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_woek2")
+text = "Options"
+
+[node name="Quit" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1298744873]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 48
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a4qce")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_db88c")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xj3q8")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_emfws")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_woek2")
+text = "Quit"

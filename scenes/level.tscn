@@ -9,13 +9,16 @@
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="5_klq6b"]
 [ext_resource type="PackedScene" uid="uid://cta8360fe31sq" path="res://scenes/players/knight.tscn" id="6_2r41h"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_b121j"]
-[ext_resource type="Script" uid="uid://ctht0fqm20g0c" path="res://scripts/components/dummySpawner.gd" id="7_klq6b"]
 [ext_resource type="Script" uid="uid://cmdyxxpmvstsw" path="res://scripts/commandMenuManager.gd" id="8_8c41q"]
 [ext_resource type="Texture2D" uid="uid://3bclsgo1d1ya" path="res://assets/oak_woods_v1.0/tileset/oak_woods_tileset.png" id="8_82cfe"]
+[ext_resource type="Script" uid="uid://dymfqpyd8nmm0" path="res://scripts/components/groupCameraController.gd" id="8_ux5qa"]
 [ext_resource type="PackedScene" uid="uid://bv3u0dmwc1s0k" path="res://scenes/command_menu_ui.tscn" id="9_olg7q"]
+[ext_resource type="PackedScene" uid="uid://cyd8ahtaqegfy" path="res://scenes/health_bars.tscn" id="14_wc255"]
+[ext_resource type="PackedScene" uid="uid://b1toatsibbio4" path="res://scenes/super_bar.tscn" id="15_arp2o"]
+[ext_resource type="Script" uid="uid://bf2533d5724ux" path="res://scripts/components/trainingRegen.gd" id="16_arp2o"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w7c3h"]
-size = Vector2(856, 35)
+size = Vector2(856, 34.5)
 
 [sub_resource type="Resource" id="Resource_8c41q"]
 script = ExtResource("6_b121j")
@@ -432,41 +435,94 @@ sources/0 = SubResource("TileSetAtlasSource_gunhw")
 
 [node name="level" type="Node2D" unique_id=1704752631]
 
-[node name="BackgroundLayer1" type="Sprite2D" parent="." unique_id=227345522]
-position = Vector2(428.99997, 301)
-scale = Vector2(2.6625, 2.6333334)
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=2142091540]
+layer = -2
+follow_viewport_enabled = true
+
+[node name="Node2D" type="Node2D" parent="CanvasLayer" unique_id=1420867749]
+position = Vector2(274.0001, 270.00003)
+scale = Vector2(0.375, 0.375)
+
+[node name="BackgroundLayer1" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=1677658418]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.7424996, 2.8733325)
 texture = ExtResource("1_wc255")
 
-[node name="BackgroundLayer2" type="Sprite2D" parent="." unique_id=428631111]
-position = Vector2(428.5, 300.5)
-scale = Vector2(2.653125, 2.6277778)
+[node name="BackgroundLayer2" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=630149612]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
 texture = ExtResource("2_arp2o")
 
-[node name="BackgroundLayer3" type="Sprite2D" parent="." unique_id=281561984]
-position = Vector2(428, 302)
-scale = Vector2(2.6625, 2.6111112)
+[node name="BackgroundLayer3" type="Sprite2D" parent="CanvasLayer/Node2D" unique_id=326012996]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
 texture = ExtResource("3_ux5qa")
 
-[node name="StaticBody2D" type="StaticBody2D" parent="." unique_id=919893541]
+[node name="Node2D3" type="Node2D" parent="CanvasLayer" unique_id=2145306416]
+position = Vector2(603, 270)
+scale = Vector2(0.375, 0.375)
+
+[node name="BackgroundLayer1" type="Sprite2D" parent="CanvasLayer/Node2D3" unique_id=255822800]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.7424996, 2.8733325)
+texture = ExtResource("1_wc255")
+
+[node name="BackgroundLayer2" type="Sprite2D" parent="CanvasLayer/Node2D3" unique_id=637966919]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("2_arp2o")
+
+[node name="BackgroundLayer3" type="Sprite2D" parent="CanvasLayer/Node2D3" unique_id=385523557]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("3_ux5qa")
+
+[node name="Node2D2" type="Node2D" parent="CanvasLayer" unique_id=265043811]
+position = Vector2(-55, 270)
+scale = Vector2(0.375, 0.375)
+
+[node name="BackgroundLayer1" type="Sprite2D" parent="CanvasLayer/Node2D2" unique_id=486751182]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.7424996, 2.8733325)
+texture = ExtResource("1_wc255")
+
+[node name="BackgroundLayer2" type="Sprite2D" parent="CanvasLayer/Node2D2" unique_id=1651701172]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("2_arp2o")
+
+[node name="BackgroundLayer3" type="Sprite2D" parent="CanvasLayer/Node2D2" unique_id=883325264]
+texture_filter = 1
+position = Vector2(430, 260)
+scale = Vector2(2.742, 2.873)
+texture = ExtResource("3_ux5qa")
+
+[node name="floor" type="StaticBody2D" parent="." unique_id=919893541]
 position = Vector2(85, 277)
 collision_mask = 0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1898402038]
-position = Vector2(340, 188)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="floor" unique_id=1898402038]
+position = Vector2(340, 188.25)
 shape = SubResource("RectangleShape2D_w7c3h")
 
-[node name="Icon" type="Sprite2D" parent="StaticBody2D/CollisionShape2D" unique_id=1825333061]
+[node name="Icon" type="Sprite2D" parent="floor/CollisionShape2D" unique_id=1825333061]
 visible = false
 position = Vector2(6.5000525, 0.5)
 scale = Vector2(6.914063, 0.296875)
 texture = ExtResource("1_2q6dc")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=868489909]
-physics_interpolation_mode = 1
 top_level = true
-position = Vector2(411.5, 389.5)
+position = Vector2(462, 409)
 zoom = Vector2(3.5, 3.5)
-process_callback = 0
 limit_left = 0
 limit_right = 854
 limit_bottom = 460
@@ -479,10 +535,10 @@ metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
 [node name="PhantomCamera2D" type="Node2D" parent="." unique_id=27442747 node_paths=PackedStringArray("follow_targets")]
 top_level = true
-position = Vector2(411.5, 389.5)
+position = Vector2(462, 409)
 script = ExtResource("5_klq6b")
 follow_mode = 3
-follow_targets = [NodePath("../knight"), NodePath("../dummy")]
+follow_targets = [null, null]
 zoom = Vector2(3.5, 3.5)
 tween_resource = SubResource("Resource_8c41q")
 follow_damping = true
@@ -494,27 +550,23 @@ limit_right = 854
 limit_bottom = 460
 metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
 
+[node name="GroupCameraController" type="Node" parent="PhantomCamera2D" unique_id=228707927]
+script = ExtResource("8_ux5qa")
+metadata/_custom_type_script = "uid://dymfqpyd8nmm0"
+
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=317994434]
 scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAAAA4AAAASAAwAAAABAA4AAAATAAwAAAACAA4AAAAUAAwAAAADAA4AAAASAAwAAAAEAA4AAAATAAwAAAAFAA4AAAAUAAwAAAAGAA4AAAASAAwAAAAHAA4AAAATAAwAAAAIAA4AAAAUAAwAAAAJAA4AAAASAAwAAAAKAA4AAAATAAwAAAALAA4AAAAUAAwAAAAMAA4AAAASAAwAAAANAA4AAAATAAwAAAAOAA4AAAAUAAwAAAAPAA4AAAASAAwAAAAQAA4AAAATAAwAAAARAA4AAAAUAAwAAAASAA4AAAASAAwAAAATAA4AAAATAAwAAAAUAA4AAAAUAAwAAAAVAA4AAAASAAwAAAAWAA4AAAATAAwAAAAXAA4AAAAUAAwAAAAYAA4AAAASAAwAAAAZAA4AAAATAAwAAAAaAA4AAAAUAAwAAAAAAA8AAAAJAA4AAAABAA8AAAAKAA4AAAACAA8AAAALAA4AAAADAA8AAAAIAA4AAAAEAA8AAAAJAA4AAAAFAA8AAAAKAA4AAAAGAA8AAAALAA4AAAAHAA8AAAAIAA4AAAAIAA8AAAAJAA4AAAAJAA8AAAAKAA4AAAAKAA8AAAALAA4AAAALAA8AAAAIAA4AAAAMAA8AAAAJAA4AAAANAA8AAAAKAA4AAAAOAA8AAAALAA4AAAAPAA8AAAAIAA4AAAAQAA8AAAAJAA4AAAARAA8AAAAKAA4AAAASAA8AAAALAA4AAAATAA8AAAAIAA4AAAAUAA8AAAAJAA4AAAAVAA8AAAAKAA4AAAAWAA8AAAALAA4AAAAXAA8AAAAIAA4AAAAYAA8AAAAJAA4AAAAZAA8AAAAKAA4AAAAaAA8AAAALAA4AAAAAABAAAAADAAEAAAABABAAAAADAAEAAAACABAAAAADAAEAAAADABAAAAADAAEAAAAEABAAAAADAAEAAAAFABAAAAADAAEAAAAGABAAAAADAAEAAAAHABAAAAADAAEAAAAIABAAAAADAAEAAAAJABAAAAADAAEAAAAKABAAAAADAAEAAAALABAAAAADAAEAAAAMABAAAAADAAEAAAANABAAAAADAAEAAAAOABAAAAADAAEAAAAPABAAAAADAAEAAAAQABAAAAADAAEAAAARABAAAAADAAEAAAASABAAAAADAAEAAAATABAAAAADAAEAAAAUABAAAAADAAEAAAAVABAAAAADAAEAAAAWABAAAAADAAEAAAAXABAAAAADAAEAAAAYABAAAAADAAEAAAAZABAAAAADAAEAAAAaABAAAAADAAEAAAA=")
 tile_set = SubResource("TileSet_a4qce")
 
-[node name="dummy" parent="." unique_id=1271576175 instance=ExtResource("5_8iemx")]
-position = Vector2(462, 409)
+[node name="dummy" parent="." unique_id=1271576175 node_paths=PackedStringArray("camera_controller") instance=ExtResource("5_8iemx")]
+position = Vector2(446, 425)
+camera_controller = NodePath("../PhantomCamera2D/GroupCameraController")
 
 [node name="knight" parent="." unique_id=1208209418 instance=ExtResource("6_2r41h")]
-position = Vector2(361, 370)
+position = Vector2(371, 410)
 collision_layer = 1
 collision_mask = 1
-
-[node name="DummySpawner" type="Node2D" parent="." unique_id=297998310 node_paths=PackedStringArray("initial_dummy", "player", "phantom_camera")]
-script = ExtResource("7_klq6b")
-dummy_scene = ExtResource("5_8iemx")
-initial_dummy = NodePath("../dummy")
-respawn_delay = 1.0
-player = NodePath("../knight")
-phantom_camera = NodePath("../PhantomCamera2D")
-metadata/_custom_type_script = "uid://ctht0fqm20g0c"
 
 [node name="CommandMenuManager" type="Node" parent="." unique_id=506197021 node_paths=PackedStringArray("menu_ui")]
 script = ExtResource("8_8c41q")
@@ -523,3 +575,12 @@ menu_ui = NodePath("../commandMenuUI")
 metadata/_custom_type_script = "uid://cmdyxxpmvstsw"
 
 [node name="commandMenuUI" parent="." unique_id=2073219795 instance=ExtResource("9_olg7q")]
+
+[node name="healthBars" parent="." unique_id=1743953624 instance=ExtResource("14_wc255")]
+
+[node name="superBar" parent="." unique_id=1256545268 instance=ExtResource("15_arp2o")]
+
+[node name="TrainingRegenerationComponent" type="Node" parent="." unique_id=1475744447]
+script = ExtResource("16_arp2o")
+special_meter_component_name = &"specialMeterComponent"
+metadata/_custom_type_script = "uid://bf2533d5724ux"
