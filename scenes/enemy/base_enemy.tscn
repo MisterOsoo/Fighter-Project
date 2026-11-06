@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://2ol7mgcjfs3d" path="res://addons/activeFrameHitbox/components/hurtBox.gd" id="1_23iyx"]
 [ext_resource type="Script" uid="uid://bel1gh8x3bupg" path="res://scripts/enemy/baseEnemy.gd" id="1_eb5uv"]
 [ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="2_eb5uv"]
-[ext_resource type="Script" uid="uid://bu5u4cvc6apv0" path="res://scripts/FSM.gd" id="3_0clvb"]
+[ext_resource type="Script" uid="uid://bu5u4cvc6apv0" path="res://scripts/components/FSM.gd" id="3_0clvb"]
 [ext_resource type="Script" uid="uid://dafnhcvh2ppq3" path="res://scripts/enemy/AIController/AIController.gd" id="4_0clvb"]
-[ext_resource type="Script" uid="uid://c7y1pdo4tg8dn" path="res://scripts/state.gd" id="6_se4xw"]
+[ext_resource type="Script" uid="uid://c7y1pdo4tg8dn" path="res://scripts/components/state.gd" id="6_se4xw"]
 [ext_resource type="Script" uid="uid://cvlog5luqrwyg" path="res://scripts/enemy/states/idleE.gd" id="6_x8f0n"]
 [ext_resource type="Script" uid="uid://cl2311s4esnr4" path="res://scripts/enemy/states/moveE.gd" id="7_316ce"]
 [ext_resource type="Script" uid="uid://ih26uf4a7jn5" path="res://scripts/cameraBounds.gd" id="7_ja8iv"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://dvq856tlh4px4" path="res://scripts/enemy/lowHealthRetreat.gd" id="11_ea3ej"]
 [ext_resource type="Script" uid="uid://celunr1e5b2lt" path="res://scripts/enemy/states/dashE.gd" id="12_bw6yy"]
 [ext_resource type="Script" uid="uid://dg32mkuqs5fyo" path="res://scripts/enemy/states/air_dashE.gd" id="13_vke1u"]
+[ext_resource type="Script" uid="uid://c1l2kch50gnh6" path="res://scripts/components/specialMeterComponent.gd" id="15_vke1u"]
 
 [node name="baseEnemy" type="CharacterBody2D" unique_id=468140087 node_paths=PackedStringArray("visuals", "anim", "health_component", "fsm") groups=["enemy"]]
 script = ExtResource("1_eb5uv")
@@ -37,6 +38,10 @@ metadata/_custom_type_script = "uid://2ol7mgcjfs3d"
 [node name="HealthComponent" type="Node" parent="." unique_id=812285896]
 script = ExtResource("2_eb5uv")
 metadata/_custom_type_script = "uid://dskndl01dtv8w"
+
+[node name="specialMeterComponent" type="Node" parent="." unique_id=1216223262]
+script = ExtResource("15_vke1u")
+metadata/_custom_type_script = "uid://c1l2kch50gnh6"
 
 [node name="AIController" type="Node" parent="." unique_id=1813703295]
 script = ExtResource("4_0clvb")

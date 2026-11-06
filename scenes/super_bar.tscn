@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://b1toatsibbio4"]
+
+[ext_resource type="Texture2D" uid="uid://bileyjx4s8ovh" path="res://assets/HealthBars/Style2/4/4Front.png" id="1_q7ti2"]
+[ext_resource type="Texture2D" uid="uid://cjd80w11u2qcr" path="res://assets/HealthBars/Style2/4/4sBlue.png" id="2_3d6no"]
+[ext_resource type="Script" uid="uid://bqdkw8njn1wi8" path="res://scripts/controllers/specialMeterBarController.gd" id="3_3d6no"]
+
+[node name="superBar" type="CanvasLayer" unique_id=1256545268]
+
+[node name="playerMeter" type="TextureProgressBar" parent="." unique_id=572549023]
+offset_left = 10.0
+offset_top = 431.0
+offset_right = 198.0
+offset_bottom = 469.0
+value = 50.0
+nine_patch_stretch = true
+texture_under = ExtResource("1_q7ti2")
+texture_progress = ExtResource("2_3d6no")
+
+[node name="enemyMeter" type="TextureProgressBar" parent="." unique_id=197790424]
+offset_left = 655.0
+offset_top = 434.0
+offset_right = 843.0
+offset_bottom = 472.0
+value = 50.0
+nine_patch_stretch = true
+texture_under = ExtResource("1_q7ti2")
+texture_progress = ExtResource("2_3d6no")
+
+[node name="SpecialMeterBarController" type="CanvasLayer" parent="." unique_id=289082433]
+script = ExtResource("3_3d6no")
+metadata/_custom_type_script = "uid://bqdkw8njn1wi8"

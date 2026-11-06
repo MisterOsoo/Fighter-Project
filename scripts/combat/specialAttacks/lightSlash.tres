@@ -6,5 +6,9 @@
 script = ExtResource("1_je7c8")
 special_name = "lightSlash"
 animation_name = &"lightSlash"
+ex_enabled = true
+ex_flash_interval = 0.060000000000000005
+ex_afterimage_opacity = 0.85
+ex_afterimage_offset = 0.0
 usage_type = 2
 metadata/_custom_type_script = "uid://dqean8ijehqjn"

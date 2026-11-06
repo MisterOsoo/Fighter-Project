@@ -1171,7 +1171,7 @@ shape = SubResource("CircleShape2D_tfmq4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="0" unique_id=916986781]
 sprite_frames = SubResource("SpriteFrames_joarl")
-animation = &"idle"
+animation = &"lightThrust"
 
 [node name="HurtboxCollision" type="CollisionShape2D" parent="Visuals/Hurtbox" parent_id_path=PackedInt32Array(1319678047) index="0" unique_id=298190807]
 position = Vector2(0, 18.5)
@@ -1252,7 +1252,7 @@ script = ExtResource("16_gkckh")
 character = NodePath("../..")
 animated_sprite = NodePath("../AnimatedSprite2D")
 attack_animation = "lightThrust"
-active_frames = Array[int]([6])
+active_frames = Array[int]([6, 7, 8, 9])
 damage = 25
 knockback = 300.0
 knockup = 50.0
@@ -1293,7 +1293,7 @@ debug_color = Color(1, 1, 0, 0.3)
 [node name="projectilePoint" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="8" unique_id=1931063390]
 position = Vector2(30, 18)
 
-[node name="BlockComponent" parent="." index="4" unique_id=515685535]
+[node name="BlockComponent" parent="." index="5" unique_id=515685535]
 visible = false
 shape_type = 1
 
@@ -1302,24 +1302,24 @@ position = Vector2(0, 18)
 shape = SubResource("CircleShape2D_q3foc")
 debug_color = Color(0.2, 0.6, 1, 0.3)
 
-[node name="DashComponent" parent="." index="6" unique_id=1120109285]
+[node name="DashComponent" parent="." index="7" unique_id=1120109285]
 dash_speed = 250.0
 dash_duration = 0.25
 forward_dash_animation = "dash"
 backward_dash_animation = "dash"
 
-[node name="ActiveFrameSpawner" parent="." index="7" unique_id=1476909129 node_paths=PackedStringArray("animated_sprite", "spawn_marker", "shooter")]
+[node name="swordHit" type="AudioStreamPlayer2D" parent="." index="8" unique_id=1950935511]
+process_mode = 3
+stream = ExtResource("20_iwxi6")
+script = ExtResource("21_87wqp")
+
+[node name="ActiveFrameSpawner" parent="." index="9" unique_id=1476909129 node_paths=PackedStringArray("animated_sprite", "spawn_marker", "shooter")]
 animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
 spawn_animation = "lightSlash"
 spawn_frames = Array[int]([3])
 scene_to_spawn = ExtResource("21_10ipc")
 spawn_marker = NodePath("../Visuals/projectilePoint")
 shooter = NodePath("..")
-
-[node name="swordHit" type="AudioStreamPlayer2D" parent="." index="8" unique_id=1950935511]
-process_mode = 3
-stream = ExtResource("20_iwxi6")
-script = ExtResource("21_87wqp")
 
 [node name="jump" parent="FiniteStateMachine" parent_id_path=PackedInt32Array(1321618913) index="2" unique_id=1737627805 node_paths=PackedStringArray("attack_state")]
 light_input = &"attack"
@@ -1343,6 +1343,12 @@ death_animation = "death"
 [node name="crouch" parent="FiniteStateMachine" parent_id_path=PackedInt32Array(1321618913) index="10" unique_id=1866627877 node_paths=PackedStringArray("standing_hurtbox", "crouching_hurtbox")]
 standing_hurtbox = NodePath("../../Visuals/Hurtbox")
 crouching_hurtbox = NodePath("../../Visuals/crouchHurtbox")
+
+[node name="EXVisualEffects" parent="." index="11" unique_id=1659274355 node_paths=PackedStringArray("character", "animated_sprite", "visuals")]
+character = NodePath("..")
+animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
+visuals = NodePath("../Visuals")
+shadow_2_delay = 0.17
 
 [connection signal="hit_confirmed" from="Visuals/light1" to="swordHit" method="_on_light_1_hit_confirmed"]
 [connection signal="hit_confirmed" from="Visuals/light2" to="swordHit" method="_on_light_2_hit_confirmed"]

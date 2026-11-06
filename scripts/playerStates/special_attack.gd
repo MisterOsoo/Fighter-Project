@@ -9,6 +9,8 @@ class_name SpecialAttackState
 	get_parent().get_parent() as BasePlayer
 )
 
+var ex_visual_effects: EXVisualEffects
+
 #endregion
 
 
@@ -16,6 +18,11 @@ class_name SpecialAttackState
 
 var pending_special: SpecialAttackData
 var current_special: SpecialAttackData
+
+var pending_is_ex: bool = false
+var current_is_ex: bool = false
+
+var active_animation: StringName = &""
 
 #endregion
 
@@ -29,10 +36,26 @@ var movement_velocity: Vector2 = Vector2.ZERO
 #endregion
 
 
+#region Initialization
+
+func _ready() -> void:
+	if player:
+		for child in player.get_children():
+			if child is EXVisualEffects:
+				ex_visual_effects = child as EXVisualEffects
+				break
+
+#endregion
+
+
 #region Special Selection
 
-func prepare_special(special: SpecialAttackData) -> void:
+func prepare_special(
+	special: SpecialAttackData,
+	is_ex: bool = false
+) -> void:
 	pending_special = special
+	pending_is_ex = is_ex
 
 #endregion
 
@@ -45,35 +68,69 @@ func Enter() -> void:
 		return
 
 	current_special = pending_special
+	current_is_ex = pending_is_ex
+
 	pending_special = null
+	pending_is_ex = false
 
 	movement_started = false
 	movement_timer = 0.0
 	movement_velocity = Vector2.ZERO
 
-	player.isAttacking = true
-	player.velocity.x = 0.0
+	if current_is_ex and not current_special.ex_enabled:
+		cancel_special()
+		return
+
+	if not current_special.can_use(
+		not player.is_on_floor()
+	):
+		cancel_special()
+		return
+
+	active_animation = current_special.get_animation(
+		current_is_ex
+	)
 
 	if player.anim == null:
-		finish_special()
+		cancel_special()
 		return
 
 	if player.anim.sprite_frames == null:
-		finish_special()
+		cancel_special()
 		return
 
 	if not player.anim.sprite_frames.has_animation(
-		current_special.animation_name
+		active_animation
 	):
 		push_warning(
 			"Missing special animation: %s" %
-			current_special.animation_name
+			active_animation
 		)
-		finish_special()
+		cancel_special()
 		return
 
-	player.anim.play(current_special.animation_name)
+	if current_is_ex:
+		var meter: specialMeterComponent = find_special_meter()
+
+		if meter == null:
+			cancel_special()
+			return
+
+		if not meter.consume_resource(
+			current_special.ex_meter_cost
+		):
+			cancel_special()
+			return
+
+	player.isAttacking = true
+	player.velocity.x = 0.0
+
+	player.anim.play(active_animation)
 	player.anim.set_frame_and_progress(0, 0.0)
+
+	# Activate visual effects for EX specials only.
+	if current_is_ex and ex_visual_effects:
+		ex_visual_effects.start_effects(current_special)
 
 
 func Update(_delta: float) -> void:
@@ -87,7 +144,7 @@ func Update(_delta: float) -> void:
 		finish_special()
 		return
 
-	if player.anim.animation != current_special.animation_name:
+	if player.anim.animation != active_animation:
 		return
 
 	if not player.anim.is_playing():
@@ -104,7 +161,9 @@ func PhysicsUpdate(delta: float) -> void:
 	if not movement_started:
 		if player.anim:
 			if player.anim.frame >= (
-				current_special.movement_start_frame
+				current_special.get_movement_start_frame(
+					current_is_ex
+				)
 			):
 				start_special_movement()
 
@@ -116,8 +175,25 @@ func PhysicsUpdate(delta: float) -> void:
 			0.0
 		)
 
-	elif current_special.lock_horizontal_movement:
+	elif current_special.get_lock_horizontal_movement(
+		current_is_ex
+	):
 		player.velocity.x = 0.0
+
+#endregion
+
+
+#region Special Meter
+
+func find_special_meter() -> specialMeterComponent:
+	if player == null:
+		return null
+
+	for child in player.get_children():
+		if child is specialMeterComponent:
+			return child as specialMeterComponent
+
+	return null
 
 #endregion
 
@@ -129,12 +205,22 @@ func start_special_movement() -> void:
 		return
 
 	movement_started = true
-	movement_timer = current_special.movement_duration
 
-	var speed: float = current_special.movement_speed
+	movement_timer = current_special.get_movement_duration(
+		current_is_ex
+	)
+
+	var speed: float = current_special.get_movement_speed(
+		current_is_ex
+	)
+
 	var facing: float = float(player.facing_direction)
 
-	match current_special.movement_type:
+	var movement_type: SpecialAttackData.MovementType = (
+		current_special.get_movement_type(current_is_ex)
+	)
+
+	match movement_type:
 		SpecialAttackData.MovementType.NONE:
 			movement_velocity = Vector2.ZERO
 
@@ -158,7 +244,9 @@ func start_special_movement() -> void:
 
 		SpecialAttackData.MovementType.DIRECTIONAL:
 			var direction: Vector2 = (
-				current_special.movement_direction
+				current_special.get_movement_direction(
+					current_is_ex
+				)
 			)
 
 			direction.x *= facing
@@ -172,9 +260,15 @@ func apply_special_movement() -> void:
 	if current_special == null:
 		return
 
-	match current_special.movement_type:
+	var movement_type: SpecialAttackData.MovementType = (
+		current_special.get_movement_type(current_is_ex)
+	)
+
+	match movement_type:
 		SpecialAttackData.MovementType.NONE:
-			if current_special.lock_horizontal_movement:
+			if current_special.get_lock_horizontal_movement(
+				current_is_ex
+			):
 				player.velocity.x = 0.0
 
 		SpecialAttackData.MovementType.FORWARD_DASH, \
@@ -182,7 +276,6 @@ func apply_special_movement() -> void:
 			player.velocity.x = movement_velocity.x
 
 		SpecialAttackData.MovementType.VERTICAL_LAUNCH:
-			# Apply the upward impulse once.
 			player.velocity.y = movement_velocity.y
 			movement_timer = 0.0
 
@@ -200,13 +293,28 @@ func finish_special() -> void:
 		return
 
 	player.isAttacking = false
+	reset_special()
+	return_to_movement()
+
+
+func cancel_special() -> void:
+	player.isAttacking = false
+	reset_special()
+	return_to_movement()
+
+
+func reset_special() -> void:
+	# Stop EX visual effects.
+	if ex_visual_effects:
+		ex_visual_effects.stop_effects()
+
 	current_special = null
+	current_is_ex = false
 
 	movement_started = false
 	movement_timer = 0.0
 	movement_velocity = Vector2.ZERO
-
-	return_to_movement()
+	active_animation = &""
 
 
 func return_to_movement() -> void:
@@ -231,11 +339,9 @@ func return_to_movement() -> void:
 func Exit() -> void:
 	player.isAttacking = false
 
-	current_special = null
-	pending_special = null
+	reset_special()
 
-	movement_started = false
-	movement_timer = 0.0
-	movement_velocity = Vector2.ZERO
+	pending_special = null
+	pending_is_ex = false
 
 #endregion

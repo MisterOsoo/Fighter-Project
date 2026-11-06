@@ -47,6 +47,27 @@ var hitstun_duration: float = 0.4
 #endregion
 
 
+#region EX Damage
+
+@export_group("EX Damage")
+
+@export_range(0.0, 10.0, 0.1, "or_greater")
+var damage_multiplier: float = 1.0
+
+
+func set_damage_multiplier(multiplier: float) -> void:
+	damage_multiplier = maxf(multiplier, 0.0)
+
+
+func get_final_damage() -> int:
+	return maxi(
+		0,
+		roundi(float(damage) * damage_multiplier)
+	)
+
+#endregion
+
+
 #region Launch Properties
 
 @export_group("Launch Properties")
@@ -188,9 +209,11 @@ func _on_area_entered(area: Area2D) -> void:
 				hit_blocked.emit(hurtbox)
 				return
 
+	var final_damage: int = get_final_damage()
+
 	# Apply damage and combat physics.
 	var hit_landed: bool = hurtbox.receive_hit(
-		damage,
+		final_damage,
 		knockback,
 		knockup,
 		get_attack_origin(),

@@ -7,13 +7,14 @@
 [ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="5_p4adi"]
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="6_t48v5"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="7_qfsc6"]
-[ext_resource type="Script" uid="uid://dymfqpyd8nmm0" path="res://scripts/groupCameraController.gd" id="8_bso8f"]
+[ext_resource type="Script" uid="uid://dymfqpyd8nmm0" path="res://scripts/components/groupCameraController.gd" id="8_bso8f"]
 [ext_resource type="Texture2D" uid="uid://3bclsgo1d1ya" path="res://assets/oak_woods_v1.0/tileset/oak_woods_tileset.png" id="8_d18do"]
 [ext_resource type="PackedScene" uid="uid://cta8360fe31sq" path="res://scenes/players/knight.tscn" id="10_1l6yw"]
 [ext_resource type="Script" uid="uid://cmdyxxpmvstsw" path="res://scripts/commandMenuManager.gd" id="12_7eys6"]
 [ext_resource type="PackedScene" uid="uid://cep3b6yxynnrh" path="res://scenes/enemy/test_rat.tscn" id="12_31r7n"]
 [ext_resource type="PackedScene" uid="uid://bv3u0dmwc1s0k" path="res://scenes/command_menu_ui.tscn" id="13_2tael"]
 [ext_resource type="PackedScene" uid="uid://cyd8ahtaqegfy" path="res://scenes/health_bars.tscn" id="14_vtflf"]
+[ext_resource type="PackedScene" uid="uid://b1toatsibbio4" path="res://scenes/super_bar.tscn" id="15_vtflf"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w7c3h"]
 size = Vector2(856, 35)
@@ -577,3 +578,6 @@ position = Vector2(457, 430)
 
 [node name="healthBars" parent="." unique_id=1743953624 instance=ExtResource("14_vtflf")]
 layer = -1
+
+[node name="superBar" parent="." unique_id=1256545268 instance=ExtResource("15_vtflf")]
+layer = 0

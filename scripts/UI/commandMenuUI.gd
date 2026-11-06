@@ -6,9 +6,13 @@ class_name CommandMenuUI
 #region Signals
 
 signal special_attacks_pressed
+signal ex_special_attacks_pressed
 signal switch_monster_pressed
 signal cancel_pressed
-signal special_selected(special: SpecialAttackData)
+signal special_selected(
+	special: SpecialAttackData,
+	is_ex: bool
+)
 
 #endregion
 
@@ -16,6 +20,7 @@ signal special_selected(special: SpecialAttackData)
 #region References
 
 @onready var panel: PanelContainer = $PanelContainer
+
 @onready var menu_container: VBoxContainer = (
 	$PanelContainer/VBoxContainer
 )
@@ -47,11 +52,21 @@ signal special_selected(special: SpecialAttackData)
 #endregion
 
 
+#region EX Button
+
+var ex_special_attacks_button: Button
+
+#endregion
+
+
 #region Submenu
 
 var special_container: VBoxContainer
+
 var available_specials: Array[SpecialAttackData] = []
+
 var showing_specials: bool = false
+var showing_ex_specials: bool = false
 
 #endregion
 
@@ -73,22 +88,102 @@ func _ready() -> void:
 		_on_cancel_pressed
 	)
 
-	special_container = VBoxContainer.new()
-	special_container.name = "SpecialContainer"
-	special_container.process_mode = Node.PROCESS_MODE_ALWAYS
-
-	menu_container.add_child(special_container)
-	menu_container.move_child(
-		special_container,
-		menu_container.get_child_count() - 2
-	)
+	create_ex_button()
+	create_special_container()
 
 	title_label.text = "Command Menu"
 	special_attacks_button.text = "Special Attacks"
 	switch_monster_button.text = "Switch Monster"
 	cancel_button.text = "Cancel"
 
+	# Intercept ui_accept before focused buttons
+	# can process it.
+	get_viewport().gui_focus_changed.connect(
+		_on_gui_focus_changed
+	)
+
 	hide_menu()
+
+#endregion
+
+
+#region Input Filtering
+
+func _on_gui_focus_changed(
+	control: Control
+) -> void:
+	if control == null:
+		return
+
+	if not panel.visible:
+		return
+
+	if not panel.is_ancestor_of(control):
+		return
+
+	if control is Button:
+		var button: Button = control as Button
+
+		if not button.gui_input.is_connected(
+			_on_button_gui_input
+		):
+			button.gui_input.connect(
+				_on_button_gui_input
+			)
+
+
+func _on_button_gui_input(
+	event: InputEvent
+) -> void:
+	if not panel.visible:
+		return
+
+	if event.is_action("ui_accept"):
+		get_viewport().set_input_as_handled()
+
+#endregion
+
+
+#region Dynamic UI
+
+func create_ex_button() -> void:
+	ex_special_attacks_button = Button.new()
+	ex_special_attacks_button.name = "exSpecialButton"
+	ex_special_attacks_button.text = "EX Special Attacks"
+	ex_special_attacks_button.focus_mode = Control.FOCUS_ALL
+	ex_special_attacks_button.process_mode = (
+		Node.PROCESS_MODE_ALWAYS
+	)
+
+	menu_container.add_child(ex_special_attacks_button)
+
+	var special_index: int = (
+		special_attacks_button.get_index()
+	)
+
+	menu_container.move_child(
+		ex_special_attacks_button,
+		special_index + 1
+	)
+
+	ex_special_attacks_button.pressed.connect(
+		_on_ex_special_attacks_pressed
+	)
+
+
+func create_special_container() -> void:
+	special_container = VBoxContainer.new()
+	special_container.name = "SpecialContainer"
+	special_container.process_mode = (
+		Node.PROCESS_MODE_ALWAYS
+	)
+
+	menu_container.add_child(special_container)
+
+	menu_container.move_child(
+		special_container,
+		cancel_button.get_index()
+	)
 
 #endregion
 
@@ -97,26 +192,20 @@ func _ready() -> void:
 
 func show_menu() -> void:
 	if panel == null:
-		panel = get_node_or_null("PanelContainer")
-
-	if panel == null:
 		return
 
 	show_main_menu()
 	panel.show()
 
-	if special_attacks_button:
-		special_attacks_button.grab_focus()
+	special_attacks_button.grab_focus()
 
 
 func hide_menu() -> void:
-	if panel == null:
-		panel = get_node_or_null("PanelContainer")
-
 	if panel:
 		panel.hide()
 
 	showing_specials = false
+	showing_ex_specials = false
 
 #endregion
 
@@ -125,10 +214,12 @@ func hide_menu() -> void:
 
 func show_main_menu() -> void:
 	showing_specials = false
+	showing_ex_specials = false
 
 	title_label.text = "Command Menu"
 
 	special_attacks_button.show()
+	ex_special_attacks_button.show()
 	switch_monster_button.show()
 
 	if special_container:
@@ -142,21 +233,29 @@ func show_main_menu() -> void:
 #region Special Menu
 
 func show_special_menu(
-	specials: Array[SpecialAttackData]
+	specials: Array[SpecialAttackData],
+	is_ex: bool = false,
+	available_meter: float = 0.0
 ) -> void:
 	available_specials = specials
-	showing_specials = true
 
-	title_label.text = "Special Attacks"
+	showing_specials = true
+	showing_ex_specials = is_ex
+
+	if is_ex:
+		title_label.text = "EX Special Attacks"
+	else:
+		title_label.text = "Special Attacks"
 
 	special_attacks_button.hide()
+	ex_special_attacks_button.hide()
 	switch_monster_button.hide()
 
 	cancel_button.text = "Back"
 
 	for child in special_container.get_children():
-		child.queue_free()
 		special_container.remove_child(child)
+		child.queue_free()
 
 	special_container.show()
 
@@ -167,20 +266,34 @@ func show_special_menu(
 			continue
 
 		var button := Button.new()
-		button.text = special.special_name
 		button.focus_mode = Control.FOCUS_ALL
+		button.process_mode = Node.PROCESS_MODE_ALWAYS
+
+		if is_ex:
+			button.text = "EX %s - %.0f Meter" % [
+				special.special_name,
+				special.ex_meter_cost
+			]
+
+			button.disabled = (
+				available_meter < special.ex_meter_cost
+			)
+		else:
+			button.text = special.special_name
 
 		special_container.add_child(button)
 
 		button.pressed.connect(
-			_on_special_selected.bind(special)
+			_on_special_selected.bind(special, is_ex)
 		)
 
-		if first_button == null:
+		if first_button == null and not button.disabled:
 			first_button = button
 
 	if first_button:
 		first_button.grab_focus()
+	else:
+		cancel_button.grab_focus()
 
 #endregion
 
@@ -191,16 +304,6 @@ func update_timer(
 	time_remaining: float,
 	total_duration: float
 ) -> void:
-	if timer_label == null:
-		timer_label = get_node_or_null(
-			"PanelContainer/VBoxContainer/timerLabel"
-		)
-
-	if progress_bar == null:
-		progress_bar = get_node_or_null(
-			"PanelContainer/VBoxContainer/ProgressBar"
-		)
-
 	if timer_label:
 		timer_label.text = "%.1f" % time_remaining
 
@@ -217,6 +320,10 @@ func _on_special_attacks_pressed() -> void:
 	special_attacks_pressed.emit()
 
 
+func _on_ex_special_attacks_pressed() -> void:
+	ex_special_attacks_pressed.emit()
+
+
 func _on_switch_monster_pressed() -> void:
 	switch_monster_pressed.emit()
 
@@ -230,8 +337,9 @@ func _on_cancel_pressed() -> void:
 
 
 func _on_special_selected(
-	special: SpecialAttackData
+	special: SpecialAttackData,
+	is_ex: bool
 ) -> void:
-	special_selected.emit(special)
+	special_selected.emit(special, is_ex)
 
 #endregion

@@ -141,13 +141,26 @@ func _ready() -> void:
 		return
 
 	if not is_instance_valid(animated_sprite):
-		push_warning("ActiveFrameSpawner needs AnimatedSprite2D.")
+		push_warning(
+			"ActiveFrameSpawner needs AnimatedSprite2D."
+		)
 		return
 
-	animated_sprite.frame_changed.connect(_on_frame_changed)
-	animated_sprite.animation_changed.connect(_on_animation_changed)
-	animated_sprite.animation_finished.connect(_on_animation_finished)
-	animated_sprite.animation_looped.connect(_on_animation_looped)
+	animated_sprite.frame_changed.connect(
+		_on_frame_changed
+	)
+
+	animated_sprite.animation_changed.connect(
+		_on_animation_changed
+	)
+
+	animated_sprite.animation_finished.connect(
+		_on_animation_finished
+	)
+
+	animated_sprite.animation_looped.connect(
+		_on_animation_looped
+	)
 
 	last_animation = animated_sprite.animation
 	last_playing = animated_sprite.is_playing()
@@ -166,8 +179,13 @@ func _process(_delta: float) -> void:
 	if not is_instance_valid(animated_sprite):
 		return
 
-	var current_animation: StringName = animated_sprite.animation
-	var currently_playing: bool = animated_sprite.is_playing()
+	var current_animation: StringName = (
+		animated_sprite.animation
+	)
+
+	var currently_playing: bool = (
+		animated_sprite.is_playing()
+	)
 
 	if current_animation != last_animation:
 		spawned_frames.clear()
@@ -210,7 +228,9 @@ func _check_spawn_frame() -> void:
 
 func spawn_object() -> void:
 	if scene_to_spawn == null:
-		push_warning("No scene assigned to ActiveFrameSpawner.")
+		push_warning(
+			"No scene assigned to ActiveFrameSpawner."
+		)
 		return
 
 	if not scene_to_spawn.can_instantiate():
@@ -219,7 +239,9 @@ func spawn_object() -> void:
 	var instance: Node = scene_to_spawn.instantiate()
 
 	if not instance is Node2D:
-		push_warning("Spawned scene must inherit Node2D.")
+		push_warning(
+			"Spawned scene must inherit Node2D."
+		)
 		instance.free()
 		return
 
@@ -249,10 +271,24 @@ func spawn_object() -> void:
 		+ spawn_transform.basis_xform(spawn_offset)
 	)
 
+	# Determine EX multiplier before spawning.
+	var ex_multiplier: float = (
+		get_ex_damage_multiplier(actual_shooter)
+	)
+
 	# Set shooter before _ready() runs.
 	if spawned_object is BaseBullet:
-		var bullet: BaseBullet = spawned_object as BaseBullet
+		var bullet: BaseBullet = (
+			spawned_object as BaseBullet
+		)
+
 		bullet.set_shooter(actual_shooter)
+
+	# Apply damage multiplier before _ready().
+	apply_damage_multiplier(
+		spawned_object,
+		ex_multiplier
+	)
 
 	target_parent.add_child(spawned_object)
 	spawned_object.global_position = spawn_position
@@ -262,10 +298,102 @@ func spawn_object() -> void:
 			"[ActiveFrameSpawner] Spawned: ",
 			spawned_object.name,
 			" | Shooter: ",
-			actual_shooter
+			actual_shooter,
+			" | Damage Multiplier: ",
+			ex_multiplier
 		)
 
 	object_spawned.emit(spawned_object)
+
+#endregion
+
+
+#region EX Damage
+
+func get_ex_damage_multiplier(
+	actual_shooter: Node2D
+) -> float:
+	if not is_instance_valid(actual_shooter):
+		return 1.0
+
+	if not actual_shooter is BasePlayer:
+		return 1.0
+
+	var attacking_player: BasePlayer = (
+		actual_shooter as BasePlayer
+	)
+
+	if attacking_player.fsm == null:
+		return 1.0
+
+	var special_state: SpecialAttackState = (
+		attacking_player.fsm.current_state
+		as SpecialAttackState
+	)
+
+	if special_state == null:
+		return 1.0
+
+	if special_state.current_special == null:
+		return 1.0
+
+	if not special_state.current_is_ex:
+		return 1.0
+
+	# Only apply EX damage when this spawner
+	# belongs to the active EX animation.
+	if StringName(spawn_animation) != (
+		special_state.active_animation
+	):
+		return 1.0
+
+	return special_state.current_special.get_damage_multiplier(
+		true
+	)
+
+
+func apply_damage_multiplier(
+	spawned_object: Node2D,
+	multiplier: float
+) -> void:
+	# Support a BulletHitbox on the scene root.
+	if spawned_object is BulletHitbox:
+		var root_hitbox: BulletHitbox = (
+			spawned_object as BulletHitbox
+		)
+
+		root_hitbox.set_damage_multiplier(
+			multiplier
+		)
+		return
+
+	# Support a BulletHitbox nested anywhere
+	# inside the spawned projectile scene.
+	var hitbox: BulletHitbox = (
+		find_bullet_hitbox(spawned_object)
+	)
+
+	if hitbox == null:
+		return
+
+	hitbox.set_damage_multiplier(multiplier)
+
+
+func find_bullet_hitbox(
+	parent_node: Node
+) -> BulletHitbox:
+	for child in parent_node.get_children():
+		if child is BulletHitbox:
+			return child as BulletHitbox
+
+		var nested_hitbox: BulletHitbox = (
+			find_bullet_hitbox(child)
+		)
+
+		if nested_hitbox != null:
+			return nested_hitbox
+
+	return null
 
 #endregion
 

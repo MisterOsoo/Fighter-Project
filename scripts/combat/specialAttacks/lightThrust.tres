@@ -6,7 +6,13 @@
 script = ExtResource("1_mlefd")
 special_name = "lightThrust"
 animation_name = &"lightThrust"
+ex_enabled = true
+ex_flash_interval = 0.060000000000000005
+ex_afterimage_opacity = 0.85
+ex_afterimage_offset = 0.0
 movement_type = 1
 movement_start_frame = 5
 movement_speed = 250.0
+ex_movement_type = 1
+ex_movement_start_frame = 5
 metadata/_custom_type_script = "uid://dqean8ijehqjn"

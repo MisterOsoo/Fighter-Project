@@ -68,7 +68,6 @@ var ground_slam_speed: float = 500.0
 
 #region Ground Bounce
 
-# Configured by AttackState from the current AttackData.
 var enable_ground_bounce: bool = false
 var bounce_speed: float = 230.0
 var bounce_hitstun: float = 0.6
@@ -103,6 +102,16 @@ var screen_shake_duration: float = 0.2
 
 @export_range(0.0, 10.0, 0.1, "or_greater")
 var impact_fx_lifetime: float = 0.5
+
+#endregion
+
+
+#region Blockstun Settings
+
+@export_group("Blockstun")
+
+@export_range(0.0, 5.0, 0.01, "or_greater")
+var blockstun_duration: float = 0.2
 
 #endregion
 
@@ -257,8 +266,10 @@ func _on_area_entered(area: Area2D) -> void:
 
 	hit_targets.append(hurtbox)
 
+	var final_damage: int = get_final_damage()
+
 	var hit_landed: bool = hurtbox.receive_hit(
-		damage,
+		final_damage,
 		knockback,
 		knockup,
 		character.global_position,
@@ -281,6 +292,57 @@ func _on_area_entered(area: Area2D) -> void:
 
 	spawn_impact_fx(hurtbox)
 	trigger_hit_effects()
+
+#endregion
+
+
+#region EX Damage
+
+func get_final_damage() -> int:
+	var multiplier: float = get_ex_damage_multiplier()
+
+	return maxi(
+		0,
+		roundi(float(damage) * multiplier)
+	)
+
+
+func get_ex_damage_multiplier() -> float:
+	if not is_instance_valid(character):
+		return 1.0
+
+	if not character is BasePlayer:
+		return 1.0
+
+	var attacking_player: BasePlayer = character as BasePlayer
+
+	if attacking_player.fsm == null:
+		return 1.0
+
+	var special_state: SpecialAttackState = (
+		attacking_player.fsm.current_state
+		as SpecialAttackState
+	)
+
+	if special_state == null:
+		return 1.0
+
+	if special_state.current_special == null:
+		return 1.0
+
+	if not special_state.current_is_ex:
+		return 1.0
+
+	# Only empower the hitbox belonging to the
+	# currently playing EX special animation.
+	if StringName(attack_animation) != (
+		special_state.active_animation
+	):
+		return 1.0
+
+	return special_state.current_special.get_damage_multiplier(
+		true
+	)
 
 #endregion
 
@@ -375,15 +437,5 @@ func trigger_hit_effects() -> void:
 
 	if enable_hitstop:
 		effects.call("hitstop", hitstop_duration)
-
-#endregion
-
-
-#region Blockstun Settings
-
-@export_group("Blockstun")
-
-@export_range(0.0, 5.0, 0.01, "or_greater")
-var blockstun_duration: float = 0.2
 
 #endregion

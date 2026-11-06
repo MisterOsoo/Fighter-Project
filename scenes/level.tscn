@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="5_klq6b"]
 [ext_resource type="PackedScene" uid="uid://cta8360fe31sq" path="res://scenes/players/knight.tscn" id="6_2r41h"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="6_b121j"]
-[ext_resource type="Script" uid="uid://ctht0fqm20g0c" path="res://scripts/dummySpawner.gd" id="7_klq6b"]
+[ext_resource type="Script" uid="uid://ctht0fqm20g0c" path="res://scripts/components/dummySpawner.gd" id="7_klq6b"]
 [ext_resource type="Script" uid="uid://cmdyxxpmvstsw" path="res://scripts/commandMenuManager.gd" id="8_8c41q"]
 [ext_resource type="Texture2D" uid="uid://3bclsgo1d1ya" path="res://assets/oak_woods_v1.0/tileset/oak_woods_tileset.png" id="8_82cfe"]
 [ext_resource type="PackedScene" uid="uid://bv3u0dmwc1s0k" path="res://scenes/command_menu_ui.tscn" id="9_olg7q"]
