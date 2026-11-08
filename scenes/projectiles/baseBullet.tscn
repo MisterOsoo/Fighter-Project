@@ -10,6 +10,7 @@ script = ExtResource("1_u2slo")
 
 [node name="BulletHitbox" type="Area2D" parent="." unique_id=638731895]
 collision_layer = 4
-collision_mask = 8
+collision_mask = 12
 script = ExtResource("2_sqoif")
+destroy_on_projectile_collision = null
 metadata/_custom_type_script = "uid://tg08sn2btju1"

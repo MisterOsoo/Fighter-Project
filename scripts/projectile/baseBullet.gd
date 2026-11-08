@@ -70,6 +70,13 @@ func _ready() -> void:
 				_on_hitbox_hit_blocked
 			)
 
+		if not hitbox.projectile_clashed.is_connected(
+			_on_projectile_clashed
+		):
+			hitbox.projectile_clashed.connect(
+				_on_projectile_clashed
+			)
+
 	update_direction()
 
 	if autoplay_animation:
@@ -198,6 +205,12 @@ func _on_hitbox_hit_confirmed(
 
 func _on_hitbox_hit_blocked(
 	_target: Hurtbox
+) -> void:
+	destroy_bullet()
+
+
+func _on_projectile_clashed(
+	_other_hitbox: BulletHitbox
 ) -> void:
 	destroy_bullet()
 

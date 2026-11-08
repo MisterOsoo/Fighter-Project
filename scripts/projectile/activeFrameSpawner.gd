@@ -247,7 +247,7 @@ func spawn_object() -> void:
 
 	var spawned_object: Node2D = instance as Node2D
 
-	var target_parent: Node = get_tree().current_scene
+	var target_parent: Node2D = get_tree().current_scene as Node2D
 
 	if is_instance_valid(spawn_parent):
 		target_parent = spawn_parent
@@ -256,10 +256,7 @@ func spawn_object() -> void:
 		spawned_object.free()
 		return
 
-	var actual_shooter: Node2D = shooter
-
-	if not is_instance_valid(actual_shooter):
-		actual_shooter = get_parent() as Node2D
+	var actual_shooter: Node2D = find_actual_shooter()
 
 	var spawn_transform: Transform2D = global_transform
 
@@ -276,7 +273,7 @@ func spawn_object() -> void:
 		get_ex_damage_multiplier(actual_shooter)
 	)
 
-	# Set shooter before _ready() runs.
+	# Assign shooter before _ready() runs.
 	if spawned_object is BaseBullet:
 		var bullet: BaseBullet = (
 			spawned_object as BaseBullet
@@ -290,13 +287,23 @@ func spawn_object() -> void:
 		ex_multiplier
 	)
 
+	# Set the correct spawn position BEFORE adding
+	# the object to the scene tree.
+	#
+	# Convert world position into local coordinates
+	# relative to the future parent.
+	spawned_object.position = (
+		target_parent.to_local(spawn_position)
+	)
+
 	target_parent.add_child(spawned_object)
-	spawned_object.global_position = spawn_position
 
 	if debug_enabled:
 		print(
 			"[ActiveFrameSpawner] Spawned: ",
 			spawned_object.name,
+			" | Position: ",
+			spawned_object.global_position,
 			" | Shooter: ",
 			actual_shooter,
 			" | Damage Multiplier: ",
@@ -424,5 +431,35 @@ func _on_animation_looped() -> void:
 	if animated_sprite.animation == spawn_animation:
 		spawned_frames.clear()
 		_check_spawn_frame()
+
+#endregion
+
+#region Shooter Detection
+
+func find_actual_shooter() -> Node2D:
+	if is_instance_valid(shooter):
+		if shooter.is_in_group("player"):
+			return shooter
+
+		if shooter.is_in_group("enemy"):
+			return shooter
+
+	var current_node: Node = get_parent()
+
+	while current_node != null:
+		if current_node is Node2D:
+			if current_node.is_in_group("player"):
+				return current_node as Node2D
+
+			if current_node.is_in_group("enemy"):
+				return current_node as Node2D
+
+		current_node = current_node.get_parent()
+
+	push_warning(
+		"ActiveFrameSpawner: Could not find player or enemy shooter."
+	)
+
+	return null
 
 #endregion

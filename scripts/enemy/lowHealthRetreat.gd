@@ -89,6 +89,51 @@ var backward_dash_weight: float = 0.50
 #endregion
 
 
+#region Ranged Special Settings
+
+@export_group("Ranged Special Attacks")
+
+@export var enable_ranged_specials: bool = true
+
+# Only specials placed in this array are used
+# by the low-health retreat behavior.
+@export var ranged_specials: Array[SpecialAttackData] = []
+
+@export_range(0.0, 1000.0, 5.0)
+var minimum_special_distance: float = 100.0
+
+@export_range(0.0, 1500.0, 5.0)
+var maximum_special_distance: float = 500.0
+
+@export_range(0.1, 10.0, 0.1)
+var special_decision_interval: float = 0.75
+
+@export_range(0.0, 20.0, 0.1)
+var special_cooldown: float = 3.0
+
+@export var allow_ex_specials: bool = true
+
+@export_range(0.0, 1.0, 0.05)
+var ex_special_chance: float = 0.20
+
+@export var debug_specials: bool = false
+
+#endregion
+
+
+#region Ranged Special AI Chances
+
+@export_group("Ranged Special AI Chances")
+
+@export_range(0.0, 1.0, 0.05)
+var wild_ranged_special_chance: float = 0.35
+
+@export_range(0.0, 1.0, 0.05)
+var trainer_ranged_special_chance: float = 0.75
+
+#endregion
+
+
 #region Camera Safety
 
 @export_group("Camera Safety")
@@ -106,7 +151,12 @@ var boundary_safety_margin: float = 32.0
 var decision_timer: float = 0.0
 var cooldown_remaining: float = 0.0
 
+var special_decision_timer: float = 0.0
+var special_cooldown_remaining: float = 0.0
+
 var retreat_active: bool = false
+
+var special_state: EnemySpecialAttackState
 
 #endregion
 
@@ -141,6 +191,8 @@ func _ready() -> void:
 			"CameraBounds"
 		) as CameraBounds
 
+	find_special_state()
+
 #endregion
 
 
@@ -154,17 +206,25 @@ func _physics_process(delta: float) -> void:
 		retreat_active = false
 		return
 
-	if decision_timer > 0.0:
-		decision_timer = maxf(
-			decision_timer - delta,
-			0.0
-		)
+	decision_timer = maxf(
+		decision_timer - delta,
+		0.0
+	)
 
-	if cooldown_remaining > 0.0:
-		cooldown_remaining = maxf(
-			cooldown_remaining - delta,
-			0.0
-		)
+	cooldown_remaining = maxf(
+		cooldown_remaining - delta,
+		0.0
+	)
+
+	special_decision_timer = maxf(
+		special_decision_timer - delta,
+		0.0
+	)
+
+	special_cooldown_remaining = maxf(
+		special_cooldown_remaining - delta,
+		0.0
+	)
 
 	if not is_defensive_mode_active():
 		retreat_active = false
@@ -174,39 +234,31 @@ func _physics_process(delta: float) -> void:
 		retreat_active = false
 		return
 
-	# Defensive AI never intentionally approaches
-	# the player while low on health.
+	# Do not interrupt an ongoing special,
+	# attack, dash, jump, or hurt state.
+	if enemy.isAttacking or enemy.isStunned:
+		return
+
+	if not enemy.can_move():
+		return
+
+	# Defensive AI never intentionally
+	# approaches the player.
 	enemy.stop_movement()
 
 	var distance: float = get_player_distance()
 
-	# The player is far enough away.
-	# Hold position and wait.
-	if distance >= retreat_trigger_distance:
-		retreat_active = false
+	# Prioritize escaping when the player
+	# is too close.
+	if distance < retreat_trigger_distance:
+		process_retreat()
 		return
 
-	# The enemy is too close to the player.
-	# Only attempt retreat from a valid ground state.
-	if not enemy.can_move():
-		return
+	retreat_active = false
 
-	if decision_timer > 0.0:
-		return
-
-	if cooldown_remaining > 0.0:
-		return
-
-	if not can_retreat_from_camera():
-		retreat_active = false
-		return
-
-	decision_timer = decision_interval
-
-	if randf() > get_retreat_chance():
-		return
-
-	attempt_retreat()
+	# Once enough distance has been created,
+	# attempt a ranged special attack.
+	process_ranged_special(distance)
 
 #endregion
 
@@ -235,8 +287,6 @@ func is_defensive_mode_active() -> bool:
 
 
 func should_override_movement() -> bool:
-	# Normal AI approach behavior is disabled
-	# for the entire duration of Defensive Mode.
 	return is_defensive_mode_active()
 
 #endregion
@@ -273,6 +323,164 @@ func get_retreat_chance() -> float:
 			return wild_retreat_chance
 
 	return wild_retreat_chance
+
+
+func get_ranged_special_chance() -> float:
+	if ai_controller == null:
+		return wild_ranged_special_chance
+
+	match ai_controller.ai_type:
+		AIController.AIType.TRAINER:
+			return trainer_ranged_special_chance
+
+		AIController.AIType.WILD:
+			return wild_ranged_special_chance
+
+	return wild_ranged_special_chance
+
+#endregion
+
+
+#region Retreat Processing
+
+func process_retreat() -> void:
+	if decision_timer > 0.0:
+		return
+
+	if cooldown_remaining > 0.0:
+		return
+
+	if not can_retreat_from_camera():
+		retreat_active = false
+		return
+
+	decision_timer = decision_interval
+
+	if randf() > get_retreat_chance():
+		return
+
+	attempt_retreat()
+
+#endregion
+
+
+#region Ranged Special Processing
+
+func process_ranged_special(distance: float) -> void:
+	if not enable_ranged_specials:
+		return
+
+	if ranged_specials.is_empty():
+		return
+
+	if distance < minimum_special_distance:
+		return
+
+	if distance > maximum_special_distance:
+		return
+
+	if special_decision_timer > 0.0:
+		return
+
+	if special_cooldown_remaining > 0.0:
+		return
+
+	if enemy.is_dead or enemy.isStunned:
+		return
+
+	if enemy.isAttacking:
+		return
+
+	if not enemy.is_on_floor():
+		return
+
+	if enemy.block_component:
+		if enemy.block_component.is_blocking:
+			return
+
+		if enemy.block_component.is_guard_broken:
+			return
+
+	if special_state == null:
+		find_special_state()
+
+	if special_state == null:
+		return
+
+	special_decision_timer = special_decision_interval
+
+	if randf() > get_ranged_special_chance():
+		return
+
+	attempt_ranged_special()
+
+#endregion
+
+
+#region Ranged Special Selection
+
+func attempt_ranged_special() -> void:
+	if special_state == null:
+		return
+
+	var available_specials: Array[SpecialAttackData] = []
+
+	# Only select specials that are valid
+	# for the enemy's current situation.
+	for special in ranged_specials:
+		if special == null:
+			continue
+
+		if not special.can_use(
+			not enemy.is_on_floor()
+		):
+			continue
+
+		available_specials.append(special)
+
+	if available_specials.is_empty():
+		return
+
+	# Randomly select one available special.
+	var selected_special: SpecialAttackData = (
+		available_specials.pick_random()
+	)
+
+	var use_ex: bool = false
+
+	if allow_ex_specials:
+		if selected_special.ex_enabled:
+			use_ex = randf() < ex_special_chance
+
+	# The special state validates meter,
+	# animations, and combat restrictions.
+	var success: bool = special_state.request_special(
+		selected_special,
+		use_ex
+	)
+
+	# If EX fails, try the normal version.
+	if not success and use_ex:
+		use_ex = false
+
+		success = special_state.request_special(
+			selected_special,
+			false
+		)
+
+	if success:
+		special_cooldown_remaining = special_cooldown
+		retreat_active = false
+
+		if debug_specials:
+			print(
+				"LowHealthRetreat: ",
+				enemy.name,
+				" used ranged special: ",
+				selected_special.resource_name,
+				" EX: ",
+				use_ex
+			)
 
 #endregion
 
@@ -328,7 +536,6 @@ func can_retreat_from_camera() -> bool:
 		- boundary_safety_margin
 	)
 
-	# Backward means moving away from the opponent.
 	var retreat_direction: float = (
 		-float(enemy.facing_direction)
 	)
@@ -396,6 +603,18 @@ func attempt_retreat() -> void:
 
 
 #region State References
+
+func find_special_state() -> void:
+	special_state = null
+
+	if enemy == null or enemy.fsm == null:
+		return
+
+	for child in enemy.fsm.get_children():
+		if child is EnemySpecialAttackState:
+			special_state = child as EnemySpecialAttackState
+			return
+
 
 func get_dash_state() -> EnemyDashState:
 	if enemy == null or enemy.fsm == null:

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://5dduhh7k0jux"]
+
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_tmswe"]
+
+[resource]
+script = ExtResource("1_tmswe")
+attack_name = "heavy1"
+animation_name = &"heavy1"
+blockstun_duration = 0.35
+metadata/_custom_type_script = "uid://baru8ib5ws770"

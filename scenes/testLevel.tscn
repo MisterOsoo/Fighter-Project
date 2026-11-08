@@ -15,6 +15,8 @@
 [ext_resource type="PackedScene" uid="uid://bv3u0dmwc1s0k" path="res://scenes/command_menu_ui.tscn" id="13_2tael"]
 [ext_resource type="PackedScene" uid="uid://cyd8ahtaqegfy" path="res://scenes/health_bars.tscn" id="14_vtflf"]
 [ext_resource type="PackedScene" uid="uid://b1toatsibbio4" path="res://scenes/super_bar.tscn" id="15_vtflf"]
+[ext_resource type="Script" uid="uid://dt4545scf1yeo" path="res://scripts/controllers/battleStartController.gd" id="16_vaa3h"]
+[ext_resource type="PackedScene" uid="uid://dfrb8blceyr78" path="res://scenes/UI/battle_ui.tscn" id="17_p4adi"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w7c3h"]
 size = Vector2(856, 35)
@@ -520,7 +522,7 @@ texture = ExtResource("4_vaa3h")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=868489909]
 top_level = true
-position = Vector2(425, 406)
+position = Vector2(422, 405)
 zoom = Vector2(4, 4)
 limit_left = 0
 limit_right = 854
@@ -534,7 +536,7 @@ metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
 [node name="PhantomCamera2D" type="Node2D" parent="." unique_id=27442747 node_paths=PackedStringArray("follow_targets")]
 top_level = true
-position = Vector2(425, 406)
+position = Vector2(422, 405)
 script = ExtResource("6_t48v5")
 follow_mode = 3
 follow_targets = [null, null]
@@ -582,3 +584,10 @@ layer = -1
 
 [node name="superBar" parent="." unique_id=1256545268 instance=ExtResource("15_vtflf")]
 layer = 0
+
+[node name="BattleStartController" type="Node" parent="." unique_id=947547850 node_paths=PackedStringArray("battle_ui")]
+script = ExtResource("16_vaa3h")
+battle_ui = NodePath("../BattleUi")
+metadata/_custom_type_script = "uid://dt4545scf1yeo"
+
+[node name="BattleUi" parent="." unique_id=1930275053 instance=ExtResource("17_p4adi")]

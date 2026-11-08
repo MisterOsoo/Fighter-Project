@@ -1,0 +1,17 @@
+[gd_scene format=3 uid="uid://dfrb8blceyr78"]
+
+[ext_resource type="FontFile" uid="uid://de3vucx1dmbhn" path="res://assets/fonts/ThaleahFat.ttf" id="1_ea2wa"]
+
+[node name="BattleUi" type="CanvasLayer" unique_id=1930275053]
+
+[node name="FightLabel" type="Label" parent="." unique_id=547370524]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("1_ea2wa")
+theme_override_font_sizes/font_size = 252
+text = "Fight"
+horizontal_alignment = 1
+vertical_alignment = 1

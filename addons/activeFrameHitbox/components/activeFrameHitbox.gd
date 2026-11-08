@@ -290,8 +290,86 @@ func _on_area_entered(area: Area2D) -> void:
 
 	hit_confirmed.emit(StringName(attack_animation))
 
+	award_special_meter()
+
 	spawn_impact_fx(hurtbox)
 	trigger_hit_effects()
+
+#endregion
+
+
+#region Special Meter
+
+func get_current_attack_data() -> AttackData:
+	if not is_instance_valid(character):
+		return null
+
+	var attacking_fsm: FiniteStateMachine = (
+		character.get("fsm") as FiniteStateMachine
+	)
+
+	if attacking_fsm == null:
+		return null
+
+	var current_state: State = attacking_fsm.current_state
+
+	if current_state == null:
+		return null
+
+	var attack_data: AttackData = null
+
+	if current_state is AttackState:
+		attack_data = (
+			current_state as AttackState
+		).current_attack
+
+	elif current_state is EnemyAttackState:
+		attack_data = (
+			current_state as EnemyAttackState
+		).current_attack
+
+	if attack_data == null:
+		return null
+
+	if attack_data.animation_name != StringName(attack_animation):
+		return null
+
+	return attack_data
+
+
+func get_attacker_special_meter() -> specialMeterComponent:
+	if not is_instance_valid(character):
+		return null
+
+	for child in character.get_children():
+		if child is specialMeterComponent:
+			return child as specialMeterComponent
+
+	return null
+
+
+func award_special_meter() -> void:
+	var attack_data: AttackData = get_current_attack_data()
+
+	if attack_data == null:
+		return
+
+	var amount: float = maxf(
+		attack_data.meter_gain_on_hit,
+		0.0
+	)
+
+	if amount <= 0.0:
+		return
+
+	var meter: specialMeterComponent = (
+		get_attacker_special_meter()
+	)
+
+	if meter == null:
+		return
+
+	meter.regenerate_resource(amount)
 
 #endregion
 
@@ -333,8 +411,6 @@ func get_ex_damage_multiplier() -> float:
 	if not special_state.current_is_ex:
 		return 1.0
 
-	# Only empower the hitbox belonging to the
-	# currently playing EX special animation.
 	if StringName(attack_animation) != (
 		special_state.active_animation
 	):

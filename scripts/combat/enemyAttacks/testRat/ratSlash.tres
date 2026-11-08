@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SpecialAttackData" format=3 uid="uid://b4t4u7bkfmd2d"]
+
+[ext_resource type="Script" uid="uid://dqean8ijehqjn" path="res://scripts/combat/specialAttackData.gd" id="1_lxurm"]
+
+[resource]
+script = ExtResource("1_lxurm")
+special_name = "ratSlash"
+animation_name = &"projectile"
+ex_enabled = true
+ex_animation_name = &"projectile"
+metadata/_custom_type_script = "uid://dqean8ijehqjn"

@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="SpecialAttackData" format=3 uid="uid://btjxbvyxvwhw7"]
 
-[ext_resource type="Script" uid="uid://dqean8ijehqjn" path="res://scripts/combat/specialAttackData.gd" id="1_je7c8"]
+[ext_resource type="Script" uid="uid://dqean8ijehqjn" path="res://scripts/combat/specialAttackData.gd" id="1_t6n8m"]
 
 [resource]
-script = ExtResource("1_je7c8")
+script = ExtResource("1_t6n8m")
 special_name = "lightSlash"
 animation_name = &"lightSlash"
 ex_enabled = true
-ex_flash_interval = 0.060000000000000005
+ex_flash_interval = 0.06
 ex_afterimage_opacity = 0.85
 ex_afterimage_offset = 0.0
 usage_type = 2

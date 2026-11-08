@@ -51,19 +51,12 @@ frame = 4
 frame_progress = 0.80754507
 
 [node name="BulletHitbox" parent="." index="1" unique_id=638731895]
-collision_layer = 4
-collision_mask = 8
 shape_type = 1
+destroy_on_projectile_collision = true
 damage = 20
 knockback = 20.0
-knockup = null
 knockback_duration = 0.3
 hitstun_duration = 0.35
-ground_slam = null
-ground_slam_speed = null
-enable_ground_bounce = null
-bounce_speed = null
-bounce_hitstun = null
 blockstun_duration = 0.3
 impact_fx_scene = ExtResource("8_xldcq")
 

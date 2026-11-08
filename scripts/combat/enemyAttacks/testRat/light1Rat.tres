@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://cc7ea0l3liug2"]
+
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_bk1a4"]
+[ext_resource type="Resource" uid="uid://5dduhh7k0jux" path="res://scripts/combat/enemyAttacks/testRat/heavy1Rat.tres" id="1_mdraq"]
+
+[resource]
+script = ExtResource("1_bk1a4")
+attack_name = "light1"
+animation_name = &"light1"
+next_heavy_attack = ExtResource("1_mdraq")
+cancel_start_frame = 5
+cancel_end_frame = 6
+require_hit_to_cancel = true
+blockstun_duration = 0.24
+metadata/_custom_type_script = "uid://baru8ib5ws770"

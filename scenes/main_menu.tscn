@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bsgqmp6s6dpmm"]
 
-[ext_resource type="Script" uid="uid://b44rkxgmlmyu1" path="res://scripts/main_menu.gd" id="1_ekxnf"]
+[ext_resource type="Script" uid="uid://b44rkxgmlmyu1" path="res://scripts/UI/main_menu.gd" id="1_ekxnf"]
 [ext_resource type="FontFile" uid="uid://de3vucx1dmbhn" path="res://assets/fonts/ThaleahFat.ttf" id="1_l6cm7"]
 [ext_resource type="PackedScene" uid="uid://bm6eifp8wl2eo" path="res://scenes/testLevel.tscn" id="2_wu84c"]
 [ext_resource type="PackedScene" uid="uid://c2g852dw7d3pi" path="res://scenes/level.tscn" id="3_8ln24"]

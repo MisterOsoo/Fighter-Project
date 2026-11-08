@@ -230,6 +230,9 @@ func can_use_ground_states() -> bool:
 	if is_dead or isStunned or isAttacking:
 		return false
 
+	if block_component and block_component.is_guard_broken:
+		return false
+
 	if knockback_timer > 0.0:
 		return false
 
@@ -288,6 +291,12 @@ func receive_combat_hit(
 ) -> void:
 	if is_dead:
 		return
+
+	# An actual hit ends guard break immediately, restores the meter,
+	# and lets the normal HurtState handle the incoming hit.
+	# Suppress the normal recovery signal so it does not enter Idle first.
+	if block_component and block_component.is_guard_broken:
+		block_component.recover_from_guard_break(false)
 
 	# A successful hit interrupts blocking.
 	if block_component:
@@ -403,6 +412,16 @@ func _physics_process(delta: float) -> void:
 
 	if not air_dashing:
 		apply_gravity(delta)
+
+	# Guard-break stun is managed by BlockComponent, not hitstun_timer.
+	# Gravity and collisions remain active while movement is locked.
+	if block_component and block_component.is_guard_broken:
+		velocity.x = 0.0
+		jump_horizontal_velocity = 0.0
+		isStunned = true
+		move_and_slide()
+		update_facing()
+		return
 
 	# Update hitstun.
 	if isStunned:
@@ -547,7 +566,8 @@ func _physics_process(delta: float) -> void:
 				"specialattack",
 				"block",
 				"crouch",
-				"death"
+				"death",
+				"guardbreak"
 			]:
 				jump_horizontal_velocity = velocity.x
 				fsm.transition_to("jump")
@@ -686,8 +706,11 @@ func die() -> void:
 	if air_dash_component and air_dash_component.is_air_dashing:
 		air_dash_component.stop_air_dash()
 
-	if block_component and block_component.is_blocking:
+	if block_component:
 		block_component.end_block(true)
+		block_component.clear_ai_block()
+		block_component.is_guard_broken = false
+		block_component.guard_break_timer = 0.0
 
 	isAttacking = false
 	isStunned = false

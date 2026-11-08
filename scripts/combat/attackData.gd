@@ -79,3 +79,13 @@ var bounce_hitstun: float = 0.6
 var blockstun_duration: float = 0.2
 
 #endregion
+
+
+#region Special Meter Settings
+
+@export_group("Special Meter")
+
+@export_range(0.0, 1000.0, 1.0, "or_greater")
+var meter_gain_on_hit: float = 5.0
+
+#endregion

@@ -10,4 +10,5 @@ ground_only = false
 air_only = true
 lock_horizontal_movement = false
 enable_ground_bounce = true
+meter_gain_on_hit = 10.0
 metadata/_custom_type_script = "uid://baru8ib5ws770"

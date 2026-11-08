@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://bileyjx4s8ovh" path="res://assets/HealthBars/Style2/4/4Front.png" id="1_q7ti2"]
 [ext_resource type="Texture2D" uid="uid://cjd80w11u2qcr" path="res://assets/HealthBars/Style2/4/4sBlue.png" id="2_3d6no"]
 [ext_resource type="Script" uid="uid://bqdkw8njn1wi8" path="res://scripts/controllers/specialMeterBarController.gd" id="3_3d6no"]
+[ext_resource type="Script" uid="uid://cdssyf2vib6m6" path="res://scripts/UI/show meter number.gd" id="3_6a5sr"]
 
 [node name="superBar" type="CanvasLayer" unique_id=1256545268]
 
@@ -11,10 +12,19 @@ offset_left = 10.0
 offset_top = 431.0
 offset_right = 198.0
 offset_bottom = 469.0
-value = 50.0
+value = 100.0
 nine_patch_stretch = true
 texture_under = ExtResource("1_q7ti2")
 texture_progress = ExtResource("2_3d6no")
+
+[node name="meterNumber" type="RichTextLabel" parent="playerMeter" unique_id=204216756 node_paths=PackedStringArray("meter_bar")]
+layout_mode = 0
+offset_left = 187.0
+offset_top = -2.0
+offset_right = 227.0
+offset_bottom = 38.0
+script = ExtResource("3_6a5sr")
+meter_bar = NodePath("..")
 
 [node name="enemyMeter" type="TextureProgressBar" parent="." unique_id=197790424]
 offset_left = 655.0

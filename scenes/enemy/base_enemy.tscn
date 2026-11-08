@@ -5,9 +5,9 @@
 [ext_resource type="Script" uid="uid://dskndl01dtv8w" path="res://addons/activeFrameHitbox/components/healthComponent.gd" id="2_eb5uv"]
 [ext_resource type="Script" uid="uid://bu5u4cvc6apv0" path="res://scripts/components/FSM.gd" id="3_0clvb"]
 [ext_resource type="Script" uid="uid://dafnhcvh2ppq3" path="res://scripts/enemy/AIController/AIController.gd" id="4_0clvb"]
-[ext_resource type="Script" uid="uid://c7y1pdo4tg8dn" path="res://scripts/components/state.gd" id="6_se4xw"]
 [ext_resource type="Script" uid="uid://cvlog5luqrwyg" path="res://scripts/enemy/states/idleE.gd" id="6_x8f0n"]
 [ext_resource type="Script" uid="uid://cl2311s4esnr4" path="res://scripts/enemy/states/moveE.gd" id="7_316ce"]
+[ext_resource type="Script" uid="uid://mhwlpwu2d25p" path="res://scripts/components/blocking.gd" id="7_ahaew"]
 [ext_resource type="Script" uid="uid://b2vbvqmtqo8jh" path="res://scripts/components/EXVisualEffects.gd" id="7_ce0r4"]
 [ext_resource type="Script" uid="uid://ih26uf4a7jn5" path="res://scripts/cameraBounds.gd" id="7_ja8iv"]
 [ext_resource type="Script" uid="uid://bws0otun1erg2" path="res://scripts/enemy/states/jumpE.gd" id="8_ehali"]
@@ -16,6 +16,13 @@
 [ext_resource type="Script" uid="uid://celunr1e5b2lt" path="res://scripts/enemy/states/dashE.gd" id="12_bw6yy"]
 [ext_resource type="Script" uid="uid://dg32mkuqs5fyo" path="res://scripts/enemy/states/air_dashE.gd" id="13_vke1u"]
 [ext_resource type="Script" uid="uid://c1l2kch50gnh6" path="res://scripts/components/specialMeterComponent.gd" id="15_vke1u"]
+[ext_resource type="Script" uid="uid://bq5sh73kvggdn" path="res://scripts/enemy/states/attackE.gd" id="16_7hgl1"]
+[ext_resource type="Script" uid="uid://5bc62jcq34nk" path="res://scenes/enemy/special_attack.gd" id="18_aatwx"]
+[ext_resource type="Script" uid="uid://ddkw2a20y2cif" path="res://scripts/enemy/states/blockE.gd" id="18_eu7ko"]
+[ext_resource type="Script" uid="uid://co6qbopdlinlg" path="res://scripts/enemy/states/hurtE.gd" id="20_aatwx"]
+[ext_resource type="Script" uid="uid://csirm83vim3xp" path="res://scripts/enemy/states/guard_breakE.gd" id="20_h06g6"]
+[ext_resource type="Script" uid="uid://cnc5otuxmirdt" path="res://scripts/enemy/states/deathE.gd" id="21_aatwx"]
+[ext_resource type="Script" uid="uid://bk46s61c2ne8h" path="res://scripts/projectile/activeFrameSpawner.gd" id="23_equve"]
 
 [node name="baseEnemy" type="CharacterBody2D" unique_id=468140087 node_paths=PackedStringArray("visuals", "anim", "health_component", "fsm") groups=["enemy"]]
 script = ExtResource("1_eb5uv")
@@ -35,6 +42,8 @@ fsm = NodePath("FiniteStateMachine")
 [node name="Hurtbox" type="Area2D" parent="Visuals" unique_id=470468608]
 script = ExtResource("1_23iyx")
 metadata/_custom_type_script = "uid://2ol7mgcjfs3d"
+
+[node name="projectile point" type="Marker2D" parent="Visuals" unique_id=1004876029]
 
 [node name="HealthComponent" type="Node" parent="." unique_id=812285896]
 script = ExtResource("2_eb5uv")
@@ -56,6 +65,14 @@ ai_controller = NodePath("../AIController")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="detection" unique_id=1517841327]
 
+[node name="BlockComponent" type="Area2D" parent="." unique_id=1609530659]
+script = ExtResource("7_ahaew")
+use_player_input = false
+enable_block_flash = null
+block_flash_color = null
+block_flash_duration = null
+metadata/_custom_type_script = "uid://mhwlpwu2d25p"
+
 [node name="EXVisualEffects" type="Node" parent="." unique_id=608017104]
 script = ExtResource("7_ce0r4")
 metadata/_custom_type_script = "uid://b2vbvqmtqo8jh"
@@ -74,6 +91,10 @@ metadata/_custom_type_script = "uid://dvq856tlh4px4"
 [node name="CameraBounds" type="Node" parent="." unique_id=1681505556]
 script = ExtResource("7_ja8iv")
 metadata/_custom_type_script = "uid://ih26uf4a7jn5"
+
+[node name="ActiveFrameSpawner" type="Node2D" parent="." unique_id=1532172688]
+script = ExtResource("23_equve")
+metadata/_custom_type_script = "uid://bk46s61c2ne8h"
 
 [node name="FiniteStateMachine" type="Node" parent="." unique_id=1624247729 node_paths=PackedStringArray("initial_state")]
 script = ExtResource("3_0clvb")
@@ -108,21 +129,25 @@ script = ExtResource("13_vke1u")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="attack" type="Node" parent="FiniteStateMachine" unique_id=1472730563]
-script = ExtResource("6_se4xw")
+script = ExtResource("16_7hgl1")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="specialAttack" type="Node" parent="FiniteStateMachine" unique_id=1030794786]
-script = ExtResource("6_se4xw")
+script = ExtResource("18_aatwx")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="block" type="Node" parent="FiniteStateMachine" unique_id=186859451]
-script = ExtResource("6_se4xw")
+script = ExtResource("18_eu7ko")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="hurt" type="Node" parent="FiniteStateMachine" unique_id=1349970779]
-script = ExtResource("6_se4xw")
+script = ExtResource("20_aatwx")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="death" type="Node" parent="FiniteStateMachine" unique_id=1537028527]
-script = ExtResource("6_se4xw")
+script = ExtResource("21_aatwx")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="guardBreak" type="Node" parent="FiniteStateMachine" unique_id=114317747]
+script = ExtResource("20_h06g6")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"

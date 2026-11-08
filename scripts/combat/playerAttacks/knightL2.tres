@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://ccv3vfqtkoy6k"]
 
-[ext_resource type="Resource" uid="uid://c3k6ibt5st25n" path="res://scripts/combat/attacks/knightL3.tres" id="1_pbyku"]
+[ext_resource type="Resource" uid="uid://c3k6ibt5st25n" path="res://scripts/combat/playerAttacks/knightL3.tres" id="1_pbyku"]
 [ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="2_80yky"]
 
 [resource]

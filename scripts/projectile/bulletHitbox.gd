@@ -8,6 +8,7 @@ class_name BulletHitbox
 
 signal hit_confirmed(target: Hurtbox)
 signal hit_blocked(target: Hurtbox)
+signal projectile_clashed(other_hitbox: BulletHitbox)
 
 #endregion
 
@@ -26,6 +27,15 @@ enum ShapeType {
 
 @export_tool_button("Add Collision Shape")
 var add_collision_shape_button: Callable = create_collision_shape
+
+#endregion
+
+
+#region Projectile Collision
+
+@export_group("Projectile Collision")
+
+@export var destroy_on_projectile_collision: bool = true
 
 #endregion
 
@@ -156,6 +166,7 @@ var character: Node2D
 #region Internal Variables
 
 var hit_targets: Array[Hurtbox] = []
+var has_clashed: bool = false
 
 #endregion
 
@@ -167,6 +178,7 @@ func _ready() -> void:
 		return
 
 	monitoring = true
+	debug_collision_settings()
 
 	if not area_entered.is_connected(_on_area_entered):
 		area_entered.connect(_on_area_entered)
@@ -177,6 +189,24 @@ func _ready() -> void:
 #region Hit Detection
 
 func _on_area_entered(area: Area2D) -> void:
+	print(
+	"[BulletHitbox] ",
+	get_parent().name,
+	" detected: ",
+	area.name,
+	" | Type: ",
+	area.get_class()
+)
+
+	if area is BulletHitbox:
+		print("PROJECTILE VS PROJECTILE DETECTED!")
+		if has_clashed or is_queued_for_deletion():
+			return
+
+	if area is BulletHitbox:
+		handle_projectile_collision(area as BulletHitbox)
+		return
+
 	if not area is Hurtbox:
 		return
 
@@ -237,6 +267,78 @@ func _on_area_entered(area: Area2D) -> void:
 	trigger_hit_effects()
 
 	hit_confirmed.emit(hurtbox)
+
+#endregion
+
+
+#region Projectile Collision
+
+func handle_projectile_collision(
+	other: BulletHitbox
+) -> void:
+	if not destroy_on_projectile_collision:
+		return
+
+	if not is_instance_valid(other):
+		return
+
+	if other == self:
+		return
+
+	if not other.destroy_on_projectile_collision:
+		return
+
+	if has_clashed or other.has_clashed:
+		return
+
+	if other.is_queued_for_deletion():
+		return
+
+	# Both projectiles must have valid shooters.
+	if not is_instance_valid(character):
+		return
+
+	if not is_instance_valid(other.character):
+		return
+
+	# Never clash with projectiles from the same shooter.
+	if character == other.character:
+		return
+
+	var my_team: int = get_projectile_team(character)
+	var other_team: int = get_projectile_team(
+		other.character
+	)
+
+	# Only player and enemy projectiles can clash.
+	if my_team == 0 or other_team == 0:
+		return
+
+	if my_team == other_team:
+		return
+
+	# Mark both before emitting signals so
+	# the clash cannot happen twice.
+	has_clashed = true
+	other.has_clashed = true
+
+	projectile_clashed.emit(other)
+	other.projectile_clashed.emit(self)
+
+
+func get_projectile_team(
+	shooter_node: Node2D
+) -> int:
+	if not is_instance_valid(shooter_node):
+		return 0
+
+	if shooter_node.is_in_group("player"):
+		return 1
+
+	if shooter_node.is_in_group("enemy"):
+		return 2
+
+	return 0
 
 #endregion
 
@@ -440,3 +542,12 @@ func reset_hit_targets() -> void:
 	hit_targets.clear()
 
 #endregion
+
+func debug_collision_settings() -> void:
+	print(
+		"[", get_parent().name, "] ",
+		"Layer: ", collision_layer,
+		" | Mask: ", collision_mask,
+		" | Monitoring: ", monitoring,
+		" | Monitorable: ", monitorable
+	)

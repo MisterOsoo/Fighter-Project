@@ -6,9 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://l2kkfh0x0avl" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/ATTACK 3.png" id="2_vwao6"]
 [ext_resource type="Texture2D" uid="uid://s0xtvi11vxrg" path="res://assets/FREE_Knight 2D Pixel Art v1.2/BLOCK.png" id="3_aj0ji"]
 [ext_resource type="Texture2D" uid="uid://btsfkdxgoamdf" path="res://assets/FREE_Knight 2D Pixel Art v1.2/ATTACK 2.png" id="3_b4xqx"]
-[ext_resource type="Resource" uid="uid://btjxbvyxvwhw7" path="res://scripts/combat/specialAttacks/lightSlash.tres" id="3_tewky"]
+[ext_resource type="Resource" uid="uid://btjxbvyxvwhw7" path="res://scripts/combat/playerSpecialAttacks/lightSlash.tres" id="3_tewky"]
 [ext_resource type="Texture2D" uid="uid://cw4k88n4gbgd3" path="res://assets/FREE_Knight 2D Pixel Art v1.2/DEATH.png" id="3_ujqor"]
-[ext_resource type="Resource" uid="uid://chl8wdhrfebex" path="res://scripts/combat/specialAttacks/lightThrust.tres" id="4_3c1ol"]
+[ext_resource type="Resource" uid="uid://chl8wdhrfebex" path="res://scripts/combat/playerSpecialAttacks/lightThrust.tres" id="4_3c1ol"]
 [ext_resource type="Texture2D" uid="uid://b7od250h4yfhh" path="res://assets/FREE_Knight 2D Pixel Art v1.2/JUMP-FALL.png" id="4_q3foc"]
 [ext_resource type="Texture2D" uid="uid://bjw3isd3cilam" path="res://assets/FREE_Knight 2D Pixel Art v1.2/ATTACK 3.png" id="4_vwao6"]
 [ext_resource type="Texture2D" uid="uid://msyfy5orsim0" path="res://assets/FREE_Knight 2D Pixel Art v1.2/HURT.png" id="5_aj0ji"]
@@ -21,13 +21,14 @@
 [ext_resource type="Texture2D" uid="uid://7kec2mipu7ik" path="res://assets/FREE_Knight 2D Pixel Art v1.2/WALK.png" id="9_vwao6"]
 [ext_resource type="PackedScene" uid="uid://dkqfuqeqmyvpv" path="res://scenes/impact_sprite.tscn" id="11_tw6kv"]
 [ext_resource type="Texture2D" uid="uid://d1p6xxsit0b34" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/THRUST ATTACK.png" id="14_ie60q"]
+[ext_resource type="Texture2D" uid="uid://c1erhu0waf4q0" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/DEATH.png" id="15_tewky"]
 [ext_resource type="Script" uid="uid://dq1wo7xx4vfdo" path="res://addons/activeFrameHitbox/components/activeFrameHitbox.gd" id="16_gkckh"]
-[ext_resource type="Resource" uid="uid://cj5f315s5lnkm" path="res://scripts/combat/attacks/knightL1.tres" id="16_vwao6"]
+[ext_resource type="Resource" uid="uid://cj5f315s5lnkm" path="res://scripts/combat/playerAttacks/knightL1.tres" id="16_vwao6"]
 [ext_resource type="Texture2D" uid="uid://k7sbc7ip1nxo" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/ATTACK 1.png" id="16_xmtl2"]
-[ext_resource type="Resource" uid="uid://p6uiymnxfmlq" path="res://scripts/combat/attacks/knightAirL1.tres" id="17_xlok1"]
+[ext_resource type="Resource" uid="uid://p6uiymnxfmlq" path="res://scripts/combat/playerAttacks/knightAirL1.tres" id="17_xlok1"]
 [ext_resource type="AudioStream" uid="uid://cahd8b20il4ld" path="res://assets/sfx/metal-weapon-swing-impact-heavy-joshua-chivers-2-2-00-01.mp3" id="20_iwxi6"]
-[ext_resource type="PackedScene" uid="uid://uvssx6ebtd2e" path="res://scenes/projectiles/swirling_slash.tscn" id="21_10ipc"]
 [ext_resource type="Script" uid="uid://e56gcny8jiob" path="res://scripts/randomPitch.gd" id="21_87wqp"]
+[ext_resource type="PackedScene" uid="uid://uvssx6ebtd2e" path="res://scenes/projectiles/swirling_slash.tscn" id="25_tewky"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tfmq4"]
 
@@ -390,6 +391,66 @@ region = Rect2(112, 0, 112, 96)
 [sub_resource type="AtlasTexture" id="AtlasTexture_h513l"]
 atlas = ExtResource("4_q3foc")
 region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_03v1w"]
+atlas = ExtResource("15_tewky")
+region = Rect2(0, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_n7afl"]
+atlas = ExtResource("15_tewky")
+region = Rect2(112, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a4jnl"]
+atlas = ExtResource("15_tewky")
+region = Rect2(224, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ov3b0"]
+atlas = ExtResource("15_tewky")
+region = Rect2(336, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h2iht"]
+atlas = ExtResource("15_tewky")
+region = Rect2(448, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tyock"]
+atlas = ExtResource("15_tewky")
+region = Rect2(560, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r5t5v"]
+atlas = ExtResource("15_tewky")
+region = Rect2(672, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fiwax"]
+atlas = ExtResource("15_tewky")
+region = Rect2(784, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gh2fn"]
+atlas = ExtResource("15_tewky")
+region = Rect2(896, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v1fq4"]
+atlas = ExtResource("15_tewky")
+region = Rect2(1008, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_217le"]
+atlas = ExtResource("15_tewky")
+region = Rect2(1120, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vklce"]
+atlas = ExtResource("15_tewky")
+region = Rect2(1232, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k6woa"]
+atlas = ExtResource("15_tewky")
+region = Rect2(1344, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_oj70t"]
+atlas = ExtResource("15_tewky")
+region = Rect2(1456, 0, 112, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ik043"]
+atlas = ExtResource("15_tewky")
+region = Rect2(1568, 0, 112, 96)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_yxsji"]
 atlas = ExtResource("5_aj0ji")
@@ -935,6 +996,56 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
+"texture": SubResource("AtlasTexture_03v1w")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_n7afl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a4jnl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ov3b0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h2iht")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tyock")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r5t5v")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fiwax")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gh2fn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v1fq4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_217le")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vklce")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k6woa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_oj70t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ik043")
+}],
+"loop": 0,
+"name": &"guardbreak",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
 "texture": SubResource("AtlasTexture_yxsji")
 }, {
 "duration": 1.0,
@@ -1171,7 +1282,7 @@ shape = SubResource("CircleShape2D_tfmq4")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="0" unique_id=916986781]
 sprite_frames = SubResource("SpriteFrames_joarl")
-animation = &"lightThrust"
+animation = &"guardbreak"
 
 [node name="HurtboxCollision" type="CollisionShape2D" parent="Visuals/Hurtbox" parent_id_path=PackedInt32Array(1319678047) index="0" unique_id=298190807]
 position = Vector2(0, 18.5)
@@ -1293,9 +1404,14 @@ debug_color = Color(1, 1, 0, 0.3)
 [node name="projectilePoint" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="8" unique_id=1931063390]
 position = Vector2(30, 18)
 
-[node name="BlockComponent" parent="." index="5" unique_id=515685535]
-visible = false
+[node name="BlockComponent" parent="." index="5" unique_id=515685535 node_paths=PackedStringArray("special_meter")]
 shape_type = 1
+crouch_block_animation = "crouchBlock"
+special_meter = NodePath("../specialMeterComponent")
+guard_break_stun_duration = 4.0
+enable_block_flash = true
+block_flash_color = Color(0.2, 0.55, 1, 1)
+block_flash_duration = 0.12
 
 [node name="BlockCollision" type="CollisionShape2D" parent="BlockComponent" index="0" unique_id=84155848]
 position = Vector2(0, 18)
@@ -1318,9 +1434,10 @@ shadow_2_delay = 0.17
 animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
 spawn_animation = "lightSlash"
 spawn_frames = Array[int]([3])
-scene_to_spawn = ExtResource("21_10ipc")
+scene_to_spawn = ExtResource("25_tewky")
 spawn_marker = NodePath("../Visuals/projectilePoint")
 shooter = NodePath("..")
+debug_enabled = true
 
 [node name="jump" parent="FiniteStateMachine" parent_id_path=PackedInt32Array(1321618913) index="2" unique_id=1737627805 node_paths=PackedStringArray("attack_state")]
 light_input = &"attack"

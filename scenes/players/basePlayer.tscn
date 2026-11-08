@@ -23,6 +23,7 @@
 [ext_resource type="Script" uid="uid://bx356p3y4xgyd" path="res://scripts/playerStates/death.gd" id="19_oet57"]
 [ext_resource type="Script" uid="uid://cucr5ryoyd5vx" path="res://scripts/playerStates/crouch.gd" id="20_wq7h6"]
 [ext_resource type="Script" uid="uid://b2vbvqmtqo8jh" path="res://scripts/components/EXVisualEffects.gd" id="23_jw02x"]
+[ext_resource type="Script" uid="uid://cedxp0fuv0ppp" path="res://scripts/playerStates/guard_break.gd" id="24_ra05w"]
 
 [node name="basePlayer" type="CharacterBody2D" unique_id=1208209418 node_paths=PackedStringArray("visuals", "dash_component", "air_dash_component", "block_component") groups=["player"]]
 collision_layer = 2
@@ -93,6 +94,9 @@ metadata/_custom_type_script = "uid://ih26uf4a7jn5"
 collision_layer = 16
 collision_mask = 4
 script = ExtResource("6_1c80q")
+enable_block_flash = null
+block_flash_color = null
+block_flash_duration = null
 metadata/_custom_type_script = "uid://mhwlpwu2d25p"
 
 [node name="AirDashComponent" type="Node" parent="." unique_id=637463712]
@@ -158,4 +162,8 @@ metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
 
 [node name="crouch" type="Node" parent="FiniteStateMachine" unique_id=1866627877]
 script = ExtResource("20_wq7h6")
+metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"
+
+[node name="guardBreak" type="Node" parent="FiniteStateMachine" unique_id=1661162790]
+script = ExtResource("24_ra05w")
 metadata/_custom_type_script = "uid://c7y1pdo4tg8dn"

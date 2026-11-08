@@ -3,8 +3,6 @@ extends CharacterBody2D
 class_name BaseEnemy
 
 
-
-	# Keep the rest of your existing _ready() code below.
 #region Movement Settings
 
 @export_group("Movement")
@@ -61,6 +59,7 @@ var facing_direction: int = -1
 
 @export var health_component: HealthComponent
 @export var fsm: FiniteStateMachine
+@export var block_component: BlockComponent
 
 #endregion
 
@@ -126,6 +125,9 @@ func _ready() -> void:
 			"HealthComponent"
 		) as HealthComponent
 
+	if block_component == null:
+		block_component = get_node_or_null("BlockComponent") as BlockComponent
+
 	if fsm == null:
 		fsm = get_node_or_null(
 			"FiniteStateMachine"
@@ -152,6 +154,7 @@ func _ready() -> void:
 func _physics_process(delta: float) -> void:
 	if not is_dead:
 		update_hitstun(delta)
+		update_block_state()
 
 	update_knockback(delta)
 	apply_gravity(delta)
@@ -214,6 +217,44 @@ func is_in_movement_ability() -> bool:
 #endregion
 
 
+#region Enemy Blocking
+
+func update_block_state() -> void:
+	if block_component == null or fsm == null:
+		return
+
+	# Guard break remains authoritative, even if the enemy is airborne.
+	# Do not clear guard-break or blockstun timers here.
+	if block_component.is_guard_broken:
+		stop_movement()
+		velocity.x = 0.0
+		if fsm.states.has("guardbreak") and not (fsm.current_state is EnemyGuardBreakState):
+			fsm.transition_to("guardbreak", true)
+		return
+
+	# Never enter BlockState while airborne. This prevents AI block
+	# requests and ongoing blockstun from interrupting a jump or fall.
+	# The BlockComponent keeps managing its own timers and AI requests.
+	if not is_on_floor():
+		return
+
+	# Preserve existing forced block/blockstun behavior on the ground.
+	if block_component.is_blocking or block_component.blockstun_timer > 0.0:
+		stop_movement()
+		velocity.x = 0.0
+		if fsm.states.has("block") and not (fsm.current_state is EnemyBlockState):
+			fsm.transition_to("block", true)
+		return
+
+	# AI or directional guard requests can start blocking only on floor.
+	if block_component.is_holding_back() and block_component.can_block():
+		stop_movement()
+		velocity.x = 0.0
+		if fsm.states.has("block") and not (fsm.current_state is EnemyBlockState):
+			fsm.transition_to("block")
+
+#endregion
+
 #region Movement
 
 func can_move() -> bool:
@@ -221,6 +262,7 @@ func can_move() -> bool:
 		not is_dead
 		and not isStunned
 		and not isAttacking
+		and not (block_component != null and (block_component.is_blocking or block_component.is_guard_broken or block_component.blockstun_timer > 0.0))
 		and not is_launched
 		and not ground_bounce_active
 		and knockback_timer <= 0.0
@@ -250,22 +292,44 @@ func stop_movement() -> void:
 
 #region Jump
 
+
 func jump(
 	jump_type: EnemyJumpState.JumpType = EnemyJumpState.JumpType.NEUTRAL
 ) -> void:
-	if not can_move():
+	# Prevent jumping again while airborne.
+	if not is_on_floor():
+		return
+
+	# Prevent jumping during combat interruptions.
+	if is_dead or isStunned or is_launched:
+		return
+
+	# Prevent jumping while attacking or blocking.
+	if isAttacking:
+		return
+
+	if block_component and block_component.is_blocking:
 		return
 
 	if fsm == null:
 		return
 
-	for child in fsm.get_children():
-		if child is EnemyJumpState:
-			var jump_state: EnemyJumpState = child
+	var jump_state: EnemyJumpState = (
+		fsm.states.get("jump") as EnemyJumpState
+	)
 
-			jump_state.prepare_jump(jump_type)
-			fsm.transition_to("jump")
-			return
+	if jump_state == null:
+		return
+
+	# Prevent restarting the current jump state.
+	if fsm.current_state == jump_state:
+		return
+
+	if not can_move():
+		return
+
+	jump_state.prepare_jump(jump_type)
+	fsm.transition_to("jump")
 
 #endregion
 
@@ -510,6 +574,13 @@ func receive_combat_hit(
 	if is_dead:
 		return
 
+	# Restore guard meter and permit the incoming hit to enter HurtState.
+	if block_component and block_component.is_guard_broken:
+		block_component.recover_from_guard_break(false)
+	if block_component:
+		block_component.end_block(true)
+		block_component.clear_ai_block()
+
 	isAttacking = false
 	movement_direction = 0.0
 
@@ -576,9 +647,12 @@ func receive_combat_hit(
 	isStunned = hitstun_timer > 0.0
 
 	if fsm != null and fsm.states.has("hurt"):
-		fsm.transition_to("hurt", true)
-
-	play_hit_animation()
+		if fsm.current_state is EnemyHurtState:
+			(fsm.current_state as EnemyHurtState).receive_additional_hit()
+		else:
+			fsm.transition_to("hurt", true)
+	else:
+		play_hit_animation()
 
 #endregion
 
@@ -643,6 +717,9 @@ func _on_defeated() -> void:
 		return
 
 	is_dead = true
+	if block_component:
+		block_component.end_block(true)
+		block_component.clear_ai_block()
 	isAttacking = false
 	isStunned = false
 
@@ -664,7 +741,11 @@ func _on_defeated() -> void:
 		hurtbox.set_deferred("monitorable", false)
 		hurtbox.set_deferred("monitoring", false)
 
-	play_death_sequence()
+	reset_launch_state()
+	if fsm != null and fsm.states.has("death"):
+		fsm.transition_to("death", true)
+	else:
+		play_death_sequence()
 
 #endregion
 
