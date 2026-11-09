@@ -68,14 +68,6 @@ knockback_duration = 0.6
 hitstun_duration = 0.6
 metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
 
-[node name="light2" type="Area2D" parent="Visuals" unique_id=584469600]
-script = ExtResource("6_ur7pv")
-metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
-
-[node name="light3" type="Area2D" parent="Visuals" unique_id=396890563]
-script = ExtResource("6_ur7pv")
-metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
-
 [node name="projectilePoint" type="Marker2D" parent="Visuals" unique_id=1931063390]
 
 [node name="HealthComponent" type="Node" parent="." unique_id=1359002574]
@@ -94,9 +86,6 @@ metadata/_custom_type_script = "uid://ih26uf4a7jn5"
 collision_layer = 16
 collision_mask = 4
 script = ExtResource("6_1c80q")
-enable_block_flash = null
-block_flash_color = null
-block_flash_duration = null
 metadata/_custom_type_script = "uid://mhwlpwu2d25p"
 
 [node name="AirDashComponent" type="Node" parent="." unique_id=637463712]

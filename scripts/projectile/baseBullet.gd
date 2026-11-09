@@ -37,7 +37,9 @@ enum DirectionMode {
 @export_group("References")
 
 @export var hitbox: BulletHitbox
-@export var anim: AnimatedSprite2D
+
+# Supports both Sprite2D and AnimatedSprite2D.
+@export var anim: Node2D
 
 #endregion
 
@@ -165,21 +167,42 @@ func set_manual_direction() -> void:
 
 func play_bullet_animation() -> void:
 	if anim == null:
-		push_warning("BaseBullet has no AnimatedSprite2D assigned!")
-		return
-
-	if anim.sprite_frames == null:
-		push_warning("BaseBullet AnimatedSprite2D has no SpriteFrames!")
-		return
-
-	if not anim.sprite_frames.has_animation(bullet_animation):
 		push_warning(
-			"BaseBullet animation not found: %s"
-			% bullet_animation
+			"BaseBullet has no Sprite2D or AnimatedSprite2D assigned!"
 		)
 		return
 
-	anim.play(bullet_animation)
+	# AnimatedSprite2D: Play the selected animation.
+	if anim is AnimatedSprite2D:
+		var animated_sprite: AnimatedSprite2D = (
+			anim as AnimatedSprite2D
+		)
+
+		if animated_sprite.sprite_frames == null:
+			push_warning(
+				"BaseBullet AnimatedSprite2D has no SpriteFrames!"
+			)
+			return
+
+		if not animated_sprite.sprite_frames.has_animation(
+			bullet_animation
+		):
+			push_warning(
+				"BaseBullet animation not found: %s"
+				% bullet_animation
+			)
+			return
+
+		animated_sprite.play(bullet_animation)
+		return
+
+	# Sprite2D: Static sprites don't require animation.
+	if anim is Sprite2D:
+		return
+
+	push_warning(
+		"BaseBullet visual reference must be Sprite2D or AnimatedSprite2D!"
+	)
 
 #endregion
 

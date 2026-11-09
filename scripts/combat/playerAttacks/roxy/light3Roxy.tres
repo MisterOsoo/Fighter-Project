@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://dn3i6mhswr1gi"]
+
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_pvjfx"]
+
+[resource]
+script = ExtResource("1_pvjfx")
+attack_name = "light3"
+animation_name = &"light3"
+cancel_start_frame = 4
+cancel_end_frame = 10
+require_hit_to_cancel = true
+blockstun_duration = 0.4
+meter_gain_on_hit = 10.0
+metadata/_custom_type_script = "uid://baru8ib5ws770"

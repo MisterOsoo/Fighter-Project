@@ -8,9 +8,15 @@ signal dash_finished
 
 #region Dash Settings
 
-@export_group("Dash Settings")
-@export var dash_speed: float = 350.0
-@export var dash_duration: float = 0.15
+@export_group("Forward Dash")
+@export var forward_dash_speed: float = 350.0
+@export var forward_dash_duration: float = 0.15
+
+@export_group("Backward Dash")
+@export var backward_dash_speed: float = 450.0
+@export var backward_dash_duration: float = 0.20
+
+@export_group("Dash Cooldown")
 @export var dash_cooldown: float = 0.25
 
 #endregion
@@ -55,6 +61,10 @@ var last_tap_direction: int = 0
 var tap_timer: float = 0.0
 
 var requested_direction: int = 1
+
+var current_dash_speed: float = 0.0
+var current_dash_duration: float = 0.0
+var is_forward_dash: bool = true
 
 #endregion
 
@@ -177,7 +187,21 @@ func start_dash(direction: int) -> void:
 	is_dashing = true
 	dash_direction = 1 if direction >= 0 else -1
 
-	dash_timer = dash_duration
+	# Determine whether the dash moves toward
+	# or away from the opponent.
+	is_forward_dash = (
+		dash_direction == get_facing_direction()
+	)
+
+	# Select speed and duration based on dash direction.
+	if is_forward_dash:
+		current_dash_speed = forward_dash_speed
+		current_dash_duration = forward_dash_duration
+	else:
+		current_dash_speed = backward_dash_speed
+		current_dash_duration = backward_dash_duration
+
+	dash_timer = current_dash_duration
 	cooldown_timer = dash_cooldown
 
 	last_tap_direction = 0
@@ -190,7 +214,7 @@ func apply_dash_velocity() -> void:
 	if player == null or not is_dashing:
 		return
 
-	player.velocity.x = dash_direction * dash_speed
+	player.velocity.x = dash_direction * current_dash_speed
 
 
 func stop_dash() -> void:
@@ -207,7 +231,7 @@ func stop_dash() -> void:
 
 
 func get_dash_animation() -> String:
-	if dash_direction == get_facing_direction():
+	if is_forward_dash:
 		return forward_dash_animation
 
 	return backward_dash_animation

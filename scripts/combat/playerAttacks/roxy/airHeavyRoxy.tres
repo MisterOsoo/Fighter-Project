@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://bwtjkggj2fbe0"]
+
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_gvqs5"]
+
+[resource]
+script = ExtResource("1_gvqs5")
+attack_name = "airHeavy"
+animation_name = &"airHeavy"
+ground_only = false
+air_only = true
+lock_horizontal_movement = false
+enable_ground_bounce = true
+blockstun_duration = 0.0
+meter_gain_on_hit = 10.0
+metadata/_custom_type_script = "uid://baru8ib5ws770"

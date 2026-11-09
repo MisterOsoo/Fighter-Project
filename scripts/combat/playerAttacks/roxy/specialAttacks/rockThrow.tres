@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SpecialAttackData" format=3 uid="uid://bipbvof8iqmok"]
+
+[ext_resource type="Script" uid="uid://dqean8ijehqjn" path="res://scripts/combat/specialAttackData.gd" id="1_00ljn"]
+
+[resource]
+script = ExtResource("1_00ljn")
+special_name = "Rock Throw"
+animation_name = &"rockThrow"
+ex_enabled = true
+metadata/_custom_type_script = "uid://dqean8ijehqjn"

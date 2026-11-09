@@ -6,9 +6,9 @@
 [ext_resource type="Texture2D" uid="uid://l2kkfh0x0avl" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/ATTACK 3.png" id="2_vwao6"]
 [ext_resource type="Texture2D" uid="uid://s0xtvi11vxrg" path="res://assets/FREE_Knight 2D Pixel Art v1.2/BLOCK.png" id="3_aj0ji"]
 [ext_resource type="Texture2D" uid="uid://btsfkdxgoamdf" path="res://assets/FREE_Knight 2D Pixel Art v1.2/ATTACK 2.png" id="3_b4xqx"]
-[ext_resource type="Resource" uid="uid://btjxbvyxvwhw7" path="res://scripts/combat/playerSpecialAttacks/lightSlash.tres" id="3_tewky"]
+[ext_resource type="Resource" uid="uid://btjxbvyxvwhw7" path="res://scripts/combat/playerAttacks/knight/knightSpecialAttacks/lightSlash.tres" id="3_tewky"]
 [ext_resource type="Texture2D" uid="uid://cw4k88n4gbgd3" path="res://assets/FREE_Knight 2D Pixel Art v1.2/DEATH.png" id="3_ujqor"]
-[ext_resource type="Resource" uid="uid://chl8wdhrfebex" path="res://scripts/combat/playerSpecialAttacks/lightThrust.tres" id="4_3c1ol"]
+[ext_resource type="Resource" uid="uid://chl8wdhrfebex" path="res://scripts/combat/playerAttacks/knight/knightSpecialAttacks/lightThrust.tres" id="4_3c1ol"]
 [ext_resource type="Texture2D" uid="uid://b7od250h4yfhh" path="res://assets/FREE_Knight 2D Pixel Art v1.2/JUMP-FALL.png" id="4_q3foc"]
 [ext_resource type="Texture2D" uid="uid://bjw3isd3cilam" path="res://assets/FREE_Knight 2D Pixel Art v1.2/ATTACK 3.png" id="4_vwao6"]
 [ext_resource type="Texture2D" uid="uid://msyfy5orsim0" path="res://assets/FREE_Knight 2D Pixel Art v1.2/HURT.png" id="5_aj0ji"]
@@ -23,12 +23,18 @@
 [ext_resource type="Texture2D" uid="uid://d1p6xxsit0b34" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/THRUST ATTACK.png" id="14_ie60q"]
 [ext_resource type="Texture2D" uid="uid://c1erhu0waf4q0" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/DEATH.png" id="15_tewky"]
 [ext_resource type="Script" uid="uid://dq1wo7xx4vfdo" path="res://addons/activeFrameHitbox/components/activeFrameHitbox.gd" id="16_gkckh"]
-[ext_resource type="Resource" uid="uid://cj5f315s5lnkm" path="res://scripts/combat/playerAttacks/knightL1.tres" id="16_vwao6"]
+[ext_resource type="Resource" uid="uid://cj5f315s5lnkm" path="res://scripts/combat/playerAttacks/knight/knightL1.tres" id="16_vwao6"]
 [ext_resource type="Texture2D" uid="uid://k7sbc7ip1nxo" path="res://assets/FREE_Knight 2D Pixel Art v1.2/Buffed Sword/glow/ATTACK 1.png" id="16_xmtl2"]
-[ext_resource type="Resource" uid="uid://p6uiymnxfmlq" path="res://scripts/combat/playerAttacks/knightAirL1.tres" id="17_xlok1"]
+[ext_resource type="Resource" uid="uid://p6uiymnxfmlq" path="res://scripts/combat/playerAttacks/knight/knightAirL1.tres" id="17_xlok1"]
 [ext_resource type="AudioStream" uid="uid://cahd8b20il4ld" path="res://assets/sfx/metal-weapon-swing-impact-heavy-joshua-chivers-2-2-00-01.mp3" id="20_iwxi6"]
 [ext_resource type="Script" uid="uid://e56gcny8jiob" path="res://scripts/randomPitch.gd" id="21_87wqp"]
 [ext_resource type="PackedScene" uid="uid://uvssx6ebtd2e" path="res://scenes/projectiles/swirling_slash.tscn" id="25_tewky"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_vwao6"]
+size = Vector2(50, 53)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b4xqx"]
+size = Vector2(63, 31)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_tfmq4"]
 
@@ -1253,17 +1259,11 @@ size = Vector2(20, 35)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iyavm"]
 size = Vector2(26, 31)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_b4xqx"]
-size = Vector2(63, 31)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_toiwi"]
 size = Vector2(45, 55)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2q874"]
 size = Vector2(80, 16)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_vwao6"]
-size = Vector2(50, 53)
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_q3foc"]
 radius = 34.0
@@ -1276,7 +1276,19 @@ health_component = NodePath("HealthComponent")
 equipped_specials = Array[ExtResource("2_injek")]([ExtResource("3_tewky"), ExtResource("4_3c1ol")])
 death_animation = "death"
 
-[node name="CollisionShape2D" parent="." index="0" unique_id=502901929]
+[node name="Visuals_light3#HitboxCollision" type="CollisionShape2D" parent="." index="0" unique_id=845078406]
+visible = false
+position = Vector2(10, 10.5)
+shape = SubResource("RectangleShape2D_vwao6")
+debug_color = Color(1, 1, 0, 0.3)
+
+[node name="Visuals_light2#HitboxCollision" type="CollisionShape2D" parent="." index="1" unique_id=1137609335]
+visible = false
+position = Vector2(-0.5, 16.5)
+shape = SubResource("RectangleShape2D_b4xqx")
+debug_color = Color(1, 1, 0, 0.3)
+
+[node name="CollisionShape2D" parent="." index="2" unique_id=502901929]
 position = Vector2(1, 26.5)
 shape = SubResource("CircleShape2D_tfmq4")
 
@@ -1313,26 +1325,8 @@ position = Vector2(19, 20.5)
 shape = SubResource("RectangleShape2D_iyavm")
 debug_color = Color(1, 1, 0, 0.3)
 
-[node name="light2" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="4" unique_id=584469600 node_paths=PackedStringArray("character", "animated_sprite")]
-collision_layer = 4
-collision_mask = 8
-character = NodePath("../..")
-animated_sprite = NodePath("../AnimatedSprite2D")
-attack_animation = "attack2"
-active_frames = Array[int]([4])
-damage = 10
-knockback = 20.0
-knockup = 10.0
-knockback_duration = 0.6
-hitstun_duration = 0.6
-screen_shake_duration = 0.1
-impact_fx_scene = ExtResource("11_tw6kv")
-
-[node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/light2" index="0" unique_id=1137609335]
-visible = false
-position = Vector2(-0.5, 16.5)
-shape = SubResource("RectangleShape2D_b4xqx")
-debug_color = Color(1, 1, 0, 0.3)
+[node name="projectilePoint" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="4" unique_id=1931063390]
+position = Vector2(30, 18)
 
 [node name="airLight" type="Area2D" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="5" unique_id=851132339 node_paths=PackedStringArray("character", "animated_sprite")]
 collision_layer = 4
@@ -1379,58 +1373,35 @@ position = Vector2(-30, 0)
 shape = SubResource("RectangleShape2D_2q874")
 debug_color = Color(1, 1, 0, 0.3)
 
-[node name="light3" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="7" unique_id=396890563 node_paths=PackedStringArray("character", "animated_sprite")]
-collision_layer = 4
-collision_mask = 8
-character = NodePath("../..")
-animated_sprite = NodePath("../AnimatedSprite2D")
-attack_animation = "attack3"
-active_frames = Array[int]([4])
-damage = 20
-knockback = 60.0
-knockup = 200.0
-knockback_duration = 0.6
-hitstun_duration = 1.29
-hitstop_duration = 0.1
-screen_shake_duration = 0.15
-impact_fx_scene = ExtResource("11_tw6kv")
-
-[node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/light3" index="0" unique_id=845078406]
-visible = false
-position = Vector2(10, 10.5)
-shape = SubResource("RectangleShape2D_vwao6")
-debug_color = Color(1, 1, 0, 0.3)
-
-[node name="projectilePoint" parent="Visuals" parent_id_path=PackedInt32Array(890805793) index="8" unique_id=1931063390]
-position = Vector2(30, 18)
-
-[node name="BlockComponent" parent="." index="5" unique_id=515685535 node_paths=PackedStringArray("special_meter")]
+[node name="BlockComponent" parent="." index="7" unique_id=515685535 node_paths=PackedStringArray("special_meter")]
 shape_type = 1
 crouch_block_animation = "crouchBlock"
 special_meter = NodePath("../specialMeterComponent")
 guard_break_stun_duration = 4.0
-enable_block_flash = true
-block_flash_color = Color(0.2, 0.55, 1, 1)
-block_flash_duration = 0.12
 
 [node name="BlockCollision" type="CollisionShape2D" parent="BlockComponent" index="0" unique_id=84155848]
 position = Vector2(0, 18)
 shape = SubResource("CircleShape2D_q3foc")
 debug_color = Color(0.2, 0.6, 1, 0.3)
 
-[node name="DashComponent" parent="." index="7" unique_id=1120109285]
+[node name="DashComponent" parent="." index="9" unique_id=1120109285]
 dash_speed = 250.0
 dash_duration = 0.25
 forward_dash_animation = "dash"
 backward_dash_animation = "dash"
 
-[node name="EXVisualEffects" parent="." index="8" unique_id=1659274355 node_paths=PackedStringArray("character", "animated_sprite", "visuals")]
+[node name="EXVisualEffects" parent="." index="10" unique_id=1659274355 node_paths=PackedStringArray("character", "animated_sprite", "visuals")]
 character = NodePath("..")
 animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
 visuals = NodePath("../Visuals")
 shadow_2_delay = 0.17
 
-[node name="ActiveFrameSpawner" parent="." index="9" unique_id=1476909129 node_paths=PackedStringArray("animated_sprite", "spawn_marker", "shooter")]
+[node name="swordHit" type="AudioStreamPlayer2D" parent="." index="11" unique_id=1950935511]
+process_mode = 3
+stream = ExtResource("20_iwxi6")
+script = ExtResource("21_87wqp")
+
+[node name="ActiveFrameSpawner" parent="." index="12" unique_id=1476909129 node_paths=PackedStringArray("animated_sprite", "spawn_marker", "shooter")]
 animated_sprite = NodePath("../Visuals/AnimatedSprite2D")
 spawn_animation = "lightSlash"
 spawn_frames = Array[int]([3])
@@ -1462,12 +1433,5 @@ death_animation = "death"
 standing_hurtbox = NodePath("../../Visuals/Hurtbox")
 crouching_hurtbox = NodePath("../../Visuals/crouchHurtbox")
 
-[node name="swordHit" type="AudioStreamPlayer2D" parent="." index="11" unique_id=1950935511]
-process_mode = 3
-stream = ExtResource("20_iwxi6")
-script = ExtResource("21_87wqp")
-
 [connection signal="hit_confirmed" from="Visuals/light1" to="swordHit" method="_on_light_1_hit_confirmed"]
-[connection signal="hit_confirmed" from="Visuals/light2" to="swordHit" method="_on_light_2_hit_confirmed"]
 [connection signal="hit_confirmed" from="Visuals/airLight" to="swordHit" method="_on_air_light_hit_confirmed"]
-[connection signal="hit_confirmed" from="Visuals/light3" to="swordHit" method="_on_light_3_hit_confirmed"]

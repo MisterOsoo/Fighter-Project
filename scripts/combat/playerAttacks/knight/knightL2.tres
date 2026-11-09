@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://ccv3vfqtkoy6k"]
+
+[ext_resource type="Resource" uid="uid://c3k6ibt5st25n" path="res://scripts/combat/playerAttacks/knight/knightL3.tres" id="1_pbyku"]
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="2_80yky"]
+
+[resource]
+script = ExtResource("2_80yky")
+attack_name = "knightl2"
+animation_name = &"attack2"
+next_light_attack = ExtResource("1_pbyku")
+cancel_start_frame = 5
+cancel_end_frame = 8
+require_hit_to_cancel = true
+blockstun_duration = 0.35
+metadata/_custom_type_script = "uid://baru8ib5ws770"

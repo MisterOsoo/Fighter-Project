@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AttackData" format=3 uid="uid://nx8bxx0ag7w3"]
+
+[ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_vfvqx"]
+
+[resource]
+script = ExtResource("1_vfvqx")
+attack_name = "heavyD"
+animation_name = &"heavyD"
+cancel_start_frame = 5
+cancel_end_frame = 11
+require_hit_to_cancel = true
+jump_cancelable = true
+blockstun_duration = 0.4
+meter_gain_on_hit = 10.0
+metadata/_custom_type_script = "uid://baru8ib5ws770"

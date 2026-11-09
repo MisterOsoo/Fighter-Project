@@ -231,6 +231,7 @@ animation = &"idle"
 
 [node name="HealthComponent" type="Node" parent="." unique_id=1625563618]
 script = ExtResource("8_m6xck")
+max_health = 250
 metadata/_custom_type_script = "uid://dskndl01dtv8w"
 
 [node name="CameraBounds" type="Node" parent="." unique_id=917848698]

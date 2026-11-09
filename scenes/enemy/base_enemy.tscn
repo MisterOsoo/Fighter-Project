@@ -68,9 +68,6 @@ ai_controller = NodePath("../AIController")
 [node name="BlockComponent" type="Area2D" parent="." unique_id=1609530659]
 script = ExtResource("7_ahaew")
 use_player_input = false
-enable_block_flash = null
-block_flash_color = null
-block_flash_duration = null
 metadata/_custom_type_script = "uid://mhwlpwu2d25p"
 
 [node name="EXVisualEffects" type="Node" parent="." unique_id=608017104]

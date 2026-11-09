@@ -16,6 +16,16 @@ class_name MoveState
 #endregion
 
 
+#region Animation Settings
+
+@export_group("Animations")
+
+@export var walk_forward_animation: String = "walkForward"
+@export var walk_backward_animation: String = "walkBackward"
+
+#endregion
+
+
 #region References
 
 @onready var player: BasePlayer = (
@@ -35,7 +45,7 @@ func Enter() -> void:
 	if not player.can_use_ground_states():
 		return
 
-	player.play_animation(player.walk_animation)
+	update_walk_animation()
 
 
 func Update(_delta: float) -> void:
@@ -91,8 +101,39 @@ func PhysicsUpdate(delta: float) -> void:
 		acceleration * delta
 	)
 
+	# Update animation based on movement direction.
+	update_walk_animation()
+
 
 func Exit() -> void:
 	pass
+
+#endregion
+
+
+#region Walk Animation Handling
+
+func update_walk_animation() -> void:
+	if player == null:
+		return
+
+	var direction: float = Input.get_axis(
+		left_input,
+		right_input
+	)
+
+	if is_zero_approx(direction):
+		return
+
+	# Positive means moving toward the opponent.
+	# Negative means moving away from the opponent.
+	var relative_direction: float = (
+		direction * player.facing_direction
+	)
+
+	if relative_direction > 0.0:
+		player.play_animation(walk_forward_animation)
+	else:
+		player.play_animation(walk_backward_animation)
 
 #endregion

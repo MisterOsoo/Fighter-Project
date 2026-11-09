@@ -11,6 +11,14 @@ class_name CrouchState
 #endregion
 
 
+#region Attack Settings
+
+@export_group("Attack Settings")
+@export var heavy_input: StringName = &"heavyAtk"
+
+#endregion
+
+
 #region Hurtbox Settings
 
 @export_group("Hurtboxes")
@@ -32,7 +40,6 @@ class_name CrouchState
 #region Initialization
 
 func _ready() -> void:
-	# Start with only the standing hurtbox active.
 	set_crouching_hurtbox(false)
 
 #endregion
@@ -69,6 +76,12 @@ func PhysicsUpdate(_delta: float) -> void:
 	player.velocity.x = 0.0
 	player.jump_horizontal_velocity = 0.0
 
+	# Crouching heavy attack.
+	if InputMap.has_action(heavy_input):
+		if Input.is_action_just_pressed(heavy_input):
+			request_crouch_heavy()
+			return
+
 	if not Input.is_action_pressed(player.crouch_input):
 		player.update_ground_state()
 
@@ -82,6 +95,37 @@ func Exit() -> void:
 
 	if not keep_crouching:
 		set_crouching_hurtbox(false)
+
+#endregion
+
+
+#region Crouch Attack
+
+func request_crouch_heavy() -> void:
+	if player == null or player.fsm == null:
+		return
+
+	var attack_state: AttackState = null
+
+	for child in player.fsm.get_children():
+		if child is AttackState:
+			attack_state = child as AttackState
+			break
+
+	if attack_state == null:
+		push_warning(
+			"CrouchState: AttackState not found."
+		)
+		return
+
+	if attack_state.crouch_heavy_attack == null:
+		push_warning(
+			"CrouchState: Crouch Heavy AttackData not assigned."
+		)
+		return
+
+	attack_state.request_attack(&"crouch_heavy")
+	transition_to("attack")
 
 #endregion
 
@@ -100,7 +144,6 @@ func set_hurtbox_active(
 	if hurtbox == null:
 		return
 
-	# Disable actual collision shapes.
 	for child in hurtbox.get_children():
 		if child is CollisionShape2D:
 			var collision: CollisionShape2D = (
@@ -112,7 +155,6 @@ func set_hurtbox_active(
 				not enabled
 			)
 
-	# Also control Area2D detection.
 	hurtbox.set_deferred("monitoring", enabled)
 	hurtbox.set_deferred("monitorable", enabled)
 

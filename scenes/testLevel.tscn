@@ -9,9 +9,9 @@
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="7_qfsc6"]
 [ext_resource type="Script" uid="uid://dymfqpyd8nmm0" path="res://scripts/components/groupCameraController.gd" id="8_bso8f"]
 [ext_resource type="Texture2D" uid="uid://3bclsgo1d1ya" path="res://assets/oak_woods_v1.0/tileset/oak_woods_tileset.png" id="8_d18do"]
-[ext_resource type="PackedScene" uid="uid://cta8360fe31sq" path="res://scenes/players/knight.tscn" id="10_1l6yw"]
 [ext_resource type="Script" uid="uid://cmdyxxpmvstsw" path="res://scripts/commandMenuManager.gd" id="12_7eys6"]
 [ext_resource type="PackedScene" uid="uid://cep3b6yxynnrh" path="res://scenes/enemy/test_rat.tscn" id="12_31r7n"]
+[ext_resource type="PackedScene" uid="uid://bv74bf0nm0nva" path="res://scenes/players/roxy.tscn" id="12_p4adi"]
 [ext_resource type="PackedScene" uid="uid://bv3u0dmwc1s0k" path="res://scenes/command_menu_ui.tscn" id="13_2tael"]
 [ext_resource type="PackedScene" uid="uid://cyd8ahtaqegfy" path="res://scenes/health_bars.tscn" id="14_vtflf"]
 [ext_resource type="PackedScene" uid="uid://b1toatsibbio4" path="res://scenes/super_bar.tscn" id="15_vtflf"]
@@ -522,7 +522,7 @@ texture = ExtResource("4_vaa3h")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=868489909]
 top_level = true
-position = Vector2(422, 405)
+position = Vector2(438, 394)
 zoom = Vector2(4, 4)
 limit_left = 0
 limit_right = 854
@@ -536,7 +536,7 @@ metadata/_custom_type_script = "uid://bd046eokvcnu2"
 
 [node name="PhantomCamera2D" type="Node2D" parent="." unique_id=27442747 node_paths=PackedStringArray("follow_targets")]
 top_level = true
-position = Vector2(422, 405)
+position = Vector2(438, 394)
 script = ExtResource("6_t48v5")
 follow_mode = 3
 follow_targets = [null, null]
@@ -561,12 +561,6 @@ scale = Vector2(2, 2)
 tile_map_data = PackedByteArray("AAAAAA4AAAASAAwAAAABAA4AAAATAAwAAAACAA4AAAAUAAwAAAADAA4AAAASAAwAAAAEAA4AAAATAAwAAAAFAA4AAAAUAAwAAAAGAA4AAAASAAwAAAAHAA4AAAATAAwAAAAIAA4AAAAUAAwAAAAJAA4AAAASAAwAAAAKAA4AAAATAAwAAAALAA4AAAAUAAwAAAAMAA4AAAASAAwAAAANAA4AAAATAAwAAAAOAA4AAAAUAAwAAAAPAA4AAAASAAwAAAAQAA4AAAATAAwAAAARAA4AAAAUAAwAAAASAA4AAAASAAwAAAATAA4AAAATAAwAAAAUAA4AAAAUAAwAAAAVAA4AAAASAAwAAAAWAA4AAAATAAwAAAAXAA4AAAAUAAwAAAAYAA4AAAASAAwAAAAZAA4AAAATAAwAAAAaAA4AAAAUAAwAAAAAAA8AAAAJAA4AAAABAA8AAAAKAA4AAAACAA8AAAALAA4AAAADAA8AAAAIAA4AAAAEAA8AAAAJAA4AAAAFAA8AAAAKAA4AAAAGAA8AAAALAA4AAAAHAA8AAAAIAA4AAAAIAA8AAAAJAA4AAAAJAA8AAAAKAA4AAAAKAA8AAAALAA4AAAALAA8AAAAIAA4AAAAMAA8AAAAJAA4AAAANAA8AAAAKAA4AAAAOAA8AAAALAA4AAAAPAA8AAAAIAA4AAAAQAA8AAAAJAA4AAAARAA8AAAAKAA4AAAASAA8AAAALAA4AAAATAA8AAAAIAA4AAAAUAA8AAAAJAA4AAAAVAA8AAAAKAA4AAAAWAA8AAAALAA4AAAAXAA8AAAAIAA4AAAAYAA8AAAAJAA4AAAAZAA8AAAAKAA4AAAAaAA8AAAALAA4AAAAAABAAAAADAAEAAAABABAAAAADAAEAAAACABAAAAADAAEAAAADABAAAAADAAEAAAAEABAAAAADAAEAAAAFABAAAAADAAEAAAAGABAAAAADAAEAAAAHABAAAAADAAEAAAAIABAAAAADAAEAAAAJABAAAAADAAEAAAAKABAAAAADAAEAAAALABAAAAADAAEAAAAMABAAAAADAAEAAAANABAAAAADAAEAAAAOABAAAAADAAEAAAAPABAAAAADAAEAAAAQABAAAAADAAEAAAARABAAAAADAAEAAAASABAAAAADAAEAAAATABAAAAADAAEAAAAUABAAAAADAAEAAAAVABAAAAADAAEAAAAWABAAAAADAAEAAAAXABAAAAADAAEAAAAYABAAAAADAAEAAAAZABAAAAADAAEAAAAaABAAAAADAAEAAAA=")
 tile_set = SubResource("TileSet_a4qce")
 
-[node name="knight" parent="." unique_id=1208209418 instance=ExtResource("10_1l6yw")]
-position = Vector2(386, 411)
-collision_layer = 1
-collision_mask = 1
-jump_velocity = -350.0
-
 [node name="CommandMenuManager" type="Node" parent="." unique_id=506197021 node_paths=PackedStringArray("menu_ui")]
 script = ExtResource("12_7eys6")
 menu_duration = 4.0
@@ -576,8 +570,12 @@ metadata/_custom_type_script = "uid://cmdyxxpmvstsw"
 
 [node name="commandMenuUI" parent="." unique_id=2073219795 instance=ExtResource("13_2tael")]
 
+[node name="Roxy" parent="." unique_id=1208209418 instance=ExtResource("12_p4adi")]
+position = Vector2(381, 419)
+
 [node name="testRat" parent="." unique_id=468140087 instance=ExtResource("12_31r7n")]
-position = Vector2(457, 430)
+position = Vector2(479, 418.99997)
+scale = Vector2(1.7, 1.7)
 
 [node name="healthBars" parent="." unique_id=1743953624 instance=ExtResource("14_vtflf")]
 layer = -1

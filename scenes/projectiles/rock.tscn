@@ -1,0 +1,42 @@
+[gd_scene format=3 uid="uid://c4fy8nlherb0c"]
+
+[ext_resource type="PackedScene" uid="uid://r077l3a7ofeo" path="res://scenes/projectiles/baseBullet.tscn" id="1_2la4d"]
+[ext_resource type="Texture2D" uid="uid://crnk2ct1m4hnq" path="res://assets/rocks/A_Bunch_Of_Rocks_Revambed128x_By_verzatiledev.png" id="2_r1qbf"]
+[ext_resource type="PackedScene" uid="uid://dkqfuqeqmyvpv" path="res://scenes/impact_sprite.tscn" id="3_vfcrn"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_6pej0"]
+animations = [{
+"frames": [],
+"loop": 1,
+"name": &"rock",
+"speed": 12.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_a4qce"]
+radius = 17.18284
+
+[node name="rock" unique_id=1612894689 node_paths=PackedStringArray("hitbox", "anim") instance=ExtResource("1_2la4d")]
+hitbox = NodePath("BulletHitbox")
+anim = NodePath("Sprite2D")
+
+[node name="AnimatedSprite2D" parent="." index="0" unique_id=1679193920]
+sprite_frames = SubResource("SpriteFrames_6pej0")
+animation = &"rock"
+
+[node name="Sprite2D" type="Sprite2D" parent="." index="1" unique_id=1435593778]
+texture = ExtResource("2_r1qbf")
+region_enabled = true
+region_rect = Rect2(168.10016, 28.629498, 35.392548, 29.183315)
+
+[node name="BulletHitbox" parent="." index="2" unique_id=638731895]
+destroy_on_projectile_collision = true
+damage = 20
+knockback = 40.0
+knockup = 10.0
+damage_multiplier = 1.5
+impact_fx_scene = ExtResource("3_vfcrn")
+
+[node name="bulletCollision" type="CollisionShape2D" parent="BulletHitbox" index="0" unique_id=755252303]
+position = Vector2(0, 1)
+shape = SubResource("CircleShape2D_a4qce")
+debug_color = Color(1, 1, 0, 0.4)

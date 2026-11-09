@@ -8,6 +8,7 @@ class_name AttackState
 @export_group("Ground Attacks")
 @export var light_attack: AttackData
 @export var heavy_attack: AttackData
+@export var crouch_heavy_attack: AttackData
 
 @export_group("Air Attacks")
 @export var air_light_attack: AttackData
@@ -80,6 +81,8 @@ var attack_finished: bool = false
 var attack_started: bool = false
 var attack_started_airborne: bool = false
 
+var crouch_attack_active: bool = false
+
 #endregion
 
 
@@ -134,6 +137,9 @@ func connect_hitbox_signals() -> void:
 #region Attack Requests
 
 func request_attack(attack_type: StringName) -> void:
+	if player == null:
+		return
+
 	var airborne: bool = not player.is_on_floor()
 
 	match attack_type:
@@ -143,8 +149,18 @@ func request_attack(attack_type: StringName) -> void:
 			)
 
 		&"heavy":
+			if airborne:
+				requested_attack = air_heavy_attack
+			elif Input.is_action_pressed(player.crouch_input):
+				requested_attack = crouch_heavy_attack
+			else:
+				requested_attack = heavy_attack
+
+		&"crouch_heavy":
 			requested_attack = (
-				air_heavy_attack if airborne else heavy_attack
+				crouch_heavy_attack
+				if not airborne
+				else null
 			)
 
 		_:
@@ -227,6 +243,7 @@ func PhysicsUpdate(_delta: float) -> void:
 
 func Exit() -> void:
 	clear_hitbox_bounce_settings()
+	restore_crouching_hurtbox()
 
 	current_attack = null
 	requested_attack = null
@@ -273,6 +290,7 @@ func start_attack(attack: AttackData) -> void:
 
 	player.isAttacking = true
 
+	update_crouching_hurtbox(attack)
 	apply_hitbox_bounce_settings(attack)
 
 	if attack.lock_horizontal_movement:
@@ -311,6 +329,56 @@ func is_attack_allowed(attack: AttackData) -> bool:
 		return false
 
 	return true
+
+#endregion
+
+
+#region Crouching Hurtbox
+
+func get_crouch_state() -> CrouchState:
+	if player == null or player.fsm == null:
+		return null
+
+	for child in player.fsm.get_children():
+		if child is CrouchState:
+			return child as CrouchState
+
+	return null
+
+
+func update_crouching_hurtbox(attack: AttackData) -> void:
+	var crouch_state: CrouchState = get_crouch_state()
+
+	if crouch_state == null:
+		return
+
+	crouch_attack_active = (
+		attack == crouch_heavy_attack
+		and crouch_heavy_attack != null
+	)
+
+	crouch_state.set_crouching_hurtbox(
+		crouch_attack_active
+	)
+
+
+func restore_crouching_hurtbox() -> void:
+	if not crouch_attack_active:
+		return
+
+	crouch_attack_active = false
+
+	var crouch_state: CrouchState = get_crouch_state()
+
+	if crouch_state == null:
+		return
+
+	var should_crouch: bool = (
+		player.is_on_floor()
+		and Input.is_action_pressed(player.crouch_input)
+	)
+
+	crouch_state.set_crouching_hurtbox(should_crouch)
 
 #endregion
 
@@ -561,6 +629,10 @@ func return_to_movement() -> void:
 	if not player.is_on_floor():
 		player.jump_horizontal_velocity = player.velocity.x
 		transition_to("jump")
+		return
+
+	if Input.is_action_pressed(player.crouch_input):
+		transition_to("crouch")
 		return
 
 	var direction: float = Input.get_axis(
