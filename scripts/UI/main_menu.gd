@@ -31,6 +31,8 @@ extends CanvasLayer
 
 @export var battle_scene: PackedScene
 @export var training_scene: PackedScene
+@export var overworld_scene: PackedScene
+@export var options_scene: PackedScene
 
 #endregion
 
@@ -55,6 +57,10 @@ extends CanvasLayer
 
 @onready var training_button: Button = get_node_or_null(
 	"PanelContainer/VBoxContainer/PlaySubmenu/Training"
+) as Button
+
+@onready var overworld_button: Button = get_node_or_null(
+	"PanelContainer/VBoxContainer/PlaySubmenu/Overworld"
 ) as Button
 
 @onready var options_button: Button = get_node_or_null(
@@ -90,6 +96,7 @@ func _ready() -> void:
 		play_button,
 		battle_button,
 		training_button,
+		overworld_button,
 		options_button,
 		quit_button
 	]:
@@ -119,6 +126,9 @@ func check_references() -> void:
 	if training_button == null:
 		push_error("MainMenu: Training button not found.")
 
+	if overworld_button == null:
+		push_error("MainMenu: Overworld button not found.")
+
 	if options_button == null:
 		push_error("MainMenu: Options button not found.")
 
@@ -131,32 +141,42 @@ func check_references() -> void:
 #region Menu Navigation
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_echo():
+	if event is InputEventKey and event.echo:
 		return
 
 	if event.is_action_pressed(down_input):
-		get_viewport().set_input_as_handled()
+		mark_input_handled()
 		move_selection(1)
 
 	elif event.is_action_pressed(up_input):
-		get_viewport().set_input_as_handled()
+		mark_input_handled()
 		move_selection(-1)
 
 	elif event.is_action_pressed(accept_input):
-		get_viewport().set_input_as_handled()
+		mark_input_handled()
 		activate_selection()
 
 	elif event.is_action_pressed(left_input):
-		get_viewport().set_input_as_handled()
+		mark_input_handled()
 
 		if submenu_open:
 			close_submenu()
 
 	elif event.is_action_pressed(right_input):
-		get_viewport().set_input_as_handled()
+		mark_input_handled()
 
 		if not submenu_open and get_selected_button() == play_button:
 			open_submenu()
+
+
+func mark_input_handled() -> void:
+	if not is_inside_tree():
+		return
+
+	var viewport: Viewport = get_viewport()
+
+	if viewport != null:
+		viewport.set_input_as_handled()
 
 
 func move_selection(direction: int) -> void:
@@ -189,6 +209,9 @@ func update_menu_buttons() -> void:
 		if training_button:
 			menu_buttons.append(training_button)
 
+		if overworld_button:
+			menu_buttons.append(overworld_button)
+
 	if options_button:
 		menu_buttons.append(options_button)
 
@@ -210,6 +233,7 @@ func update_selection() -> void:
 		play_button,
 		battle_button,
 		training_button,
+		overworld_button,
 		options_button,
 		quit_button
 	]:
@@ -250,6 +274,9 @@ func activate_selection() -> void:
 	elif selected_button == training_button:
 		start_training()
 
+	elif selected_button == overworld_button:
+		start_overworld()
+
 	elif selected_button == options_button:
 		open_options()
 
@@ -275,6 +302,8 @@ func open_submenu() -> void:
 		current_index = menu_buttons.find(battle_button)
 	elif training_button and menu_buttons.has(training_button):
 		current_index = menu_buttons.find(training_button)
+	elif overworld_button and menu_buttons.has(overworld_button):
+		current_index = menu_buttons.find(overworld_button)
 	else:
 		current_index = 0
 
@@ -303,7 +332,9 @@ func close_submenu() -> void:
 
 func start_battle() -> void:
 	if battle_scene == null:
-		push_warning("MainMenu: No Battle scene assigned in Inspector.")
+		push_warning(
+			"MainMenu: No Battle scene assigned in Inspector."
+		)
 		return
 
 	get_tree().change_scene_to_packed(battle_scene)
@@ -311,15 +342,32 @@ func start_battle() -> void:
 
 func start_training() -> void:
 	if training_scene == null:
-		push_warning("MainMenu: No Training scene assigned in Inspector.")
+		push_warning(
+			"MainMenu: No Training scene assigned in Inspector."
+		)
 		return
 
 	get_tree().change_scene_to_packed(training_scene)
 
 
+func start_overworld() -> void:
+	if overworld_scene == null:
+		push_warning(
+			"MainMenu: No Overworld scene assigned in Inspector."
+		)
+		return
+
+	get_tree().change_scene_to_packed(overworld_scene)
+
+
 func open_options() -> void:
-	print("Options selected")
-	# Add options menu here.
+	if options_scene == null:
+		push_warning(
+			"MainMenu: No Options scene assigned in Inspector."
+		)
+		return
+
+	get_tree().change_scene_to_packed(options_scene)
 
 
 func quit_game() -> void:

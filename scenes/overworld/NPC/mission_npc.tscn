@@ -1,0 +1,146 @@
+[gd_scene format=3 uid="uid://c0jpr1nresm1b"]
+
+[ext_resource type="PackedScene" uid="uid://s7r5p7mkgi5t" path="res://scenes/overworld/NPC/baseNPC.tscn" id="1_1bndo"]
+[ext_resource type="Script" uid="uid://b0b4k4230buwi" path="res://scripts/overworld/NPC/rangerMissionNPC.gd" id="2_3pda2"]
+[ext_resource type="Texture2D" uid="uid://dwdb2bb1ur14x" path="res://assets/SHADOW Series - The Brothers Sellers/Blacksmith.png" id="2_vdmgw"]
+[ext_resource type="PackedScene" uid="uid://c86ewmnw0s118" path="res://scenes/UI/mission_board.tscn" id="3_3pda2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5yekf"]
+size = Vector2(97, 57)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3pda2"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(0, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_g7lmr"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(97, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q2dtu"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(194, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xa4kh"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(291, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_y1iu2"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(388, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_681r2"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(485, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2j0eg"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(582, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jfitd"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(679, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v2f8t"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(776, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bcgyn"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(873, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5lpkm"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(970, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wj4f6"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(1067, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dk5rl"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(1164, 0, 97, 75)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cpaea"]
+atlas = ExtResource("2_vdmgw")
+region = Rect2(1261, 0, 97, 75)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_5yekf"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3pda2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_g7lmr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q2dtu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xa4kh")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_y1iu2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_681r2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2j0eg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jfitd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v2f8t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bcgyn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5lpkm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wj4f6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dk5rl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cpaea")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 6.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_a4qce"]
+size = Vector2(115, 74)
+
+[node name="missionNPC" unique_id=1201806571 instance=ExtResource("1_1bndo")]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("2_3pda2")
+mission_board_scene = ExtResource("3_3pda2")
+metadata/collision_preset_name = &"character"
+metadata/collision_preset_id = &"5636937737735867000"
+
+[node name="CollisionShape2D" parent="." index="0" unique_id=617922117]
+position = Vector2(0.5, 8.5)
+shape = SubResource("RectangleShape2D_5yekf")
+
+[node name="AnimatedSprite2D" parent="visuals" parent_id_path=PackedInt32Array(1278375229) index="0" unique_id=1120973945]
+sprite_frames = SubResource("SpriteFrames_5yekf")
+animation = &"idle"
+frame_progress = 0.47489166
+
+[node name="InteractableComponent" parent="." index="2" unique_id=627032654]
+collision_layer = 16
+collision_mask = 0
+metadata/collision_preset_name = &"interactable"
+metadata/collision_preset_id = &"2751166928749630006"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractableComponent" index="0" unique_id=1942648695]
+position = Vector2(0.5, 9)
+shape = SubResource("RectangleShape2D_a4qce")
+debug_color = Color(0.5160457, 0.5763349, 1.92523e-07, 0.41960785)

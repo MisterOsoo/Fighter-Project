@@ -1,0 +1,46 @@
+[gd_scene format=3 uid="uid://c86ewmnw0s118"]
+
+[ext_resource type="Script" uid="uid://wh470qalv2cy" path="res://scripts/UI/mission_board.gd" id="1_0tix7"]
+
+[node name="missionBoard" type="Control" unique_id=834354968 node_paths=PackedStringArray("mission_list", "description_label", "back_button")]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0tix7")
+back_input = &"cancel"
+mission_list = NodePath("CanvasLayer/PanelContainer/VBoxContainer/missionList")
+description_label = NodePath("CanvasLayer/PanelContainer/VBoxContainer/description")
+back_button = NodePath("CanvasLayer/PanelContainer/VBoxContainer/back")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1168460878]
+
+[node name="PanelContainer" type="PanelContainer" parent="CanvasLayer" unique_id=126890718]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -383.0
+offset_top = -184.0
+offset_right = 357.0
+offset_bottom = 197.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/PanelContainer" unique_id=1414980536]
+layout_mode = 2
+
+[node name="title" type="Label" parent="CanvasLayer/PanelContainer/VBoxContainer" unique_id=285594506]
+layout_mode = 2
+
+[node name="missionList" type="VBoxContainer" parent="CanvasLayer/PanelContainer/VBoxContainer" unique_id=1296394823]
+layout_mode = 2
+
+[node name="description" type="Label" parent="CanvasLayer/PanelContainer/VBoxContainer" unique_id=744524788]
+layout_mode = 2
+
+[node name="back" type="Button" parent="CanvasLayer/PanelContainer/VBoxContainer" unique_id=1988184163]
+layout_mode = 2

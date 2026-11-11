@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://crtjh4u3nvbxv"]
+
+[ext_resource type="Script" uid="uid://bxqnqeslp7mkm" path="res://scripts/overworld/player/base_ow_player.gd" id="1_0lclb"]
+
+[node name="baseOWPlayer" type="CharacterBody2D" unique_id=503157946 node_paths=PackedStringArray("visuals", "anim")]
+collision_layer = 2
+collision_mask = 3
+script = ExtResource("1_0lclb")
+visuals = NodePath("visuals")
+anim = NodePath("visuals/AnimatedSprite2D")
+metadata/collision_preset_name = &"character"
+metadata/collision_preset_id = &"5636937737735867000"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1554163307]
+
+[node name="visuals" type="Node2D" parent="." unique_id=1793436092]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="visuals" unique_id=26461005]
+animation = &""
+
+[node name="interactArea" type="Area2D" parent="visuals" unique_id=1273118966]

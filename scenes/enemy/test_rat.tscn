@@ -500,6 +500,10 @@ radius = 56.0
 radius = 28.86174
 
 [node name="testRat" unique_id=468140087 instance=ExtResource("1_u0c47")]
+collision_layer = 2
+collision_mask = 3
+metadata/collision_preset_name = &"character"
+metadata/collision_preset_id = &"5636937737735867000"
 
 [node name="CollisionShape2D" parent="." index="0" unique_id=261309969]
 position = Vector2(0, 9)
@@ -515,6 +519,8 @@ collision_layer = 8
 collision_mask = 0
 character = NodePath("../..")
 health_component = NodePath("../../HealthComponent")
+metadata/collision_preset_name = &"hurtbox"
+metadata/collision_preset_id = &"6076034784126792474"
 
 [node name="HurtboxCollision" type="CollisionShape2D" parent="Visuals/Hurtbox" index="0" unique_id=487603044]
 position = Vector2(0.5, 0)
@@ -536,6 +542,8 @@ screen_shake_duration = 0.11
 impact_fx_scene = ExtResource("6_avj4k")
 blockstun_duration = 0.24
 metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
+metadata/collision_preset_name = &"hitbox"
+metadata/collision_preset_id = &"6727274713129075"
 
 [node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/light1" index="0" unique_id=780380508]
 position = Vector2(6, 3.5)
@@ -556,6 +564,8 @@ knockup = 10.0
 impact_fx_scene = ExtResource("6_avj4k")
 blockstun_duration = 0.35
 metadata/_custom_type_script = "uid://dq1wo7xx4vfdo"
+metadata/collision_preset_name = &"hitbox"
+metadata/collision_preset_id = &"6727274713129075"
 
 [node name="HitboxCollision" type="CollisionShape2D" parent="Visuals/heavy1" index="0" unique_id=933330094]
 position = Vector2(7, 2.5)
@@ -590,9 +600,6 @@ collision_layer = 0
 collision_mask = 4
 shape_type = 1
 special_meter = NodePath("../specialMeterComponent")
-enable_block_flash = true
-block_flash_color = Color(0.2, 0.55, 1, 1)
-block_flash_duration = 0.12
 
 [node name="BlockCollision" type="CollisionShape2D" parent="BlockComponent" index="0" unique_id=1020831732]
 position = Vector2(0, 7)

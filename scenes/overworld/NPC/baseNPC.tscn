@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://s7r5p7mkgi5t"]
+
+[ext_resource type="Script" uid="uid://bha5a6ed1x3i6" path="res://scripts/components/interactableComponent.gd" id="1_irc5x"]
+[ext_resource type="Script" uid="uid://b81487vxa0e58" path="res://scripts/overworld/NPC/base_npc.gd" id="1_txqkl"]
+
+[node name="BaseNpc" type="StaticBody2D" unique_id=1201806571 node_paths=PackedStringArray("visuals", "anim", "interactable")]
+script = ExtResource("1_txqkl")
+visuals = NodePath("visuals")
+anim = NodePath("visuals/AnimatedSprite2D")
+interactable = NodePath("InteractableComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=617922117]
+
+[node name="visuals" type="Node2D" parent="." unique_id=1278375229]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="visuals" unique_id=1120973945]
+
+[node name="InteractableComponent" type="Area2D" parent="." unique_id=627032654]
+script = ExtResource("1_irc5x")
+metadata/_custom_type_script = "uid://bha5a6ed1x3i6"

@@ -4,6 +4,8 @@
 [ext_resource type="FontFile" uid="uid://de3vucx1dmbhn" path="res://assets/fonts/ThaleahFat.ttf" id="1_l6cm7"]
 [ext_resource type="PackedScene" uid="uid://bm6eifp8wl2eo" path="res://scenes/testLevel.tscn" id="2_wu84c"]
 [ext_resource type="PackedScene" uid="uid://c2g852dw7d3pi" path="res://scenes/level.tscn" id="3_8ln24"]
+[ext_resource type="PackedScene" uid="uid://d1kioe0ltvna4" path="res://scenes/UI/options_menu.tscn" id="4_8ln24"]
+[ext_resource type="PackedScene" uid="uid://dc7605h4jjbrr" path="res://scenes/overworld/home_base.tscn" id="4_rtw2f"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l6cm7"]
 
@@ -21,10 +23,12 @@
 
 [node name="mainMenu" type="CanvasLayer" unique_id=1682859070]
 script = ExtResource("1_ekxnf")
-accept_input = &"specialMenu"
+accept_input = &"interact"
 selected_color = Color(1.3307494, 0.42606953, 0, 1)
 battle_scene = ExtResource("2_wu84c")
 training_scene = ExtResource("3_8ln24")
+overworld_scene = ExtResource("4_rtw2f")
+options_scene = ExtResource("4_8ln24")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=733016135]
 offset_left = 598.0
@@ -75,6 +79,17 @@ theme_override_styles/hover = SubResource("StyleBoxEmpty_xj3q8")
 theme_override_styles/disabled = SubResource("StyleBoxEmpty_emfws")
 theme_override_styles/focus = SubResource("StyleBoxEmpty_woek2")
 text = "Training"
+
+[node name="Overworld" type="Button" parent="PanelContainer/VBoxContainer/PlaySubmenu" unique_id=151175653]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("1_l6cm7")
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxEmpty_a4qce")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_db88c")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_xj3q8")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_emfws")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_woek2")
+text = "Overworld"
 
 [node name="Options" type="Button" parent="PanelContainer/VBoxContainer" unique_id=664975064]
 layout_mode = 2

@@ -1,0 +1,120 @@
+[gd_scene format=3 uid="uid://dc7605h4jjbrr"]
+
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="1_2t0he"]
+[ext_resource type="Script" uid="uid://bhexx6mj1xv3q" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_2d.gd" id="2_ah5ut"]
+[ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="3_hy77h"]
+[ext_resource type="PackedScene" uid="uid://w8hnflmbxouc" path="res://scenes/overworld/players/roxy_ow.tscn" id="4_hy77h"]
+[ext_resource type="Texture2D" uid="uid://u5yf6aegga73" path="res://assets/checkered.png" id="5_yj75i"]
+[ext_resource type="PackedScene" uid="uid://c0jpr1nresm1b" path="res://scenes/overworld/NPC/mission_npc.tscn" id="6_u2i3r"]
+
+[sub_resource type="Resource" id="Resource_yj75i"]
+script = ExtResource("3_hy77h")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2mjqt"]
+size = Vector2(600, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_5yekf"]
+size = Vector2(598, 52)
+
+[node name="homeBase" type="Node2D" unique_id=350867730]
+metadata/_edit_vertical_guides_ = [591.0]
+metadata/_edit_horizontal_guides_ = [140.0, 220.0]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=2001449474]
+physics_interpolation_mode = 1
+top_level = true
+position = Vector2(170.8, 111)
+zoom = Vector2(2.5, 2.5)
+process_callback = 0
+limit_left = 0
+limit_top = 0
+limit_right = 590
+limit_bottom = 220
+
+[node name="PhantomCameraHost" type="Node" parent="Camera2D" unique_id=919251177]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("1_2t0he")
+metadata/_custom_type_script = "uid://bd046eokvcnu2"
+
+[node name="PhantomCamera2D" type="Node2D" parent="." unique_id=1608030063 node_paths=PackedStringArray("follow_target")]
+top_level = true
+position = Vector2(39, 111)
+script = ExtResource("2_ah5ut")
+follow_mode = 2
+follow_target = NodePath("../roxyOW")
+zoom = Vector2(2.5, 2.5)
+tween_resource = SubResource("Resource_yj75i")
+limit_left = 0
+limit_top = 0
+limit_right = 590
+limit_bottom = 220
+metadata/_custom_type_script = "uid://bhexx6mj1xv3q"
+
+[node name="foreground" type="ColorRect" parent="." unique_id=1295792261]
+z_index = 1
+offset_top = 198.0
+offset_right = 590.0
+offset_bottom = 220.0
+color = Color(0.34781694, 0.34781697, 0.3478169, 1)
+
+[node name="bottomLimit" type="StaticBody2D" parent="foreground" unique_id=1518938221]
+position = Vector2(0, -118)
+collision_mask = 0
+metadata/collision_preset_name = &"floor"
+metadata/collision_preset_id = &"8279556558583294472"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="foreground/bottomLimit" unique_id=2083827474]
+position = Vector2(294, 143)
+shape = SubResource("RectangleShape2D_2mjqt")
+
+[node name="floor" type="Node2D" parent="." unique_id=1418764326]
+
+[node name="Checkered" type="Sprite2D" parent="floor" unique_id=99097976]
+z_index = -2
+position = Vector2(45.000015, 121)
+scale = Vector2(0.45596287, 0.43944603)
+skew = 0.6230825
+texture = ExtResource("5_yj75i")
+
+[node name="Checkered2" type="Sprite2D" parent="floor" unique_id=429083101]
+z_index = -2
+position = Vector2(247.99998, 121)
+scale = Vector2(0.45596287, 0.43944603)
+skew = 0.6230825
+texture = ExtResource("5_yj75i")
+
+[node name="Checkered3" type="Sprite2D" parent="floor" unique_id=1661364796]
+z_index = -2
+position = Vector2(453, 121)
+scale = Vector2(0.45596287, 0.43944603)
+skew = 0.6230825
+texture = ExtResource("5_yj75i")
+
+[node name="Checkered4" type="Sprite2D" parent="floor" unique_id=621083637]
+z_index = -2
+position = Vector2(657, 121)
+scale = Vector2(0.45596287, 0.43944603)
+skew = 0.6230825
+texture = ExtResource("5_yj75i")
+
+[node name="background" type="ColorRect" parent="." unique_id=885588352]
+z_index = -1
+offset_right = 590.0
+offset_bottom = 46.0
+color = Color(0.34781694, 0.34781697, 0.3478169, 1)
+
+[node name="topLimit" type="StaticBody2D" parent="background" unique_id=563810143]
+collision_mask = 0
+metadata/collision_preset_name = &"floor"
+metadata/collision_preset_id = &"8279556558583294472"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="background/topLimit" unique_id=2070211269]
+position = Vector2(295, 16)
+shape = SubResource("RectangleShape2D_5yekf")
+
+[node name="missionNPC" parent="." unique_id=1201806571 instance=ExtResource("6_u2i3r")]
+position = Vector2(443, 34)
+
+[node name="roxyOW" parent="." unique_id=503157946 instance=ExtResource("4_hy77h")]
+position = Vector2(39, 111)

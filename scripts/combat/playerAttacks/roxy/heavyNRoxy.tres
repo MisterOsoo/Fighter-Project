@@ -2,11 +2,13 @@
 
 [ext_resource type="Resource" uid="uid://nx8bxx0ag7w3" path="res://scripts/combat/playerAttacks/roxy/heavyDRoxy.tres" id="1_k042p"]
 [ext_resource type="Script" uid="uid://baru8ib5ws770" path="res://scripts/combat/attackData.gd" id="1_yx6yo"]
+[ext_resource type="Resource" uid="uid://dn3i6mhswr1gi" path="res://scripts/combat/playerAttacks/roxy/light3Roxy.tres" id="2_upb02"]
 
 [resource]
 script = ExtResource("1_yx6yo")
 attack_name = "heavyN"
 animation_name = &"heavyN"
+next_light_attack = ExtResource("2_upb02")
 next_heavy_attack = ExtResource("1_k042p")
 cancel_start_frame = 5
 cancel_end_frame = 14

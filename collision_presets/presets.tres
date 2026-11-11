@@ -1,0 +1,56 @@
+[gd_resource type="Resource" script_class="CollisionPresetsDatabase" format=3 uid="uid://b4ay4048pj12w"]
+
+[ext_resource type="Script" uid="uid://dle6wr75jpdaa" path="res://addons/collision_presets/collision_preset.gd" id="1_5yekf"]
+[ext_resource type="Script" uid="uid://bka8g5my3r20w" path="res://addons/collision_presets/collision_presets_database.gd" id="2_2mjqt"]
+
+[sub_resource type="Resource" id="Resource_5yekf"]
+script = ExtResource("1_5yekf")
+name = "character"
+id = "5636937737735867000"
+layer = 2
+mask = 3
+
+[sub_resource type="Resource" id="Resource_2mjqt"]
+script = ExtResource("1_5yekf")
+name = "hitbox"
+id = "6727274713129075"
+layer = 4
+mask = 8
+
+[sub_resource type="Resource" id="Resource_uiut4"]
+script = ExtResource("1_5yekf")
+name = "hurtbox"
+id = "6076034784126792474"
+layer = 8
+mask = 0
+
+[sub_resource type="Resource" id="Resource_a7tld"]
+script = ExtResource("1_5yekf")
+name = "bullet hitbox"
+id = "7960243983829874717"
+layer = 4
+mask = 12
+
+[sub_resource type="Resource" id="Resource_ot506"]
+script = ExtResource("1_5yekf")
+name = "floor"
+id = "8279556558583294472"
+mask = 0
+
+[sub_resource type="Resource" id="Resource_xggcl"]
+script = ExtResource("1_5yekf")
+name = "playerInteract"
+id = "350144156341406048"
+layer = 0
+mask = 16
+
+[sub_resource type="Resource" id="Resource_hkb8t"]
+script = ExtResource("1_5yekf")
+name = "interactable"
+id = "2751166928749630006"
+layer = 16
+mask = 0
+
+[resource]
+script = ExtResource("2_2mjqt")
+presets = Array[ExtResource("1_5yekf")]([SubResource("Resource_5yekf"), SubResource("Resource_2mjqt"), SubResource("Resource_uiut4"), SubResource("Resource_a7tld"), SubResource("Resource_ot506"), SubResource("Resource_xggcl"), SubResource("Resource_hkb8t")])

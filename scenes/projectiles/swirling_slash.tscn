@@ -59,6 +59,8 @@ knockback_duration = 0.3
 hitstun_duration = 0.35
 blockstun_duration = 0.3
 impact_fx_scene = ExtResource("8_xldcq")
+metadata/collision_preset_name = &"bullet hitbox"
+metadata/collision_preset_id = &"7960243983829874717"
 
 [node name="bulletCollision" type="CollisionShape2D" parent="BulletHitbox" index="0" unique_id=1934310731]
 shape = SubResource("CircleShape2D_ga4mj")

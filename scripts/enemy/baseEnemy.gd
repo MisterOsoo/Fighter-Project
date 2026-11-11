@@ -72,6 +72,8 @@ var facing_direction: int = -1
 @export var blink_interval: float = 0.1
 
 var is_dead: bool = false
+var death_pending: bool = false
+var death_pending_frames: int = 0
 var is_blinking: bool = false
 
 #endregion
@@ -165,7 +167,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if is_on_floor() and is_launched:
-		if ground_bounce_pending and not is_dead:
+		if ground_bounce_pending and not death_pending and not is_dead:
 			trigger_ground_bounce()
 		else:
 			reset_launch_state()
@@ -178,7 +180,12 @@ func _physics_process(delta: float) -> void:
 		if is_on_floor() and not ground_bounce_pending:
 			ground_bounce_active = false
 
-	if not is_dead:
+	if death_pending:
+		# Allow the lethal hitbox to finish applying its impulse first.
+		death_pending_frames += 1
+		if death_pending_frames >= 2 and is_on_floor() and knockback_timer <= 0.0:
+			finish_death_knockback()
+	elif not is_dead:
 		update_facing()
 
 #endregion
@@ -260,6 +267,7 @@ func update_block_state() -> void:
 func can_move() -> bool:
 	return (
 		not is_dead
+		and not death_pending
 		and not isStunned
 		and not isAttacking
 		and not (block_component != null and (block_component.is_blocking or block_component.is_guard_broken or block_component.blockstun_timer > 0.0))
@@ -571,7 +579,7 @@ func receive_combat_hit(
 	bounce_speed: float = 230.0,
 	bounce_hitstun: float = 0.6
 ) -> void:
-	if is_dead:
+	if is_dead or (death_pending and death_pending_frames >= 2):
 		return
 
 	# Restore guard meter and permit the incoming hit to enter HurtState.
@@ -713,35 +721,45 @@ func play_hit_animation() -> void:
 #region Death Handling
 
 func _on_defeated() -> void:
-	if is_dead:
+	if is_dead or death_pending:
 		return
 
-	is_dead = true
+	# Do not enter DeathState yet: the lethal hit may still be
+	# applying its knockback/knockup after the defeated signal.
+	death_pending = true
+	death_pending_frames = 0
+	movement_direction = 0.0
+	isAttacking = false
+
 	if block_component:
 		block_component.end_block(true)
 		block_component.clear_ai_block()
-	isAttacking = false
-	isStunned = false
 
-	movement_direction = 0.0
-	hitstun_timer = 0.0
-
-	knockback_timer = 0.0
-	knockback_velocity = 0.0
-	velocity.x = 0.0
-
-	ground_bounce_pending = false
-	ground_bounce_active = false
-
-	var hurtbox: Area2D = get_node_or_null(
-		"Hurtbox"
-	) as Area2D
-
+	# Prevent additional hits while retaining physical momentum.
+	var hurtbox: Area2D = get_node_or_null("Hurtbox") as Area2D
 	if hurtbox:
 		hurtbox.set_deferred("monitorable", false)
 		hurtbox.set_deferred("monitoring", false)
 
+
+func finish_death_knockback() -> void:
+	if is_dead or not death_pending:
+		return
+
+	death_pending = false
+	is_dead = true
+	isAttacking = false
+	isStunned = false
+	hitstun_timer = 0.0
+	movement_direction = 0.0
+	knockback_timer = 0.0
+	knockback_duration = 0.0
+	knockback_velocity = 0.0
+	velocity.x = 0.0
+	ground_bounce_pending = false
+	ground_bounce_active = false
 	reset_launch_state()
+
 	if fsm != null and fsm.states.has("death"):
 		fsm.transition_to("death", true)
 	else:
